@@ -26,7 +26,7 @@ class SprintBacklog:
         #self.__logger.debug('backlog items for planning:\n {}'.format(list(self.__work_df.columns.values)))
         with open(SprintBacklog.__CFG_SPRINT_BACKLOG_BREAKDOWN) as cfg_file:
             self.__cfg = json.load(cfg_file, strict=False)
-        # self.__indexes = self.__create_indexes() if SprintBacklog.__CFG_KEY_INDEXES in self.__cfg else []
+        self.__indexes = self.__create_indexes() if SprintBacklog.__CFG_KEY_INDEXES in self.__cfg else []
         self.__transform_scope()
 
     @classmethod

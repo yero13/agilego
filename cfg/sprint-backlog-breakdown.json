@@ -18,10 +18,10 @@
 			"key": "key"
 		},
 		"priorities": {
-			"where": "type == 'Story' or type == 'Defect'",
+			"where": "type == 'Story' or type == 'Bug'",
 			"key": "priority",
 			"value": "key",
-			"order": ["Blocker", "Critical", "Major", "Normal", "Low"]
+			"order": ["Highest", "High", "Medium", "Low", "Lowest"]
 		}
 	},
 	"validations": {

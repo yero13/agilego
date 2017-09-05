@@ -1,9 +1,9 @@
 {
 	"request": {
-		"url": "http://localhost/rest/api/2/search",
+		"url": "https://yero13.atlassian.net/rest/api/2/search",
 		"multi-page": "True",
 		"data": {
-			"jql": "project=\"<PROJECT>\" AND sprint in openSprints()",
+			"jql": "project=\"Agilego\" AND sprint in futureSprints()",
 			"maxResults": 50,
 			"startAt": 0
 		}
