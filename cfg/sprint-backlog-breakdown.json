@@ -13,6 +13,12 @@
 		"blocked": {
 			"value": "blocked_by",
 			"key": "key"
+		},
+		"priorities": {
+			"where": "type == 'Story' or type == 'Defect'",
+			"key": "priority",
+			"value": "key",
+			"order": ["Blocker", "Critical", "Major", "Normal", "Low"]
 		}
 	},
 	"validations": {
