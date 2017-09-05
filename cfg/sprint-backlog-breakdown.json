@@ -1,7 +1,10 @@
 {
-	"scope": {
+	"transform-scope": {
+		"modify-fields": {
+			"estimate": "estimate/3600"
+		}
 	},
-	"indexes": {
+	"create-indexes": {
 		"parents": {
 			"key": "parent",
 			"value": "key"
