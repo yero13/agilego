@@ -1,0 +1,174 @@
+{
+	"request": {
+		"url": "http://localhost/rest/api/2/search",
+		"multi-page": "True",
+		"data": {
+			"jql": "project=\"<PROJECT>\" AND sprint in openSprints()",
+			"maxResults": 50,
+			"startAt": 0
+		}
+	},
+	"response": {
+		"out-params": {
+			"key": "total",
+			"type": "integer"
+		},
+		"issues": {
+			"key": "issues",
+			"type": "array",
+			"fields": {
+				"root": {
+					"type": "object",
+					"explicit": "True",
+					"noname": "True",
+					"fields": {
+						"key": {
+							"key": "key",
+							"type": "string"
+						},
+						"fields": {
+							"key": "fields",
+							"type": "object",
+							"fields": {
+								"type": {
+									"key": "issuetype",
+									"type": "object",
+									"fields": {
+										"name": {
+											"key": "name",
+											"type": "string",
+											"ext_id": "type"
+										}
+									}
+								},
+								"project": {
+									"key": "project",
+									"type": "object",
+									"fields": {
+										"name": {
+											"key": "key",
+											"type": "string",
+											"ext_id": "project"
+										}
+									}
+								},
+								"parent": {
+									"key": "parent",
+									"type": "object",
+									"optional": "True",
+									"fields": {
+										"name": {
+											"key": "key",
+											"type": "string",
+											"ext_id": "parent"
+										}
+									}
+								},
+								"assignee": {
+									"key": "assignee",
+									"type": "object",
+									"optional": "True",
+									"fields": {
+										"displayName": {
+											"key": "displayName",
+											"type": "string",
+											"ext_id": "assignee"
+										},
+										"name": {
+											"key": "name",
+											"type": "string",
+											"ext_id": "assignee_id"
+										}								
+									}
+								},
+								"status": {
+									"key": "status",
+									"type": "object",
+									"fields": {
+										"name": {
+											"key": "name",
+											"type": "string",
+											"ext_id": "status"
+										}
+									}
+								},
+								"priority": {
+									"key": "priority",
+									"type": "object",
+									"optional": "True",
+									"fields": {
+										"name": {
+											"key": "name",
+											"type": "string",
+											"ext_id": "priority"
+										}
+									}
+								},
+								"components": {
+									"key": "components",
+									"type": "array",
+									"fields": {
+										"name": {
+											"key": "name",
+											"type": "string"
+										}
+									}
+								},
+								"labels": {
+									"key": "labels",
+									"type": "array"
+								},
+								"duedate": {
+									"key": "duedate",
+									"type": "string"
+								},
+								"timeoriginalestimate": {
+									"key": "timeoriginalestimate",
+									"type": "int",
+									"ext_id": "estimate"
+								},
+								"blocked_by": {
+									"key": "issuelinks",
+									"type": "array",
+									"ext_id": "blocked_by",
+									"match":{
+										"type": "object",
+										"properties": {
+											"type": {
+												"type": "object",
+												"properties": {
+													"inward": {"type": "string", "pattern": "is blocked by"}
+												},
+												"required": ["inward"]
+											},
+											"inwardIssue": {
+												"type": "object",
+												"properties": {
+													"key": {"type": "string"}
+												},
+												"required": ["key"]
+											}
+										},
+										"required": ["type", "inwardIssue"]
+									},									
+									"fields": {
+										"inwardIssue": {
+											"key": "inwardIssue",
+											"type": "object",
+											"fields": {
+												"key": {
+													"key": "key",
+													"type": "string"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}				
+			}
+		}
+	}
+}

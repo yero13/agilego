@@ -1,0 +1,20 @@
+{
+	"scope": {
+	},
+	"indexes": {
+		"parents": {
+			"key": "parent",
+			"value": "key"
+		},
+		"blockers": {
+			"key": "blocked_by",
+			"value": "key"
+		},
+		"blocked": {
+			"value": "blocked_by",
+			"key": "key"
+		}
+	},
+	"validations": {
+	}
+}
