@@ -48,7 +48,7 @@ class Field:
         except jsonschema.ValidationError:
             return False
 
-
+# ToDo: separate _parse_response functionality as it could be used by other classes
 class SprintBacklogRequest(Request):
     __CFG_SPRINT_BACKLOG_REQUEST = './cfg/sprint-backlog-request.json'
     __KEY_BACKLOG_ITEMS = 'issues'

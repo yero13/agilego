@@ -20,6 +20,7 @@ class Request():
 
     _KEY_RESPONSE = 'response'
 
+    # ToDo: split response and request cfg
     def __init__(self, cfg, login, pswd, is_multipage=False):
         self._logger = logging.getLogger(__name__)
         self.__login = login
