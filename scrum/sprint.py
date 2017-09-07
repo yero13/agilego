@@ -30,6 +30,12 @@ class SprintBacklog:
         self.__indexes = self.__create_indexes() if SprintBacklog.__CFG_KEY_INDEXES in self.__cfg else []
         self.__transform_scope()
 
+    @property
+    def issues(self):
+        for index in self.__indexes:  # ToDo: fix this - temporary for FE-BE integartion
+            if index.name == 'priorities':
+                return index
+
     @classmethod
     def from_dict(cls, work_dict):
         """

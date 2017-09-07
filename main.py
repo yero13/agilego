@@ -29,5 +29,7 @@ if __name__ == '__main__':
         elif args.action == 'validate':
             with open('./data/jira-extract.json') as data_file:
                 sprint_backlog = SprintBacklog.from_dict(json.load(data_file, strict=False))
+                with open('./data/backlog-out.json', 'w') as out_file:
+                    json.dump(sprint_backlog.issues.to_json(), out_file, ensure_ascii=False)
     except Exception as e:
         logging.error(e, exc_info=True)
