@@ -1,10 +1,11 @@
 {
-	"transform-scope": {
+	"dataset": {
+		"index-notimplemented": "key",
 		"modify-fields": {
 			"estimate": "estimate/3600"
 		}
 	},
-	"create-indexes": {
+	"indexes": {
 		"parents": {
 			"key": "parent",
 			"value": "key"
@@ -19,11 +20,14 @@
 		},
 		"priorities": {
 			"where": "type == 'Story' or type == 'Bug'",
-			"key": "priority",
-			"value": "key",
-			"order": ["Highest", "High", "Medium", "Low", "Lowest"]
+			"value": "priority",
+			"key": "key",
+			"order": "priority",
+			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]
 		}
 	},
 	"validations": {
+	}
+	"subsets": {
 	}
 }

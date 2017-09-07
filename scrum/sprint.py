@@ -9,14 +9,15 @@ class SprintBacklog:
     """
     __CFG_SPRINT_BACKLOG_BREAKDOWN = './cfg/sprint-backlog-breakdown.json'
 
-    __CFG_KEY_SCOPE_TRANSFORM = 'transform-scope'
-    __CFG_KEY_SCOPE_MODIFY_FIELDS = 'modify-fields'
+    __CFG_KEY_SCOPE_DATASET = 'dataset'
+    __CFG_KEY_SCOPE_MODIFY_FIELDS = 'modify-fields' # ToDo: add fields and transformation sign eval/lambda
 
-    __CFG_KEY_INDEXES = 'create-indexes'
+    __CFG_KEY_INDEXES = 'indexes'
     __CFG_KEY_INDEX_KEY = 'key'
     __CFG_KEY_INDEX_VALUE = 'value'
     __CFG_KEY_INDEX_WHERE = 'where'
     __CFG_KEY_INDEX_ORDER = 'order'
+    __CFG_KEY_INDEX_SORT = 'sort'
 
 
     def __init__(self, work_dict):
@@ -40,8 +41,8 @@ class SprintBacklog:
         return cls(work_dict)
 
     def __transform_scope(self):
-        if SprintBacklog.__CFG_KEY_SCOPE_MODIFY_FIELDS in self.__cfg[SprintBacklog.__CFG_KEY_SCOPE_TRANSFORM]:
-            changes = self.__cfg[SprintBacklog.__CFG_KEY_SCOPE_TRANSFORM][SprintBacklog.__CFG_KEY_SCOPE_MODIFY_FIELDS]
+        if SprintBacklog.__CFG_KEY_SCOPE_MODIFY_FIELDS in self.__cfg[SprintBacklog.__CFG_KEY_SCOPE_DATASET]:
+            changes = self.__cfg[SprintBacklog.__CFG_KEY_SCOPE_DATASET][SprintBacklog.__CFG_KEY_SCOPE_MODIFY_FIELDS]
             for field in changes:
                 self.__logger.info('modifying field \'{}\' - eval({})'.format(field, changes[field]))
                 self.__work_df.eval('{} = {}'.format(field, changes[field]), inplace=True)
@@ -61,12 +62,15 @@ class SprintBacklog:
                 SprintBacklog.__CFG_KEY_INDEX_WHERE] if SprintBacklog.__CFG_KEY_INDEX_WHERE in index_cfg else None
             order = index_cfg[
                 SprintBacklog.__CFG_KEY_INDEX_ORDER] if SprintBacklog.__CFG_KEY_INDEX_ORDER in index_cfg else None
-            indexes.append(self.__create_index(index, key, value, where, order))
+            sort = index_cfg[
+                SprintBacklog.__CFG_KEY_INDEX_SORT] if SprintBacklog.__CFG_KEY_INDEX_SORT in index_cfg else None
+            indexes.append(self.__create_index(index, key, value, where, order, sort))
         return indexes
 
-    def __create_index(self, name, key, value, where, order):
+    def __create_index(self, name, key, value, where, order, sort):
         self.__logger.info(
-            'creating index {}: key {}, value {}, where {}, order {}'.format(name, key, value, where, order))
+            'creating index {}: key {}, value {}, where {}, order {}, sort {}'.format(name, key, value, where, order,
+                                                                                      sort))
         if self.__is_list(key) and self.__is_list(value):
             raise NotImplementedError('Creating index with more than one field of list type is not supported')
         # ToDo: implement checks for null/empty fields - now null/empty values for keys are filtered out
@@ -76,10 +80,10 @@ class SprintBacklog:
                 'filtered: {:d} items from {:d} total'.format(index_df[key].count(), self.__work_df[key].count()))
         index_df = index_df[[key, value]]
         if order:
-            if self.__is_list(key):
+            if self.__is_list(order):
                 raise NotImplementedError('Custom order for list type key is not supported')
-            index_df[key] = index_df[key].astype('category')
-            index_df[key].cat.set_categories(order, inplace=True)
+            index_df[order] = index_df[order].astype('category')
+            index_df[order].cat.set_categories(sort, inplace=True)
         if not self.__is_list(key) and not self.__is_list(value):
             index_df = index_df[index_df[key].notnull()]
             index = pd.Series().from_array(index_df[value].values, index=index_df[key], name=name)
@@ -93,7 +97,10 @@ class SprintBacklog:
                 index_df = index_df[index_df[value].apply(lambda value_list: True if len(value_list) > 0 else False)]
                 for item in index_df.iterrows():
                     index = index.append(pd.Series.from_array(item[1][value], index=[item[1][key]] * len(item[1][value])))
-        index.sort_index(inplace=True)
+        if order == key:
+            index.sort_index(inplace=True)
+        if order == value:
+            index.sort_values(inplace=True)
         self.__logger.debug('\n{}'.format(index))
 
         return index
