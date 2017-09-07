@@ -19,6 +19,9 @@ class SprintBacklog:
     __CFG_KEY_INDEX_ORDER = 'order'
     __CFG_KEY_INDEX_SORT = 'sort'
 
+    __CFG_KEY_SUBSETS = 'subsets'
+    __CFG_KEY_SUBSET_INDEX = 'index'
+    __CFG_KEY_SUBSET_COLUMNS = 'columns'
 
     def __init__(self, work_dict):
         self.__logger = logging.getLogger(__name__)
@@ -28,13 +31,33 @@ class SprintBacklog:
         with open(SprintBacklog.__CFG_SPRINT_BACKLOG_BREAKDOWN) as cfg_file:
             self.__cfg = json.load(cfg_file, strict=False)
         self.__indexes = self.__create_indexes() if SprintBacklog.__CFG_KEY_INDEXES in self.__cfg else []
-        self.__transform_scope()
+        self.__transform_dataset()
+        self.__create_subsets()
 
     @property
     def issues(self):
         for index in self.__indexes:  # ToDo: fix this - temporary for FE-BE integartion
             if index.name == 'priorities':
                 return index
+
+    def __get_index(self, index_name):
+        for index in self.__indexes:  # ToDo: fix this - temporary for FE-BE integartion
+            if index.name == index_name:
+                return index
+
+    def __create_subsets(self):
+        subsets = []
+        self.__logger.info('creating subsets')
+        for subset in self.__cfg[SprintBacklog.__CFG_KEY_SUBSETS]:
+            subset_cfg = self.__cfg[SprintBacklog.__CFG_KEY_SUBSETS][subset]
+            index_name = subset_cfg[SprintBacklog.__CFG_KEY_SUBSET_INDEX]
+            columns = subset_cfg[SprintBacklog.__CFG_KEY_SUBSET_COLUMNS]
+            self.__logger.info('creating subset {}: index {}, columns {}'.format(subset, index_name, columns))
+            index = self.__get_index(index_name)
+            subset = pd.concat([index, self.__work_df], axis=1, join_axes=[index.index])
+            subset = subset[columns]
+            subsets.append(subset)
+
 
     @classmethod
     def from_dict(cls, work_dict):
@@ -46,7 +69,7 @@ class SprintBacklog:
         """
         return cls(work_dict)
 
-    def __transform_scope(self):
+    def __transform_dataset(self):
         if SprintBacklog.__CFG_KEY_SCOPE_MODIFY_FIELDS in self.__cfg[SprintBacklog.__CFG_KEY_SCOPE_DATASET]:
             changes = self.__cfg[SprintBacklog.__CFG_KEY_SCOPE_DATASET][SprintBacklog.__CFG_KEY_SCOPE_MODIFY_FIELDS]
             for field in changes:

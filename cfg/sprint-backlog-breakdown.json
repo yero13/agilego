@@ -29,5 +29,9 @@
 	"validations": {
 	},
 	"subsets": {
+		"backlog": {
+			"index": "priorities",
+			"columns": ["key", "type", "priority"]
+		}
 	}
 }
