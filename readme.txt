@@ -6,11 +6,13 @@ pip install jsonschema
 pip install requests
 pip install flask
 pip install pymongo
-pip install Flask-PyMongo  ??
-pip install mongoengine
-pip install flask-mongoengine
-pip install virtualenv
+pip install flask-cors
+#pip install Flask-PyMongo  ??
+#pip install mongoengine
+#pip install flask-mongoengine
+#pip install virtualenv
 
+mongod --auth --port 27017
 
 https://flask-pymongo.readthedocs.io/en/latest/
 

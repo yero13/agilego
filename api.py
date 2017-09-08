@@ -1,12 +1,13 @@
 from flask import Flask
 from flask import Response
-import json
+#import json
 from bson.json_util import dumps
 from db.connect import db
-
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['MONGO_DBNAME'] = 'agilego'
 app.config['MONGO_HOST'] = '127.0.0.1'
