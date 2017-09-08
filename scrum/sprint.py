@@ -32,13 +32,19 @@ class SprintBacklog:
             self.__cfg = json.load(cfg_file, strict=False)
         self.__indexes = self.__create_indexes() if SprintBacklog.__CFG_KEY_INDEXES in self.__cfg else []
         self.__transform_dataset()
-        self.__create_subsets()
+        self.__subsets = self.__create_subsets()
 
     @property
     def issues(self):
         for index in self.__indexes:  # ToDo: fix this - temporary for FE-BE integartion
             if index.name == 'priorities':
                 return index
+
+    @property
+    def backlog(self):
+        for subset in self.__subsets:  # ToDo: fix this - temporary for FE-BE integartion
+            if subset.name == 'backlog':
+                return subset
 
     def __get_index(self, index_name):
         for index in self.__indexes:  # ToDo: fix this - temporary for FE-BE integartion
@@ -54,10 +60,11 @@ class SprintBacklog:
             columns = subset_cfg[SprintBacklog.__CFG_KEY_SUBSET_COLUMNS]
             self.__logger.info('creating subset {}: index {}, columns {}'.format(subset, index_name, columns))
             index = self.__get_index(index_name)
-            subset = pd.concat([index, self.__work_df], axis=1, join_axes=[index.index])
-            subset = subset[columns]
-            subsets.append(subset)
-
+            subset_df = pd.concat([index, self.__work_df], axis=1, join_axes=[index.index])
+            subset_df = subset_df[columns]
+            subset_df.name = subset
+            subsets.append(subset_df)
+        return subsets
 
     @classmethod
     def from_dict(cls, work_dict):

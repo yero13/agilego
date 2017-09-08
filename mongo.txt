@@ -1,0 +1,8 @@
+use admin
+db.createUser(
+  {
+    user: "agilego",
+    pwd: "1",
+    roles: [ { role: "root", db: "admin" } ]
+  }
+)
