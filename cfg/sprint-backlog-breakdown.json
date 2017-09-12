@@ -1,4 +1,5 @@
 {
+	"version": 0.1,
 	"dataset": {
 		"index-notimplemented": "key",
 		"modify-fields": {
@@ -7,21 +8,21 @@
 	},
 	"indexes": {
 		"parents": {
-			"key": "parent",
-			"value": "key"
+			"l1key": "parent",
+			"l2key": "key"
 		},
 		"blockers": {
-			"key": "blocked_by",
-			"value": "key"
+			"l1key": "blocked_by",
+			"l2key": "key"
 		},
 		"blocked": {
-			"value": "blocked_by",
-			"key": "key"
+			"l2key": "blocked_by",
+			"l1key": "key"
 		},
 		"priorities": {
 			"where": "type == 'Story' or type == 'Bug'",
-			"value": "priority",
-			"key": "key",
+			"l2key": "priority",
+			"l1key": "key",
 			"order": "priority",
 			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]
 		}
@@ -32,6 +33,10 @@
 		"backlog": {
 			"index": "priorities",
 			"columns": ["key", "type", "priority"]
+		},
+		"subtasks": {
+			"index": "parents",
+			"columns": ["key", "type", "priority", "status"]
 		}
 	}
 }
