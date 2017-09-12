@@ -19,7 +19,7 @@ class MongoDb:
         self.__connection = MongoClient('mongodb://{}:{}@{}:{:d}/'.format(__cfg[MongoDb.__CFG_PARAM_MONGO_USER],
                                                                          __cfg[MongoDb.__CFG_PARAM_MONGO_PSWD],
                                                                          __cfg[MongoDb.__CFG_PARAM_MONGO_HOST],
-                                                                         __cfg[MongoDb.__CFG_PARAM_MONGO_PORT]))[MongoDb.__CFG_PARAM_MONGO_DBNAME]
+                                                                         __cfg[MongoDb.__CFG_PARAM_MONGO_PORT]))[__cfg[MongoDb.__CFG_PARAM_MONGO_DBNAME]]
         self.__logger.debug('Mongo connection - instantiation')
 
     @property

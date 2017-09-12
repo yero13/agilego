@@ -7,8 +7,10 @@ class Sprint:
     __COLLECTION_PREFIX = 'sprint'
     BACKLOG = 'backlog'
     BACKLOG_DETAILS = 'backlog-details'
-    SUBTASKS = 'substasks'
+    SUBTASKS = 'subtasks'
     SUBTASKS_DETAILS = 'substasks-details'
+    ITEM_KEY = 'key'
+    ITEM_PARENT = 'parent'
 
     @staticmethod
     def wrap_db(collection):
