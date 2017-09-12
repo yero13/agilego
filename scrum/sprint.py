@@ -4,11 +4,15 @@ import json
 
 
 class Sprint:
-    COLLECTION_PREFIX = 'sprint'
+    __COLLECTION_PREFIX = 'sprint'
     BACKLOG = 'backlog'
     BACKLOG_DETAILS = 'backlog-details'
     SUBTASKS = 'substasks'
     SUBTASKS_DETAILS = 'substasks-details'
+
+    @staticmethod
+    def wrap_db(collection):
+        return '{}.{}'.format(Sprint.__COLLECTION_PREFIX, collection)
 
 class SprintWbs:
     """
@@ -31,8 +35,6 @@ class SprintWbs:
     __CFG_KEY_SUBSET_ORDER = 'order'
     __CFG_KEY_SUBSET_SORT = 'sort'
 
-    __DB_PREFIX = 'sprint' # ToDo: create public constants for integration
-
     def __init__(self, work_dict):
         self.__logger = logging.getLogger(__name__)
         self.__logger.info('sprint backlog input: {:d} work items'.format(len(work_dict)))
@@ -51,7 +53,7 @@ class SprintWbs:
         :return:
         """
         for subset in self.__subsets:
-            name = '{}.{}'.format(SprintWbs.__DB_PREFIX, subset[0])
+            name = Sprint.wrap_db(subset[0])
             data = subset[1]
             db[name].remove() # ToDo: move to clean-up
             db[name].insert_many(json.loads(data.T.to_json()).values())

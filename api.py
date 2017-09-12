@@ -12,8 +12,7 @@ db = MongoDb().connection
 
 @app.route('/backlog', methods=['GET', 'POST'])
 def backlog():
-    resp = Response(response=dumps(db['{}.{}'.format(Sprint.COLLECTION_PREFIX, Sprint.BACKLOG)].find()),
+    resp = Response(response=dumps(db[Sprint.wrap_db(Sprint.BACKLOG)].find()),
                     status=200,
                     mimetype="application/json")
     return resp
-
