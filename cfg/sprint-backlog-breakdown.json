@@ -22,21 +22,35 @@
 		"priorities": {
 			"where": "type == 'Story' or type == 'Bug'",
 			"l2key": "priority",
+			"l1key": "key"
+		},
+		"backlog": {
+			"where": "type == 'Story' or type == 'Bug'",
 			"l1key": "key",
-			"order": "priority",
-			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]
+			"l2key": "type"
 		}
 	},
 	"validations": {
 	},
 	"subsets": {
 		"backlog": {
-			"index": "priorities",
-			"columns": ["key", "type", "priority"]
+			"index": "backlog",
+			"join_on": "key",
+			"columns": ["key", "type", "priority"],
+			"order": "priority",
+			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]			
 		},
 		"subtasks": {
 			"index": "parents",
-			"columns": ["key", "type", "priority", "status"]
+			"join_on": "key",
+			"columns": ["key", "parent", "type", "priority", "status"],
+			"order": "priority",
+			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]						
+		},
+		"backlog-details": {
+			"index": "backlog",
+			"join_on": "key",
+			"columns": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components"]
 		}
 	}
 }

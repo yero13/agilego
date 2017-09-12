@@ -31,7 +31,7 @@ class Issue1():
 @app.route('/backlog', methods=['GET', 'POST'])
 def backlog():
     d = db['backlog'].find()
-
+    print('d'.format(d))
     #d = json.dumps(Issue1().find())
     resp = Response(response=dumps(d),
                     status=200,

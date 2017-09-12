@@ -13,58 +13,78 @@ class SprintBacklog:
     __CFG_KEY_SCOPE_MODIFY_FIELDS = 'modify-fields' # ToDo: add fields and transformation sign eval/lambda
 
     __CFG_KEY_INDEXES = 'indexes'
-    __CFG_KEY_INDEX_KEY = 'key'
-    __CFG_KEY_INDEX_VALUE = 'value'
+    __CFG_KEY_INDEX_L1KEY = 'l1key'
+    __CFG_KEY_INDEX_L2KEY = 'l2key'
     __CFG_KEY_INDEX_WHERE = 'where'
-    __CFG_KEY_INDEX_ORDER = 'order'
-    __CFG_KEY_INDEX_SORT = 'sort'
 
     __CFG_KEY_SUBSETS = 'subsets'
     __CFG_KEY_SUBSET_INDEX = 'index'
+    __CFG_KEY_SUBSET_JOIN_ON = 'join_on'
     __CFG_KEY_SUBSET_COLUMNS = 'columns'
+    __CFG_KEY_SUBSET_ORDER = 'order'
+    __CFG_KEY_SUBSET_SORT = 'sort'
+
+    __DB_PREFIX = 'sprint' # ToDo: create public constants for integration
 
     def __init__(self, work_dict):
         self.__logger = logging.getLogger(__name__)
-        #self.__logger.info('sprint backlog input: {:d} work items'.format(len(work_dict)))
+        self.__logger.info('sprint backlog input: {:d} work items'.format(len(work_dict)))
         self.__work_df = pd.DataFrame.from_dict(work_dict, orient='Index')
-        #self.__logger.debug('backlog items for planning:\n {}'.format(list(self.__work_df.columns.values)))
+        self.__logger.debug('backlog items for planning:\n {}'.format(list(self.__work_df.columns.values)))
         with open(SprintBacklog.__CFG_SPRINT_BACKLOG_BREAKDOWN) as cfg_file:
             self.__cfg = json.load(cfg_file, strict=False)
-        self.__indexes = self.__create_indexes() if SprintBacklog.__CFG_KEY_INDEXES in self.__cfg else []
         self.__transform_dataset()
+        self.__indexes = self.__create_indexes() if SprintBacklog.__CFG_KEY_INDEXES in self.__cfg else []
         self.__subsets = self.__create_subsets()
 
-    @property
-    def issues(self):
-        for index in self.__indexes:  # ToDo: fix this - temporary for FE-BE integartion
-            if index.name == 'priorities':
-                return index
-
-    @property
-    def backlog(self):
-        for subset in self.__subsets:  # ToDo: fix this - temporary for FE-BE integartion
-            if subset.name == 'backlog':
-                return subset
+    def to_db(self, db):
+        """
+        Saves transformed sprint backlog to MongoDB
+        :param db:
+        :return:
+        """
+        for subset in self.__subsets:
+            name = '{}.{}'.format(SprintBacklog.__DB_PREFIX, subset[0])
+            data = subset[1]
+            db[name].remove() # ToDo: move to clean-up
+            db[name].insert_many(json.loads(data.T.to_json()).values())
 
     def __get_index(self, index_name):
-        for index in self.__indexes:  # ToDo: fix this - temporary for FE-BE integartion
-            if index.name == index_name:
-                return index
+        for index in self.__indexes:
+            if index[0] == index_name:
+                return index[1]
 
     def __create_subsets(self):
+        # ToDo: order and sort should be implemented for subsets
         subsets = []
-        self.__logger.info('creating subsets')
+        self.__logger.info('creating subsets...')
         for subset in self.__cfg[SprintBacklog.__CFG_KEY_SUBSETS]:
             subset_cfg = self.__cfg[SprintBacklog.__CFG_KEY_SUBSETS][subset]
-            index_name = subset_cfg[SprintBacklog.__CFG_KEY_SUBSET_INDEX]
+            index = subset_cfg[SprintBacklog.__CFG_KEY_SUBSET_INDEX]
+            join_on = subset_cfg[SprintBacklog.__CFG_KEY_SUBSET_JOIN_ON]
             columns = subset_cfg[SprintBacklog.__CFG_KEY_SUBSET_COLUMNS]
-            self.__logger.info('creating subset {}: index {}, columns {}'.format(subset, index_name, columns))
-            index = self.__get_index(index_name)
-            subset_df = pd.concat([index, self.__work_df], axis=1, join_axes=[index.index])
-            subset_df = subset_df[columns]
-            subset_df.name = subset
-            subsets.append(subset_df)
+            order = subset_cfg[
+                SprintBacklog.__CFG_KEY_SUBSET_ORDER] if SprintBacklog.__CFG_KEY_SUBSET_ORDER in subset_cfg else None
+            sort = subset_cfg[
+                SprintBacklog.__CFG_KEY_SUBSET_SORT] if SprintBacklog.__CFG_KEY_SUBSET_SORT in subset_cfg else None
+            self.__logger.info('creating subset {}...'.format(subset))
+            subsets.append((subset, self.__create_subset(index, join_on, columns, order, sort)))
         return subsets
+
+    def __create_subset(self, index, join_on, columns, order, sort):
+        self.__logger.info(
+            'creating subset: index {}, join on {}, columns {}, order {}, sort {}'.format(index, join_on, columns, order, sort))
+        index_df = self.__get_index(index)
+        # ToDo: optimize performance - set indexes
+        subset_df = index_df.join(self.__work_df[columns], on=[join_on], lsuffix='_left')
+        subset_df = subset_df[columns]
+        if order:
+            if sort:
+                subset_df[order] = subset_df[order].astype('category')
+                subset_df[order].cat.set_categories(sort, inplace=True)
+            subset_df.sort_values(by=order, inplace=True)
+        self.__logger.debug('Subset created\n{}'.format(subset_df))
+        return subset_df
 
     @classmethod
     def from_dict(cls, work_dict):
@@ -89,54 +109,47 @@ class SprintBacklog:
 
     def __create_indexes(self):
         indexes = []
-        self.__logger.info('creating indexes')
+        self.__logger.info('creating indexes...')
         for index in self.__cfg[SprintBacklog.__CFG_KEY_INDEXES]:
+            self.__logger.info('creating index {}...'.format(index))
             index_cfg = self.__cfg[SprintBacklog.__CFG_KEY_INDEXES][index]
-            key = index_cfg[SprintBacklog.__CFG_KEY_INDEX_KEY]
-            value = index_cfg[SprintBacklog.__CFG_KEY_INDEX_VALUE]
+            l1key = index_cfg[SprintBacklog.__CFG_KEY_INDEX_L1KEY]
+            l2key = index_cfg[SprintBacklog.__CFG_KEY_INDEX_L2KEY]
             where = index_cfg[
                 SprintBacklog.__CFG_KEY_INDEX_WHERE] if SprintBacklog.__CFG_KEY_INDEX_WHERE in index_cfg else None
-            order = index_cfg[
-                SprintBacklog.__CFG_KEY_INDEX_ORDER] if SprintBacklog.__CFG_KEY_INDEX_ORDER in index_cfg else None
-            sort = index_cfg[
-                SprintBacklog.__CFG_KEY_INDEX_SORT] if SprintBacklog.__CFG_KEY_INDEX_SORT in index_cfg else None
-            indexes.append(self.__create_index(index, key, value, where, order, sort))
+            indexes.append((index, self.__create_index(l1key, l2key, where)))
         return indexes
 
-    def __create_index(self, name, key, value, where, order, sort):
+    def __create_index(self, l1key, l2key, where):
         self.__logger.info(
-            'creating index {}: key {}, value {}, where {}, order {}, sort {}'.format(name, key, value, where, order,
-                                                                                      sort))
-        if self.__is_list(key) and self.__is_list(value):
+            'creating index: l1key {}, l2key {}, where {}'.format(l1key, l2key, where))
+        if self.__is_list(l1key) and self.__is_list(l2key):
             raise NotImplementedError('Creating index with more than one field of list type is not supported')
         # ToDo: implement checks for null/empty fields - now null/empty values for keys are filtered out
         index_df = self.__work_df.query(where) if where else self.__work_df
         if where:
             self.__logger.debug(
-                'filtered: {:d} items from {:d} total'.format(index_df[key].count(), self.__work_df[key].count()))
-        index_df = index_df[[key, value]]
-        if order:
-            if self.__is_list(order):
-                raise NotImplementedError('Custom order for list type key is not supported')
-            index_df[order] = index_df[order].astype('category')
-            index_df[order].cat.set_categories(sort, inplace=True)
-        if not self.__is_list(key) and not self.__is_list(value):
-            index_df = index_df[index_df[key].notnull()]
-            index = pd.Series().from_array(index_df[value].values, index=index_df[key], name=name)
+                'filtered: {:d} items from {:d} total'.format(index_df[l1key].count(), self.__work_df[l1key].count()))
+        index_df = index_df[[l1key, l2key]]
+        index = pd.DataFrame()
+        if not self.__is_list(l1key) and not self.__is_list(l2key):
+            index_df = index_df[index_df[l1key].notnull()] # l1keys should be not null
+            index = index_df[[l1key, l2key]]
         else:
-            index = pd.Series(name=name)
-            if self.__is_list(key) and not self.__is_list(value):
-                index_df = index_df[index_df[key].apply(lambda key_list: True if len(key_list) > 0 else False)]
+            l1key_index = pd.Series()
+            l2key_index = pd.Series()
+            if self.__is_list(l1key) and not self.__is_list(l2key):
+                index_df = index_df[index_df[l1key].apply(lambda key_list: True if len(key_list) > 0 else False)]
                 for item in index_df.iterrows():
-                    index = index.append(pd.Series.from_array([item[1][value]] * len(item[1][key]), index=item[1][key]))
-            elif not self.__is_list(key) and self.__is_list(value):
-                index_df = index_df[index_df[value].apply(lambda value_list: True if len(value_list) > 0 else False)]
+                    l1key_index = l1key_index.append(pd.Series.from_array(item[1][l1key]))
+                    l2key_index = l2key_index.append(pd.Series.from_array([item[1][l2key]] * len(item[1][l1key])))
+            elif not self.__is_list(l1key) and self.__is_list(l2key):
+                index_df = index_df[index_df[l2key].apply(lambda value_list: True if len(value_list) > 0 else False)]
                 for item in index_df.iterrows():
-                    index = index.append(pd.Series.from_array(item[1][value], index=[item[1][key]] * len(item[1][value])))
-        if order == key:
-            index.sort_index(inplace=True)
-        if order == value:
-            index.sort_values(inplace=True)
-        self.__logger.debug('\n{}'.format(index))
+                    l1key_index = l1key_index.append(pd.Series.from_array([item[1][l1key]] * len(item[1][l2key])))
+                    l2key_index = l2key_index.append(pd.Series.from_array(item[1][l2key]))
+            index[l1key] = l1key_index
+            index[l2key] = l2key_index
+        self.__logger.debug('Index created\n{}'.format(index))
 
         return index
