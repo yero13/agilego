@@ -10,7 +10,6 @@ class Sprint:
     SUBTASKS = 'substasks'
     SUBTASKS_DETAILS = 'substasks-details'
 
-
 class SprintWbs:
     """
     Represents sprint backlog tasks. Provides functionality for checking sprint backlog consistency
