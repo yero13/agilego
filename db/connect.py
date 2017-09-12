@@ -24,5 +24,5 @@ class MongoDb:
 
     @property
     def connection(self):
-        return self.__connection
         self.__logger.debug('Mongo connection - getting')
+        return self.__connection
