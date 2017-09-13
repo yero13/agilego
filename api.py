@@ -25,7 +25,7 @@ def backlog():
 #@cache.cached(timeout=60)
 def backlog_item_details():
     item_key = request.args.get(Sprint.ITEM_KEY)
-    resp = Response(response=dumps(db[Sprint.wrap_db(Sprint.BACKLOG_DETAILS)].find({Sprint.ITEM_KEY: item_key})),
+    resp = Response(response=dumps(db[Sprint.wrap_db(Sprint.BACKLOG_DETAILS)].find_one({Sprint.ITEM_KEY: item_key})),
                     status=200,
                     mimetype="application/json")
     return resp
