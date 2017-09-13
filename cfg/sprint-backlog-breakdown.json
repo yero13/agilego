@@ -50,7 +50,7 @@
 		"backlog-details": {
 			"index": "backlog",
 			"join_on": "key",
-			"columns": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components"]
+			"columns": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by"]
 		}
 	}
 }
