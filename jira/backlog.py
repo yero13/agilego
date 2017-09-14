@@ -5,6 +5,7 @@ from .request import Request, Field
 class SprintBacklogRequest(Request):
     # ToDo: move to cfg constants
     __CFG_SPRINT_BACKLOG_REQUEST = './cfg/jira-sprint-backlog-request.json'
+    # ToDo: move to json cfg file as response key item to parse
     __KEY_BACKLOG_ITEMS = 'issues'
 
     def __init__(self, login, pswd):
