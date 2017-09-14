@@ -1,22 +1,13 @@
 import logging
 import pandas as pd
 import json
+from db.constants import DbConstants
 
 
-class Sprint:
-    __COLLECTION_PREFIX = 'sprint'
-    BACKLOG = 'backlog'
-    BACKLOG_DETAILS = 'backlog-details'
-    SUBTASKS = 'subtasks'
-    SUBTASKS_DETAILS = 'substasks-details'
-    ITEM_KEY = 'key'
-    ITEM_PARENT = 'parent'
+#class Definition:
 
-    @staticmethod
-    def wrap_db(collection):
-        return '{}.{}'.format(Sprint.__COLLECTION_PREFIX, collection)
 
-class SprintWbs:
+class Wbs:
     """
     Represents sprint backlog tasks. Provides functionality for checking sprint backlog consistency
     """
@@ -42,10 +33,10 @@ class SprintWbs:
         self.__logger.info('sprint backlog input: {:d} work items'.format(len(work_dict)))
         self.__work_df = pd.DataFrame.from_dict(work_dict, orient='Index')
         self.__logger.debug('backlog items for planning:\n {}'.format(list(self.__work_df.columns.values)))
-        with open(SprintWbs.__CFG_SPRINT_BACKLOG_BREAKDOWN) as cfg_file:
+        with open(Wbs.__CFG_SPRINT_BACKLOG_BREAKDOWN) as cfg_file:
             self.__cfg = json.load(cfg_file, strict=False)
         self.__transform_dataset()
-        self.__indexes = self.__create_indexes() if SprintWbs.__CFG_KEY_INDEXES in self.__cfg else []
+        self.__indexes = self.__create_indexes() if Wbs.__CFG_KEY_INDEXES in self.__cfg else []
         self.__subsets = self.__create_subsets()
 
     def to_db(self, db):
@@ -55,7 +46,7 @@ class SprintWbs:
         :return:
         """
         for subset in self.__subsets:
-            name = Sprint.wrap_db(subset[0])
+            name = DbConstants.wrap_db(subset[0])
             data = subset[1]
             db[name].remove() # ToDo: move to clean-up
             db[name].insert_many(json.loads(data.T.to_json()).values())
@@ -70,16 +61,16 @@ class SprintWbs:
         # ToDo: order and sort should be implemented for subsets
         subsets = []
         self.__logger.info('creating subsets...')
-        for subset in self.__cfg[SprintWbs.__CFG_KEY_SUBSETS]:
-            subset_cfg = self.__cfg[SprintWbs.__CFG_KEY_SUBSETS][subset]
-            index = subset_cfg[SprintWbs.__CFG_KEY_SUBSET_INDEX]
+        for subset in self.__cfg[Wbs.__CFG_KEY_SUBSETS]:
+            subset_cfg = self.__cfg[Wbs.__CFG_KEY_SUBSETS][subset]
+            index = subset_cfg[Wbs.__CFG_KEY_SUBSET_INDEX]
             # ToDo: if no join and columns return index itself
-            join_on = subset_cfg[SprintWbs.__CFG_KEY_SUBSET_JOIN_ON]
-            columns = subset_cfg[SprintWbs.__CFG_KEY_SUBSET_COLUMNS]
+            join_on = subset_cfg[Wbs.__CFG_KEY_SUBSET_JOIN_ON]
+            columns = subset_cfg[Wbs.__CFG_KEY_SUBSET_COLUMNS]
             order = subset_cfg[
-                SprintWbs.__CFG_KEY_SUBSET_ORDER] if SprintWbs.__CFG_KEY_SUBSET_ORDER in subset_cfg else None
+                Wbs.__CFG_KEY_SUBSET_ORDER] if Wbs.__CFG_KEY_SUBSET_ORDER in subset_cfg else None
             sort = subset_cfg[
-                SprintWbs.__CFG_KEY_SUBSET_SORT] if SprintWbs.__CFG_KEY_SUBSET_SORT in subset_cfg else None
+                Wbs.__CFG_KEY_SUBSET_SORT] if Wbs.__CFG_KEY_SUBSET_SORT in subset_cfg else None
             self.__logger.info('creating subset {}...'.format(subset))
             subsets.append((subset, self.__create_subset(index, join_on, columns, order, sort)))
         return subsets
@@ -110,8 +101,8 @@ class SprintWbs:
         return cls(work_dict)
 
     def __transform_dataset(self):
-        if SprintWbs.__CFG_KEY_SCOPE_MODIFY_FIELDS in self.__cfg[SprintWbs.__CFG_KEY_SCOPE_DATASET]:
-            changes = self.__cfg[SprintWbs.__CFG_KEY_SCOPE_DATASET][SprintWbs.__CFG_KEY_SCOPE_MODIFY_FIELDS]
+        if Wbs.__CFG_KEY_SCOPE_MODIFY_FIELDS in self.__cfg[Wbs.__CFG_KEY_SCOPE_DATASET]:
+            changes = self.__cfg[Wbs.__CFG_KEY_SCOPE_DATASET][Wbs.__CFG_KEY_SCOPE_MODIFY_FIELDS]
             for field in changes:
                 self.__logger.info('modifying field \'{}\' - eval({})'.format(field, changes[field]))
                 self.__work_df.eval('{} = {}'.format(field, changes[field]), inplace=True)
@@ -123,13 +114,13 @@ class SprintWbs:
     def __create_indexes(self):
         indexes = []
         self.__logger.info('creating indexes...')
-        for index in self.__cfg[SprintWbs.__CFG_KEY_INDEXES]:
+        for index in self.__cfg[Wbs.__CFG_KEY_INDEXES]:
             self.__logger.info('creating index {}...'.format(index))
-            index_cfg = self.__cfg[SprintWbs.__CFG_KEY_INDEXES][index]
-            l1key = index_cfg[SprintWbs.__CFG_KEY_INDEX_L1KEY]
-            l2key = index_cfg[SprintWbs.__CFG_KEY_INDEX_L2KEY]
+            index_cfg = self.__cfg[Wbs.__CFG_KEY_INDEXES][index]
+            l1key = index_cfg[Wbs.__CFG_KEY_INDEX_L1KEY]
+            l2key = index_cfg[Wbs.__CFG_KEY_INDEX_L2KEY]
             where = index_cfg[
-                SprintWbs.__CFG_KEY_INDEX_WHERE] if SprintWbs.__CFG_KEY_INDEX_WHERE in index_cfg else None
+                Wbs.__CFG_KEY_INDEX_WHERE] if Wbs.__CFG_KEY_INDEX_WHERE in index_cfg else None
             indexes.append((index, self.__create_index(l1key, l2key, where)))
         return indexes
 

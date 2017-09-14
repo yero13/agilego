@@ -21,6 +21,7 @@ class Field:
     TYPE_OBJECT = 'object'
     TYPE_STRING = 'string'
     TYPE_DATE = 'date'
+    TYPE_DATETIME = 'datetime'
     TYPE_INT = 'int'
     TYPE_FLOAT = 'float'
 
@@ -34,8 +35,10 @@ class Field:
             return value
         if type == Field.TYPE_STRING:
             return value
-        elif type == Field.TYPE_DATE:
-            return datetime.strptime(value, '%Y-%m-%d').date()
+        elif type == Field.TYPE_DATE: # ToDo: set template for date
+            return datetime.strptime(value, '%Y-%m-%d').date().isoformat()
+        elif type == Field.TYPE_DATETIME: # ToDo: set template for datetime
+            return datetime.strptime(value[0:10], '%Y-%m-%d').date().isoformat() # 2017-09-18T18:53:00.000Z
         elif type == Field.TYPE_INT:
             return int(value)
         elif type == Field.TYPE_FLOAT:
@@ -50,6 +53,58 @@ class Field:
             return True
         except jsonschema.ValidationError:
             return False
+
+    @staticmethod
+    def _parse_field(data, field_cfg, target, is_optional=False):
+        field_type = field_cfg[Field.FIELD_TYPE]
+        field_key = field_cfg[Field.FIELD_KEY] if Field.FIELD_KEY in field_cfg else None
+        field_ext_id = field_cfg[Field.FIELD_EXT_ID] if Field.FIELD_EXT_ID in field_cfg else field_key
+        if field_type == Field.TYPE_ARRAY:
+            target.update({field_ext_id: []})
+            field_value = data[field_key]
+            field_pattern = field_cfg[Field.FIELD_MATCH] if Field.FIELD_MATCH in field_cfg else None
+            if Field.FIELD_SUBITEMS in field_cfg:
+                subfield = next(iter(field_cfg[Field.FIELD_SUBITEMS].values()))  # only one field within array is allowed
+                for item in field_value:
+                    if Field.is_match(field_pattern, item):
+                        Field._parse_field(item, subfield, target[field_ext_id])
+            else:
+                target[field_ext_id] = field_value
+        elif field_type == Field.TYPE_OBJECT:
+            is_explicit = field_cfg[Field.FIELD_EXPLICIT] if Field.FIELD_EXPLICIT in field_cfg else False
+            is_optional = field_cfg[Field.FIELD_OPTIONAL] if Field.FIELD_OPTIONAL in field_cfg else False
+            if field_key:
+                try:
+                    field_value = data[field_key]
+                except KeyError:
+                    if is_optional:
+                        field_value = None
+                    else:
+                        raise
+            else: # noname object
+                field_value = data  # working with the same item
+            if is_explicit:
+                obj_exp = {}
+                if isinstance(target, dict):  # add to object
+                    target.update({field_ext_id: obj_exp})
+                else:  # add to array
+                    target.append(obj_exp)
+            for subfield in field_cfg[Field.FIELD_SUBITEMS]:
+                Field._parse_field(field_value, field_cfg[Field.FIELD_SUBITEMS][subfield],
+                                  obj_exp if is_explicit else target, is_optional)
+        else:  # other types
+            try:
+                field_value = data[field_key]
+            except TypeError:
+                if is_optional:
+                    field_value = None
+                else:
+                    raise
+            casted_value = Field.get_casted_value(field_type, field_value)
+            if isinstance(target, dict):  # add to object
+                target.update({field_ext_id: casted_value})
+            else:  # add to array
+                target.append(casted_value)
 
 class Request():
     """

@@ -1,9 +1,9 @@
 import json
-from datetime import datetime
 import logging
 import logging.config
-from scrum.sprint import SprintWbs
-from jira.work import SprintBacklogRequest
+from scrum.sprint import Wbs
+from jira.sprint import SprintDefinitionRequest
+from jira.backlog import SprintBacklogRequest
 import argparse
 from db.connect import MongoDb
 
@@ -23,12 +23,16 @@ if __name__ == '__main__':
     try:
         if args.action == 'extract':
             logger.debug('call parameters {} , {}'.format(args.login, args.pswd))
-            row_data = SprintBacklogRequest(args.login, args.pswd).result
-            with open('./data/backlog-{}.json'.format(datetime.now().strftime('%Y-%m-%d-%H-%M-%S')), 'w') as out_file:
-                json.dump(row_data, out_file, ensure_ascii=False)
-            logger.info('file: {} {:d} items'.format(out_file.name, len(row_data.keys())))
+            sprint_data = SprintDefinitionRequest(args.login, args.pswd).result
+            with open('./data/jira-sprint.json', 'w') as out_file:
+                json.dump(sprint_data, out_file, ensure_ascii=False)
+            logger.info('file: {} {} items'.format(out_file.name, sprint_data))
+            backlog_data = SprintBacklogRequest(args.login, args.pswd).result
+            with open('./data/jira-backlog.json', 'w') as out_file:
+                json.dump(backlog_data, out_file, ensure_ascii=False)
+            logger.info('file: {} {:d} items'.format(out_file.name, len(backlog_data.keys())))
         elif args.action == 'transform':
-            with open('./data/jira-extract.json') as data_file:
-                sprint_backlog = SprintWbs.from_dict(json.load(data_file, strict=False)).to_db(MongoDb().connection)
+            with open('./data/jira-backlog.json') as data_file:
+                Wbs.from_dict(json.load(data_file, strict=False)).to_db(MongoDb().connection)
     except Exception as e:
         logging.error(e, exc_info=True)

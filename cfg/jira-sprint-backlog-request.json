@@ -2,18 +2,13 @@
 	"version": 0.1,
 	"request": {
 		"url": "https://yero13.atlassian.net/rest/api/2/search",
-		"multi-page": "True",
 		"data": {
-			"jql": "project=\"Agilego\" AND sprint in futureSprints()",
-			"maxResults": 50,
+			"jql": "project=\"Agilego\" AND sprint in (1)",
+			"maxResults": 5,
 			"startAt": 0
 		}
 	},
 	"response": {
-		"out-params": {
-			"key": "total",
-			"type": "integer"
-		},
 		"issues": {
 			"key": "issues",
 			"type": "array",
@@ -121,7 +116,7 @@
 								},
 								"duedate": {
 									"key": "duedate",
-									"type": "string"
+									"type": "date"
 								},
 								"timeoriginalestimate": {
 									"key": "timeoriginalestimate",

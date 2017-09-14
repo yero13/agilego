@@ -1,0 +1,28 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "https://yero13.atlassian.net/rest/agile/1.0/sprint/1"
+	},
+	"response": {
+		"noname": "True",
+		"type": "object",
+		"fields": {
+			"name": {
+				"key": "name",
+				"type": "string"
+			},
+			"startDate": {
+				"key": "startDate",
+				"type": "datetime"
+			},
+			"endDate": {
+				"key": "endDate",
+				"type": "datetime"
+			},
+			"goal": {
+				"key": "goal",
+				"type": "string"
+			}
+		}
+	}
+}
