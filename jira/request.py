@@ -3,7 +3,53 @@ import abc
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+import jsonschema
+from jsonschema import validate
+from datetime import datetime
 
+
+class Field:
+    FIELD_KEY = 'key'
+    FIELD_EXT_ID = 'ext_id'
+    FIELD_TYPE = 'type'
+    FIELD_SUBITEMS = 'fields'
+    FIELD_EXPLICIT = 'explicit'
+    FIELD_OPTIONAL = 'optional'
+    FIELD_MATCH = 'match'
+
+    TYPE_ARRAY = 'array'
+    TYPE_OBJECT = 'object'
+    TYPE_STRING = 'string'
+    TYPE_DATE = 'date'
+    TYPE_INT = 'int'
+    TYPE_FLOAT = 'float'
+
+    @staticmethod
+    def is_complex_type(type):
+        return type in [Field.TYPE_ARRAY, Field.TYPE_OBJECT]
+
+    @staticmethod
+    def get_casted_value(type, value):
+        if not value:
+            return value
+        if type == Field.TYPE_STRING:
+            return value
+        elif type == Field.TYPE_DATE:
+            return datetime.strptime(value, '%Y-%m-%d').date()
+        elif type == Field.TYPE_INT:
+            return int(value)
+        elif type == Field.TYPE_FLOAT:
+            return float(value)
+
+    @staticmethod
+    def is_match(pattern, field):
+        if pattern is None:
+            return True
+        try:
+            validate(field, pattern)
+            return True
+        except jsonschema.ValidationError:
+            return False
 
 class Request():
     """
