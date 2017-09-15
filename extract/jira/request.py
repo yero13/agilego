@@ -55,7 +55,7 @@ class Field:
             return False
 
     @staticmethod
-    def _parse_field(data, field_cfg, target, is_optional=False):
+    def parse_field(data, field_cfg, target, is_optional=False):
         field_type = field_cfg[Field.FIELD_TYPE]
         field_key = field_cfg[Field.FIELD_KEY] if Field.FIELD_KEY in field_cfg else None
         field_ext_id = field_cfg[Field.FIELD_EXT_ID] if Field.FIELD_EXT_ID in field_cfg else field_key
@@ -72,7 +72,7 @@ class Field:
                 subfield = next(iter(field_cfg[Field.FIELD_SUBITEMS].values()))  # only one field within array is allowed
                 for item in field_value:
                     if Field.is_match(field_pattern, item):
-                        Field._parse_field(item, subfield, target[field_ext_id] if field_ext_id else target)
+                        Field.parse_field(item, subfield, target[field_ext_id] if field_ext_id else target)
             else:
                 target[field_ext_id] = field_value
         elif field_type == Field.TYPE_OBJECT:
@@ -95,7 +95,7 @@ class Field:
                 else:  # add to array
                     target.append(obj_exp)
             for subfield in field_cfg[Field.FIELD_SUBITEMS]:
-                Field._parse_field(field_value, field_cfg[Field.FIELD_SUBITEMS][subfield],
+                Field.parse_field(field_value, field_cfg[Field.FIELD_SUBITEMS][subfield],
                                   obj_exp if is_explicit else target, is_optional)
         else:  # other types
             try:

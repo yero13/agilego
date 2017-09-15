@@ -9,6 +9,6 @@ class SprintDefinitionRequest(Request):
             Request.__init__(self, json.load(cfg_file, strict=False), login, pswd, is_multipage=False)
 
     def _parse_response(self, response, out_data):
-        Field._parse_field(response, self._response_cfg, out_data)
+        Field.parse_field(response, self._response_cfg, out_data)
         self._logger.debug('{}'.format(out_data))
         return out_data

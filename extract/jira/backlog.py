@@ -10,7 +10,7 @@ class SprintBacklogRequest(Request):
 
     def _parse_response(self, response, out_data):
         backlog = []
-        Field._parse_field(response, self._response_cfg[self._content_root], backlog)
+        Field.parse_field(response, self._response_cfg[self._content_root], backlog)
         for issue in backlog:
             out_data.update({issue[Field.FIELD_KEY]:issue})
             self._logger.debug('issue: {}'.format(issue))
