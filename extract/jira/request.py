@@ -60,14 +60,19 @@ class Field:
         field_key = field_cfg[Field.FIELD_KEY] if Field.FIELD_KEY in field_cfg else None
         field_ext_id = field_cfg[Field.FIELD_EXT_ID] if Field.FIELD_EXT_ID in field_cfg else field_key
         if field_type == Field.TYPE_ARRAY:
-            target.update({field_ext_id: []})
-            field_value = data[field_key]
+            if isinstance(target, dict):  # add to object
+                target.update({field_ext_id: []})
+                field_value = data[field_key]
+            elif not field_key:  # add to array
+                field_value = data
+            else:
+                raise NotImplementedError
             field_pattern = field_cfg[Field.FIELD_MATCH] if Field.FIELD_MATCH in field_cfg else None
             if Field.FIELD_SUBITEMS in field_cfg:
                 subfield = next(iter(field_cfg[Field.FIELD_SUBITEMS].values()))  # only one field within array is allowed
                 for item in field_value:
                     if Field.is_match(field_pattern, item):
-                        Field._parse_field(item, subfield, target[field_ext_id])
+                        Field._parse_field(item, subfield, target[field_ext_id] if field_ext_id else target)
             else:
                 target[field_ext_id] = field_value
         elif field_type == Field.TYPE_OBJECT:
@@ -119,7 +124,8 @@ class Request():
     __KEY_PARAM_START_AT = 'startAt'
     __KEY_PARAM_MAX_RESULTS = 'maxResults'
 
-    _KEY_RESPONSE = 'response'
+    __KEY_RESPONSE = 'response'
+    __KEY_CONTENT_ROOT = 'content-root'
 
     def __init__(self, cfg, login, pswd, is_multipage=False):
         self._logger = logging.getLogger(__class__.__name__)
@@ -127,7 +133,9 @@ class Request():
         self.__pswd = pswd
         self.__is_multipage = is_multipage
         self.__request_cfg = cfg[Request.__KEY_REQUEST]
-        self._response_cfg = cfg[Request._KEY_RESPONSE]
+        self._response_cfg = cfg[Request.__KEY_RESPONSE]
+        self._content_root = self._response_cfg[
+            Request.__KEY_CONTENT_ROOT] if Request.__KEY_CONTENT_ROOT in self._response_cfg else None
         self.__response_values = {}
         self._logger.debug('\n{}'.format(self._response_cfg))
         self.__perform_multi_request() if self.__is_multipage else self.__perform_single_request()
@@ -143,7 +151,8 @@ class Request():
     def __perform_multi_request(self):
         while True:
             response = self.__perform_request()
-            self._parse_response(response, self.__response_values)
+            self._parse_response(response if not self._content_root else response[self._content_root],
+                                 self.__response_values)
             total = int(response[Request.__KEY_PARAM_TOTAL])
             max_results = int(response[Request.__KEY_PARAM_MAX_RESULTS])
             start_at = int(response[Request.__KEY_PARAM_START_AT])

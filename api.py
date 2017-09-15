@@ -43,7 +43,7 @@ def subtasks():
 #@cache.cached(timeout=60)
 def sprint():
     app.logger.debug('++{}'.format(DbConstants.wrap_db(DbConstants.SPRINT)))
-    resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.SPRINT)].find()),
+    resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.SPRINT)].find_one()),
                     status=200,
                     mimetype="application/json")
     return resp

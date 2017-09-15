@@ -9,8 +9,9 @@
 		}
 	},
 	"response": {
+		"content-root": "issues",
 		"issues": {
-			"key": "issues",
+			"noname": "True",
 			"type": "array",
 			"fields": {
 				"root": {

@@ -1,11 +1,12 @@
-import json
-import logging
-import logging.config
-from scrum.sprint import Wbs, Sprint
-from jira.sprint import SprintDefinitionRequest
-from jira.backlog import SprintBacklogRequest
 import argparse
+import json
+import logging.config
+
+from jira.backlog import SprintBacklogRequest
+
 from db.connect import MongoDb
+from extract.jira.sprint import SprintDefinitionRequest
+from scrum.sprint import Wbs, Sprint
 
 LOGGING_CONFIG = './cfg/logging-config.json'
 
