@@ -122,7 +122,7 @@ class Request():
     _KEY_RESPONSE = 'response'
 
     def __init__(self, cfg, login, pswd, is_multipage=False):
-        self._logger = logging.getLogger(__name__)
+        self._logger = logging.getLogger(__class__.__name__)
         self.__login = login
         self.__pswd = pswd
         self.__is_multipage = is_multipage

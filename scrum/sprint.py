@@ -22,7 +22,7 @@ class Sprint:
     __CFG_KEY_DESTINATION = 'dest'
 
     def __init__(self, sprint_dict):
-        self.__logger = logging.getLogger(__name__)
+        self.__logger = logging.getLogger(__class__.__name__)
         self.__logger.info('sprint definition: {}'.format(sprint_dict))
         with open(Sprint.__CFG_SPRINT_DEFINITION) as cfg_file:
             self.__cfg = json.load(cfg_file, strict=False)
@@ -67,7 +67,7 @@ class Wbs:
     __CFG_KEY_SUBSET_SORT = 'sort'
 
     def __init__(self, work_dict):
-        self.__logger = logging.getLogger(__name__)
+        self.__logger = logging.getLogger(__class__.__name__)
         self.__logger.info('sprint backlog input: {:d} work items'.format(len(work_dict)))
         self.__work_df = pd.DataFrame.from_dict(work_dict, orient='Index')
         self.__logger.debug('backlog items for planning:\n {}'.format(list(self.__work_df.columns.values)))
