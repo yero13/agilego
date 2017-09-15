@@ -4,13 +4,51 @@ import json
 from db.constants import DbConstants
 
 
-#class Definition:
+class Transformation:
+    @staticmethod
+    def transform_object(cfg, obj):
+        for transform_item in cfg:
+            transform_func = cfg[transform_item]
+            # ToDo: object transformation should be common for objects and datasets
+            exec(transform_func) # ToDo: change to compile/eval (need to add key as target in cfg)
+        return obj
 
 
+# ToDo: this class should be generalized for single object transformation
+class Sprint:
+    # ToDo: move to cfg file
+    __CFG_SPRINT_DEFINITION = './cfg/sprint-definition.json'
+    __CFG_KEY_TRANSFORMATION = 'transformation'
+    __CFG_KEY_DESTINATION = 'dest'
+
+    def __init__(self, sprint_dict):
+        self.__logger = logging.getLogger(__name__)
+        self.__logger.info('sprint definition: {}'.format(sprint_dict))
+        with open(Sprint.__CFG_SPRINT_DEFINITION) as cfg_file:
+            self.__cfg = json.load(cfg_file, strict=False)
+        if Sprint.__CFG_KEY_TRANSFORMATION in self.__cfg:
+            self.__sprint_dict = Transformation.transform_object(self.__cfg[Sprint.__CFG_KEY_TRANSFORMATION],
+                                                                 sprint_dict)
+        self.__logger.info('sprint definition transformed: {}'.format(self.__sprint_dict))
+
+    def to_db(self, db):
+        """
+        Saves transformed sprint definition to MongoDB
+        :param db:
+        :return:
+        """
+        dest = self.__cfg[Sprint.__CFG_KEY_DESTINATION]
+        db[dest].remove() # ToDo: move to clean-up
+        db[dest].insert_one(self.__sprint_dict)
+        self.__logger.info('Sprint definition {} saved to collection {}'.format(self.__sprint_dict, dest))
+
+
+# ToDo: this class should be generalized for array(dataset) of objects transformation
 class Wbs:
     """
     Represents sprint backlog tasks. Provides functionality for checking sprint backlog consistency
     """
+    # ToDo: move to cfg file
     __CFG_SPRINT_BACKLOG_BREAKDOWN = './cfg/sprint-backlog-breakdown.json'
 
     __CFG_KEY_SCOPE_DATASET = 'dataset'
@@ -35,7 +73,7 @@ class Wbs:
         self.__logger.debug('backlog items for planning:\n {}'.format(list(self.__work_df.columns.values)))
         with open(Wbs.__CFG_SPRINT_BACKLOG_BREAKDOWN) as cfg_file:
             self.__cfg = json.load(cfg_file, strict=False)
-        self.__transform_dataset()
+        self.__transform_dataset() # ToDo: move to Transformation
         self.__indexes = self.__create_indexes() if Wbs.__CFG_KEY_INDEXES in self.__cfg else []
         self.__subsets = self.__create_subsets()
 
