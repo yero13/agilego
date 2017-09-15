@@ -5,11 +5,11 @@ import logging.config
 from db.connect import MongoDb
 from db.constants import DbConstants
 
-from jira.backlog import SprintBacklogRequest
-from jira.sprint import SprintDefinitionRequest
+from extract.jira.backlog import SprintBacklogRequest
+from extract.jira.sprint import SprintDefinitionRequest
 
+# ToDo: move log config to separate file
 LOG_CFG = './extract/cfg/logging-config.json'
-DB_CFG = './extract/cfg/db.json'
 
 if __name__ == '__main__':
     with open(LOG_CFG) as log_cfg_file:
@@ -22,8 +22,7 @@ if __name__ == '__main__':
 
     try:
         logger.debug('call parameters {} , {}'.format(args.login, args.pswd))
-        with open(DB_CFG) as db_cfg_file:
-            db = MongoDb(json.load(db_cfg_file, strict=False)).connection
+        db = MongoDb(DbConstants.CFG_DB_EXTRACT).connection
         db[DbConstants.EXTRACT_SPRINT].drop()
         db[DbConstants.EXTRACT_BACKLOG].drop()
         sprint_data = SprintDefinitionRequest(args.login, args.pswd).result
