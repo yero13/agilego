@@ -1,7 +1,8 @@
 {
 	"version": 0.1,
 	"dataset": {
-		"index-notimplemented": "key",
+		"todo-src": "temp.jira-backlog",
+		"todo-dest": "sprint.backlog-all",
 		"modify-fields": {
 			"estimate": "estimate/3600"
 		}
@@ -34,6 +35,7 @@
 	},
 	"subsets": {
 		"backlog": {
+			"todo-dest": "sprint.backlog",
 			"index": "backlog",
 			"join_on": "key",
 			"columns": ["key", "type", "priority"],
@@ -41,6 +43,7 @@
 			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]			
 		},
 		"subtasks": {
+			"todo-dest": "sprint.subtasks",
 			"index": "parents",
 			"join_on": "key",
 			"columns": ["key", "parent", "type", "priority", "status"],
@@ -48,6 +51,7 @@
 			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]						
 		},
 		"backlog-details": {
+			"todo-dest": "sprint.backlog-details",
 			"index": "backlog",
 			"join_on": "key",
 			"columns": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by"]
