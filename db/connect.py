@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import logging
-import json
+#import json
 
 
 class MongoDb:
@@ -12,14 +12,15 @@ class MongoDb:
     __CFG_PARAM_MONGO_USER = 'MONGO_USER'
     __CFG_PARAM_MONGO_PSWD = 'MONGO_PASSWORD'
 
-    def __init__(self):
-        self.__logger = logging.getLogger(__name__)
-        with open(MongoDb.__CFG_DB_CONNECT) as cfg_file:
-            __cfg = json.load(cfg_file, strict=False)
-        self.__connection = MongoClient('mongodb://{}:{}@{}:{:d}/'.format(__cfg[MongoDb.__CFG_PARAM_MONGO_USER],
-                                                                         __cfg[MongoDb.__CFG_PARAM_MONGO_PSWD],
-                                                                         __cfg[MongoDb.__CFG_PARAM_MONGO_HOST],
-                                                                         __cfg[MongoDb.__CFG_PARAM_MONGO_PORT]))[__cfg[MongoDb.__CFG_PARAM_MONGO_DBNAME]]
+    def __init__(self, cfg):
+        self.__logger = logging.getLogger(__class__.__name__)
+        #with open(MongoDb.__CFG_DB_CONNECT) as cfg_file:
+        #    __cfg = json.load(cfg_file, strict=False)
+        self.__connection = MongoClient(
+            'mongodb://{}:{}@{}:{:d}/'.format(cfg[MongoDb.__CFG_PARAM_MONGO_USER], cfg[MongoDb.__CFG_PARAM_MONGO_PSWD],
+                                              cfg[MongoDb.__CFG_PARAM_MONGO_HOST],
+                                              cfg[MongoDb.__CFG_PARAM_MONGO_PORT]))[
+            cfg[MongoDb.__CFG_PARAM_MONGO_DBNAME]]
         self.__logger.debug('Mongo connection - instantiation')
 
     @property

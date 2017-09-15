@@ -66,7 +66,7 @@ class Field:
             elif not field_key:  # add to array
                 field_value = data
             else:
-                raise NotImplementedError
+                raise NotImplementedError('Array of arrays is not supported')
             field_pattern = field_cfg[Field.FIELD_MATCH] if Field.FIELD_MATCH in field_cfg else None
             if Field.FIELD_SUBITEMS in field_cfg:
                 subfield = next(iter(field_cfg[Field.FIELD_SUBITEMS].values()))  # only one field within array is allowed

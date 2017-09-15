@@ -1,5 +1,8 @@
 #ToDo: collection name wrapping should be moved to dest field in cfg file
 class DbConstants:
+    EXTRACT_BACKLOG = 'backlog'
+    EXTRACT_SPRINT = 'sprint'
+
     #Destination and collection prefix should be moved to cfg files
     SPRINT_COLLECTION_PREFIX = 'sprint'
     BACKLOG = 'backlog'
