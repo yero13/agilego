@@ -13,7 +13,7 @@ CORS(app)
 #cache = Cache(app)
 db = MongoDb().connection
 
-@app.route('/backlog', methods=['GET', 'POST'])
+@app.route('/sprint-backlog', methods=['GET', 'POST'])
 #@cache.cached(timeout=60)
 def backlog():
     resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.BACKLOG)].find()),
@@ -35,6 +35,15 @@ def backlog_item_details():
 def subtasks():
     parent_key = request.args.get(DbConstants.ITEM_PARENT)
     resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.SUBTASKS)].find({DbConstants.ITEM_PARENT: parent_key})),
+                    status=200,
+                    mimetype="application/json")
+    return resp
+
+@app.route('/sprint', methods=['GET', 'POST'])
+#@cache.cached(timeout=60)
+def sprint():
+    app.logger.debug('++{}'.format(DbConstants.wrap_db(DbConstants.SPRINT)))
+    resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.SPRINT)].find()),
                     status=200,
                     mimetype="application/json")
     return resp
