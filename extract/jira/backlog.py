@@ -4,9 +4,6 @@ from .request import Request, Field
 
 
 class SprintBacklogRequest(Request):
-    # ToDo: move to json cfg file as response key item to parse
-    __KEY_BACKLOG_ITEMS = 'issues'
-
     def __init__(self, login, pswd):
         with open(jira_cfg[__class__.__name__]) as cfg_file:
             Request.__init__(self, json.load(cfg_file, strict=False), login, pswd, is_multipage=True)
