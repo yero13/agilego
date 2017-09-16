@@ -13,6 +13,8 @@ CORS(app)
 #cache = Cache(app)
 db = MongoDb(DbConstants.CFG_DB_SCRUM).connection
 
+# ToDo: generate dinamically based on cfg
+
 @app.route('/sprint-backlog', methods=['GET', 'POST'])
 #@cache.cached(timeout=60)
 def backlog():
@@ -37,6 +39,17 @@ def subtasks():
         response=dumps(db[DbConstants.SCRUM_SUBTASKS].find({DbConstants.ITEM_PARENT: parent_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
+
+@app.route('/subtask-details', methods=['GET', 'POST'])
+#@cache.cached(timeout=60)
+def subtask_details():
+    item_key = request.args.get(DbConstants.ITEM_KEY)
+    return Response(
+        response=dumps(db[DbConstants.SCRUM_SUBTASKS_DETAILS].find_one({DbConstants.ITEM_KEY: item_key}, {'_id': False})),
+        status=200,
+        mimetype="application/json")
+
+
 
 @app.route('/sprint', methods=['GET', 'POST'])
 #@cache.cached(timeout=60)

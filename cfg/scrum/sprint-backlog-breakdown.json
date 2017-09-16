@@ -8,7 +8,7 @@
 		}
 	},
 	"indexes": {
-		"parents": {
+		"subtasks": {
 			"l1key": "parent",
 			"l2key": "key"
 		},
@@ -42,19 +42,27 @@
 			"order": "priority",
 			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]			
 		},
-		"subtasks": {
-			"todo-dest": "sprint.subtasks",
-			"index": "parents",
-			"join_on": "key",
-			"columns": ["key", "parent", "type", "priority", "status"],
-			"order": "priority",
-			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]						
-		},
 		"backlog-details": {
 			"todo-dest": "sprint.backlog-details",
 			"index": "backlog",
 			"join_on": "key",
 			"columns": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by"]
+		},
+		"subtasks": {
+			"todo-dest": "sprint.subtasks",
+			"index": "subtasks",
+			"join_on": "key",
+			"columns": ["key", "parent", "type", "priority", "status"],
+			"order": "priority",
+			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]						
+		},
+		"subtasks-details": {
+			"todo-dest": "sprint.subtasks",
+			"index": "subtasks",
+			"join_on": "key",
+			"columns": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by"],
+			"order": "priority",
+			"sort": ["Highest", "High", "Medium", "Low", "Lowest"]						
 		}
 	}
 }

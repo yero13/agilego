@@ -9,7 +9,7 @@ class DbConstants:
     SCRUM_SPRINT_BACKLOG = 'sprint.backlog'
     SCRUM_BACKLOG_DETAILS = 'sprint.backlog-details'
     SCRUM_SUBTASKS = 'sprint.subtasks'
-    SCRUM_SUBTASKS_DETAILS = 'sprint.details'
+    SCRUM_SUBTASKS_DETAILS = 'sprint.subtasks-details'
 
 
 
