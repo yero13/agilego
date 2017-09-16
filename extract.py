@@ -22,14 +22,14 @@ if __name__ == '__main__':
 
     try:
         logger.debug('call parameters {} , {}'.format(args.login, args.pswd))
-        db = MongoDb(DbConstants.CFG_DB_EXTRACT).connection
-        db[DbConstants.EXTRACT_SPRINT].drop()
-        db[DbConstants.EXTRACT_BACKLOG].drop()
+        db = MongoDb(DbConstants.CFG_DB_JIRA).connection
+        db[DbConstants.JIRA_SPRINT].drop()
+        db[DbConstants.JIRA_BACKLOG].drop()
         sprint_data = SprintDefinitionRequest(args.login, args.pswd).result
-        db[DbConstants.EXTRACT_SPRINT].insert_one(sprint_data)
-        logger.info('collection: {} sprint data {} is saved'.format(DbConstants.EXTRACT_SPRINT, sprint_data))
+        db[DbConstants.JIRA_SPRINT].insert_one(sprint_data)
+        logger.info('collection: {} sprint data {} is saved'.format(DbConstants.JIRA_SPRINT, sprint_data))
         backlog_data = SprintBacklogRequest(args.login, args.pswd).result
-        db[DbConstants.EXTRACT_BACKLOG].insert_many([issue for issue in backlog_data.values()])
-        logger.info('collection: {} {:d} items are saved'.format(DbConstants.EXTRACT_BACKLOG, len(backlog_data.keys())))
+        db[DbConstants.JIRA_BACKLOG].insert_many([issue for issue in backlog_data.values()])
+        logger.info('collection: {} {:d} items are saved'.format(DbConstants.JIRA_BACKLOG, len(backlog_data.keys())))
     except Exception as e:
         logging.error(e, exc_info=True)

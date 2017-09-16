@@ -11,39 +11,36 @@ from db.constants import DbConstants
 app = Flask(__name__)
 CORS(app)
 #cache = Cache(app)
-db = MongoDb().connection
+db = MongoDb(DbConstants.CFG_DB_SCRUM).connection
 
 @app.route('/sprint-backlog', methods=['GET', 'POST'])
 #@cache.cached(timeout=60)
 def backlog():
-    resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.BACKLOG)].find()),
+    return Response(response=dumps(db[DbConstants.SCRUM_SPRINT_BACKLOG].find({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
-    return resp
 
 @app.route('/backlog-details', methods=['GET', 'POST'])
 #@cache.cached(timeout=60)
 def backlog_item_details():
     item_key = request.args.get(DbConstants.ITEM_KEY)
-    resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.BACKLOG_DETAILS)].find_one({DbConstants.ITEM_KEY: item_key})),
+    return Response(response=dumps(
+        db[DbConstants.SCRUM_BACKLOG_DETAILS].find_one({DbConstants.ITEM_KEY: item_key}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
-    return resp
 
 @app.route('/subtasks', methods=['GET', 'POST'])
 #@cache.cached(timeout=60)
 def subtasks():
     parent_key = request.args.get(DbConstants.ITEM_PARENT)
-    resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.SUBTASKS)].find({DbConstants.ITEM_PARENT: parent_key})),
-                    status=200,
-                    mimetype="application/json")
-    return resp
+    return Response(
+        response=dumps(db[DbConstants.SCRUM_SUBTASKS].find({DbConstants.ITEM_PARENT: parent_key}, {'_id': False})),
+        status=200,
+        mimetype="application/json")
 
 @app.route('/sprint', methods=['GET', 'POST'])
 #@cache.cached(timeout=60)
 def sprint():
-    app.logger.debug('++{}'.format(DbConstants.wrap_db(DbConstants.SPRINT)))
-    resp = Response(response=dumps(db[DbConstants.wrap_db(DbConstants.SPRINT)].find_one()),
+    return Response(response=dumps(db[DbConstants.SCRUM_SPRINT].find_one({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
-    return resp
