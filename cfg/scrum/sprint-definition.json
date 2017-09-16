@@ -2,7 +2,7 @@
 	"version": 0.1,
 	"src": "ToDo",
 	"dest": "sprint.definition",
-	"transformation": {
+	"transform": {
 		"workdays": "obj['workdays'] = pd.bdate_range(obj['startDate'], obj['endDate']).strftime('%Y-%m-%d').tolist()"
 	}
 }

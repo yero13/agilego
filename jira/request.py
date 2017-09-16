@@ -56,6 +56,7 @@ class Field:
 
     @staticmethod
     def parse_field(data, field_cfg, target, is_optional=False):
+        # ToDo: describe possible fields and implement unit testing
         field_type = field_cfg[Field.FIELD_TYPE]
         field_key = field_cfg[Field.FIELD_KEY] if Field.FIELD_KEY in field_cfg else None
         field_ext_id = field_cfg[Field.FIELD_EXT_ID] if Field.FIELD_EXT_ID in field_cfg else field_key
@@ -76,8 +77,8 @@ class Field:
             else:
                 target[field_ext_id] = field_value
         elif field_type == Field.TYPE_OBJECT:
-            is_explicit = field_cfg[Field.FIELD_EXPLICIT] if Field.FIELD_EXPLICIT in field_cfg else False
-            is_optional = field_cfg[Field.FIELD_OPTIONAL] if Field.FIELD_OPTIONAL in field_cfg else False
+            is_explicit = bool(field_cfg[Field.FIELD_EXPLICIT]) if Field.FIELD_EXPLICIT in field_cfg else False
+            is_optional = bool(field_cfg[Field.FIELD_OPTIONAL]) if Field.FIELD_OPTIONAL in field_cfg else False
             if field_key:
                 try:
                     field_value = data[field_key]

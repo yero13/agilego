@@ -2,14 +2,14 @@ import argparse
 import json
 import logging.config
 
+from jira.backlog import SprintBacklogRequest
+
 from db.connect import MongoDb
 from db.constants import DbConstants
-
-from extract.jira.backlog import SprintBacklogRequest
-from extract.jira.sprint import SprintDefinitionRequest
+from sprint import SprintDefinitionRequest
 
 # ToDo: move log config to separate file
-LOG_CFG = './extract/cfg/logging-config.json'
+LOG_CFG = './cfg/extract-logging-config.json'
 
 if __name__ == '__main__':
     with open(LOG_CFG) as log_cfg_file:
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         db[DbConstants.EXTRACT_SPRINT].insert_one(sprint_data)
         logger.info('collection: {} sprint data {} is saved'.format(DbConstants.EXTRACT_SPRINT, sprint_data))
         backlog_data = SprintBacklogRequest(args.login, args.pswd).result
-        db[DbConstants.EXTRACT_BACKLOG].insert_many([{issue: backlog_data[issue]} for issue in backlog_data])
+        db[DbConstants.EXTRACT_BACKLOG].insert_many([issue for issue in backlog_data.values()])
         logger.info('collection: {} {:d} items are saved'.format(DbConstants.EXTRACT_BACKLOG, len(backlog_data.keys())))
     except Exception as e:
         logging.error(e, exc_info=True)

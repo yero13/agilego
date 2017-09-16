@@ -1,6 +1,6 @@
 import json
-from .cfg import jira_cfg
-from .request import Request, Field
+from cfg import jira_cfg
+from request import Request, Field
 
 
 class SprintBacklogRequest(Request):

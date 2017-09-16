@@ -1,5 +1,5 @@
-from .cfg import jira_cfg
-from .request import Request, Field
+from cfg import jira_cfg
+from request import Request, Field
 import json
 
 
