@@ -62,8 +62,7 @@ def get_sprint():
 #@cache.cached(timeout=60)
 def get_sprint_timeline():
     # ToDo: move to constants/separated collection and create constant for timeline
-    timeline = db[DbConstants.SCRUM_SPRINT].find_one({}, {'timeline': True, '_id': False})['timeline']
-    return Response(response=dumps(timeline),
+    return Response(response=dumps(db[DbConstants.SCRUM_SPRINT].find_one({}, {'timeline': True, '_id': False})),
                     status=200,
                     mimetype="application/json")
 
