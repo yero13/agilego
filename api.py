@@ -57,3 +57,8 @@ def sprint():
     return Response(response=dumps(db[DbConstants.SCRUM_SPRINT].find_one({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
+
+@app.route('/task-assign', methods=['GET', 'POST'])
+def assign():
+    #ToDo: assign task to someone (if allowed)
+    return NotImplementedError
