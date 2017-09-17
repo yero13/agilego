@@ -60,6 +60,7 @@ class Wbs:
     __CFG_KEY_INDEX_WHERE = 'where'
 
     __CFG_KEY_SUBSETS = 'subsets'
+    __CFG_KEY_SUBSET_DEST = 'dest'
     __CFG_KEY_SUBSET_INDEX = 'index'
     __CFG_KEY_SUBSET_JOIN_ON = 'join_on'
     __CFG_KEY_SUBSET_COLUMNS = 'columns'
@@ -84,11 +85,11 @@ class Wbs:
         :return:
         """
         for subset in self.__subsets:
-            name = DbConstants.wrap_db(subset[0])
+            dest = self.__cfg[Wbs.__CFG_KEY_SUBSETS][subset[0]][Wbs.__CFG_KEY_SUBSET_DEST]
             data = subset[1]
-            db[name].remove() # ToDo: move to clean-up
-            db[name].insert_many(json.loads(data.T.to_json()).values())
-            self.__logger.info('Subset {} saved to collection {}'.format(subset[0], name))
+            db[dest].remove() # ToDo: move to clean-up
+            db[dest].insert_many(json.loads(data.T.to_json()).values())
+            self.__logger.info('Subset {} saved to collection {}'.format(subset[0], dest))
 
     def __get_index(self, index_name):
         for index in self.__indexes:
