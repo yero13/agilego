@@ -1,4 +1,3 @@
-#ToDo: collection name wrapping should be moved to dest field in cfg file
 class DbConstants:
     CFG_DB_JIRA = 'jira'
     JIRA_BACKLOG = 'backlog'
@@ -10,6 +9,7 @@ class DbConstants:
     SCRUM_BACKLOG_DETAILS = 'sprint.backlog-details'
     SCRUM_SUBTASKS = 'sprint.subtasks'
     SCRUM_SUBTASKS_DETAILS = 'sprint.subtasks-details'
+    SCRUM_ORG_TEAM = 'org.team'
 
     # ToDo: move to API constants?
     ITEM_KEY = 'key'

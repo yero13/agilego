@@ -1,7 +1,6 @@
 import logging
 import pandas as pd
 import json
-from db.constants import DbConstants
 
 
 class Transformation:
@@ -20,6 +19,7 @@ class Sprint:
     __CFG_SPRINT_DEFINITION = './cfg/scrum/sprint-definition.json'
     __CFG_KEY_TRANSFORMATION = 'transform'
     __CFG_KEY_DESTINATION = 'dest'
+    # ToDo: split in 2 files - definition and schedule
 
     def __init__(self, sprint_dict):
         self.__logger = logging.getLogger(__class__.__name__)
@@ -108,6 +108,7 @@ class Wbs:
             columns = subset_cfg[Wbs.__CFG_KEY_SUBSET_COLUMNS]
             order = subset_cfg[
                 Wbs.__CFG_KEY_SUBSET_ORDER] if Wbs.__CFG_KEY_SUBSET_ORDER in subset_cfg else None
+            # ToDo: move to pymongo.sort
             sort = subset_cfg[
                 Wbs.__CFG_KEY_SUBSET_SORT] if Wbs.__CFG_KEY_SUBSET_SORT in subset_cfg else None
             self.__logger.info('creating subset {}...'.format(subset))
