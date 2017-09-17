@@ -1,0 +1,8 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "https://yero13.atlassian.net/rest/api/2/project/AGILEGO/components",
+	},
+	"response": {
+	}
+}
