@@ -4,22 +4,22 @@ teams = [
 	{
 		"group": "BA",
 		"components": ["BA"],
-		"resources": ["fbyero"]
+		"employees": ["fbyero"]
 	},
 	{
 		"group": "FE",
 		"components": ["FE", "HTML"],
-		"resources": ["Karl.Munchhausen"]
+		"employees": ["Karl.Munchhausen"]
 	},
 	{
 		"group": "BE",
 		"components": ["BE", "INT"],
-		"resources": ["yero13"]
+		"employees": ["yero13"]
 	},
 	{
 		"group": "QA",
 		"components": [],
-		"resources": []
+		"employees": []
 	}
 ]
 
