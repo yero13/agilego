@@ -117,61 +117,68 @@ class Request():
     Requests data from Jira. Parses response data accordingly to given rules
     """
 
-    __KEY_REQUEST = 'request'
-    __KEY_REQUEST_URL = 'url'
-    __KEY_REQUEST_DATA = 'data'
+    __CFG_KEY_REQUEST = 'request'
+    __CFG_KEY_REQUEST_URL = 'url'
+    __CFG_KEY_REQUEST_DATA = 'data'
 
-    __KEY_PARAM_TOTAL = 'total'
-    __KEY_PARAM_START_AT = 'startAt'
-    __KEY_PARAM_MAX_RESULTS = 'maxResults'
+    __CFG_KEY_PARAM_TOTAL = 'total'
+    __CFG_KEY_PARAM_START_AT = 'startAt'
+    __CFG_KEY_PARAM_MAX_RESULTS = 'maxResults'
 
-    __KEY_RESPONSE = 'response'
-    __KEY_CONTENT_ROOT = 'content-root'
+    __CFG_KEY_RESPONSE = 'response'
+    __CFG_KEY_CONTENT_ROOT = 'content-root'
 
-    def __init__(self, cfg, login, pswd, is_multipage=False):
+    TYPE_SINGLE_OBJECT = 'single_object'
+    TYPE_MULTI_PAGE = 'multi_page'
+
+    def __init__(self, cfg, login, pswd, request_type):
         self._logger = logging.getLogger(__class__.__name__)
         self.__login = login
         self.__pswd = pswd
-        self.__is_multipage = is_multipage
-        self.__request_cfg = cfg[Request.__KEY_REQUEST]
-        self._response_cfg = cfg[Request.__KEY_RESPONSE]
+        self.__request_cfg = cfg[Request.__CFG_KEY_REQUEST]
+        self._response_cfg = cfg[Request.__CFG_KEY_RESPONSE]
         self._content_root = self._response_cfg[
-            Request.__KEY_CONTENT_ROOT] if Request.__KEY_CONTENT_ROOT in self._response_cfg else None
+            Request.__CFG_KEY_CONTENT_ROOT] if Request.__CFG_KEY_CONTENT_ROOT in self._response_cfg else None
         self.__response_values = {}
         self._logger.debug('\n{}'.format(self._response_cfg))
-        self.__perform_multi_request() if self.__is_multipage else self.__perform_single_request()
+        if request_type == Request.TYPE_MULTI_PAGE:
+            self.__perform_multi_page_request()
+        elif request_type == Request.TYPE_SINGLE_OBJECT:
+            self.__perform_single_object_request()
+        else:
+            raise NotImplementedError('{} - request is not supported'.format(request_type))
 
     @property
     def result(self):
         return self.__response_values
 
-    def __perform_single_request(self):
+    def __perform_single_object_request(self):
         response = self.__perform_request()
         self._parse_response(response, self.__response_values)
 
-    def __perform_multi_request(self):
+    def __perform_multi_page_request(self):
         while True:
             response = self.__perform_request()
             self._parse_response(response if not self._content_root else response[self._content_root],
                                  self.__response_values)
-            total = int(response[Request.__KEY_PARAM_TOTAL])
-            max_results = int(response[Request.__KEY_PARAM_MAX_RESULTS])
-            start_at = int(response[Request.__KEY_PARAM_START_AT])
+            total = int(response[Request.__CFG_KEY_PARAM_TOTAL])
+            max_results = int(response[Request.__CFG_KEY_PARAM_MAX_RESULTS])
+            start_at = int(response[Request.__CFG_KEY_PARAM_START_AT])
             start_at += max_results
             if start_at < total:
-                self.__request_cfg[Request.__KEY_REQUEST_DATA].update({Request.__KEY_PARAM_START_AT: start_at})
+                self.__request_cfg[Request.__CFG_KEY_REQUEST_DATA].update({Request.__CFG_KEY_PARAM_START_AT: start_at})
                 continue
             break
 
     def __get_request_params(self):
-        self.__request_url = self.__request_cfg[Request.__KEY_REQUEST_URL]
+        self.__request_url = self.__request_cfg[Request.__CFG_KEY_REQUEST_URL]
         self.__request_data = self.__request_cfg[
-            Request.__KEY_REQUEST_DATA] if Request.__KEY_REQUEST_DATA in self.__request_cfg else None
+            Request.__CFG_KEY_REQUEST_DATA] if Request.__CFG_KEY_REQUEST_DATA in self.__request_cfg else None
 
     def __perform_request(self):
-        request_url = self.__request_cfg[Request.__KEY_REQUEST_URL]
+        request_url = self.__request_cfg[Request.__CFG_KEY_REQUEST_URL]
         request_data = self.__request_cfg[
-            Request.__KEY_REQUEST_DATA] if Request.__KEY_REQUEST_DATA in self.__request_cfg else None
+            Request.__CFG_KEY_REQUEST_DATA] if Request.__CFG_KEY_REQUEST_DATA in self.__request_cfg else None
         self._logger.info('request {} from {}'.format(request_data, request_url))
         # ToDo: implement post/get methods
         response = requests.get(request_url,
@@ -192,3 +199,26 @@ class Request():
         :return: out_data
         """
         return NotImplemented
+
+class SingleObjectRequest(Request):
+    def __init__(self, cfg, login, pswd):
+        with open(cfg) as cfg_file:
+            Request.__init__(self, json.load(cfg_file, strict=False), login, pswd, Request.TYPE_SINGLE_OBJECT)
+
+    def _parse_response(self, response, out_data):
+        Field.parse_field(response, self._response_cfg, out_data)
+        self._logger.debug('{}'.format(out_data))
+        return out_data
+
+class MultiPageRequest(Request):
+    def __init__(self, cfg, login, pswd):
+        with open(cfg) as cfg_file:
+            Request.__init__(self, json.load(cfg_file, strict=False), login, pswd, Request.TYPE_MULTI_PAGE)
+
+    def _parse_response(self, response, out_data):
+        backlog = []
+        Field.parse_field(response, self._response_cfg[self._content_root], backlog)
+        for issue in backlog:
+            out_data.update({issue[Field.FIELD_KEY]:issue})
+            self._logger.debug('issue: {}'.format(issue))
+        return out_data

@@ -4,7 +4,7 @@ teams = [
 	{
 		"group": "BA",
 		"components": ["BA"],
-		"employees": ["fbyero"]
+		"employees": ["fbyero", "yero13"]
 	},
 	{
 		"group": "FE",

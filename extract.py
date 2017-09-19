@@ -2,14 +2,10 @@ import argparse
 import json
 import logging.config
 
-from jira.backlog import SprintBacklogRequest
+from jira.extractor import Extractor
 
-from db.connect import MongoDb
-from db.constants import DbConstants
-from sprint import SprintDefinitionRequest
-
-# ToDo: move log config to separate file
 LOG_CFG = './cfg/extract-logging-config.json'
+EXTRACT_CFG = './cfg/jira/jira-extract.json'
 
 if __name__ == '__main__':
     with open(LOG_CFG) as log_cfg_file:
@@ -21,15 +17,8 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
     try:
-        logger.debug('call parameters {} , {}'.format(args.login, args.pswd))
-        db = MongoDb(DbConstants.CFG_DB_JIRA).connection
-        db[DbConstants.JIRA_SPRINT].drop()
-        db[DbConstants.JIRA_BACKLOG].drop()
-        sprint_data = SprintDefinitionRequest(args.login, args.pswd).result
-        db[DbConstants.JIRA_SPRINT].insert_one(sprint_data)
-        logger.info('collection: {} sprint data {} is saved'.format(DbConstants.JIRA_SPRINT, sprint_data))
-        backlog_data = SprintBacklogRequest(args.login, args.pswd).result
-        db[DbConstants.JIRA_BACKLOG].insert_many([issue for issue in backlog_data.values()])
-        logger.info('collection: {} {:d} items are saved'.format(DbConstants.JIRA_BACKLOG, len(backlog_data.keys())))
+        logger.info('Init JIRA extractor: {}'.format(EXTRACT_CFG))
+        with open(EXTRACT_CFG) as cfg_file:
+            Extractor(json.load(cfg_file, strict=False), args.login, args.pswd).extract()
     except Exception as e:
         logging.error(e, exc_info=True)

@@ -1,0 +1,15 @@
+{
+	"requests": {
+		"backlog": {
+			"cfg": "./cfg/jira/jira-sprint-backlog-request.json",
+			"type": "multi_page",
+			"dest": "backlog"
+		},
+		"sprint": {
+			"cfg": "./cfg/jira/jira-sprint-definition-request.json",
+			"type": "single_object",
+			"dest": "sprint"
+		}		
+	},
+	"db": "jira"
+}
