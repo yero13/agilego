@@ -21,9 +21,8 @@ class MongoDb:
                                               cfg[MongoDb.__CFG_PARAM_MONGO_HOST],
                                               cfg[MongoDb.__CFG_PARAM_MONGO_PORT]))[
             cfg[MongoDb.__CFG_PARAM_MONGO_DBNAME]]
-        self.__logger.debug('Mongo connection - instantiation')
+        self.__logger.debug('Mongo {} connection - instantiation'.format(cfg[MongoDb.__CFG_PARAM_MONGO_DBNAME]))
 
     @property
     def connection(self):
-        self.__logger.debug('Mongo connection - getting')
         return self.__connection
