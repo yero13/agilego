@@ -112,6 +112,7 @@ class Field:
             else:  # add to array
                 target.append(casted_value)
 
+
 class Request():
     """
     Requests data from Jira. Parses response data accordingly to given rules
@@ -200,6 +201,7 @@ class Request():
         """
         return NotImplemented
 
+
 class SingleObjectRequest(Request):
     def __init__(self, cfg, login, pswd):
         with open(cfg) as cfg_file:
@@ -209,6 +211,7 @@ class SingleObjectRequest(Request):
         Field.parse_field(response, self._response_cfg, out_data)
         self._logger.debug('{}'.format(out_data))
         return out_data
+
 
 class MultiPageRequest(Request):
     def __init__(self, cfg, login, pswd):

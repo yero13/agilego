@@ -10,6 +10,7 @@ class Extractor():
     __CFG_KEY_REQUEST_TYPE = 'type'
     __CFG_KEY_REQUEST_DEST = 'dest'
 
+    #ToDo: pass sprint as input param
     def __init__(self, cfg, login, pswd):
         self.__cfg = cfg
         self.__login = login
