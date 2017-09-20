@@ -9,8 +9,12 @@ class DbConstants:
     SCRUM_BACKLOG_DETAILS = 'sprint.backlog-details'
     SCRUM_SUBTASKS = 'sprint.subtasks'
     SCRUM_SUBTASKS_DETAILS = 'sprint.subtasks-details'
+    SCRUM_ASSIGNMENTS = 'sprint.assignments'
     SCRUM_ORG_TEAM = 'org.team'
 
     # ToDo: move to API constants?
-    ITEM_KEY = 'key'
-    ITEM_PARENT = 'parent'
+    ISSUE_KEY = 'key'
+    ISSUE_PARENT = 'parent'
+    ASSIGNMENT_DATE = 'date'
+    ASSIGNMENT_GROUP = 'group'
+    ASSIGNMENT_EMPLOYEE = 'employee'

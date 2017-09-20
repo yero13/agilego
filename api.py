@@ -3,10 +3,10 @@ from flask import Response
 from flask import request
 from flask_cache import Cache
 from bson.json_util import dumps
+import json
 from db.connect import MongoDb
 from flask_cors import CORS
 from db.constants import DbConstants
-
 
 app = Flask(__name__)
 CORS(app)
@@ -15,50 +15,48 @@ db = MongoDb(DbConstants.CFG_DB_SCRUM).connection
 
 # ToDo: generate dinamically based on cfg
 
-@app.route('/sprint-backlog', methods=['GET', 'POST'])
+@app.route('/sprint-backlog', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_backlog():
     return Response(response=dumps(db[DbConstants.SCRUM_SPRINT_BACKLOG].find({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
 
-@app.route('/backlog-details', methods=['GET', 'POST'])
+@app.route('/backlog-details', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_backlog_item_details():
-    item_key = request.args.get(DbConstants.ITEM_KEY)
+    item_key = request.args.get(DbConstants.ISSUE_KEY)
     return Response(response=dumps(
-        db[DbConstants.SCRUM_BACKLOG_DETAILS].find_one({DbConstants.ITEM_KEY: item_key}, {'_id': False})),
+        db[DbConstants.SCRUM_BACKLOG_DETAILS].find_one({DbConstants.ISSUE_KEY: item_key}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
 
-@app.route('/subtasks', methods=['GET', 'POST'])
+@app.route('/subtasks', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_subtasks():
-    parent_key = request.args.get(DbConstants.ITEM_PARENT)
+    parent_key = request.args.get(DbConstants.ISSUE_PARENT)
     return Response(
-        response=dumps(db[DbConstants.SCRUM_SUBTASKS].find({DbConstants.ITEM_PARENT: parent_key}, {'_id': False})),
+        response=dumps(db[DbConstants.SCRUM_SUBTASKS].find({DbConstants.ISSUE_PARENT: parent_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
-@app.route('/subtask-details', methods=['GET', 'POST'])
+@app.route('/subtask-details', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_subtask_details():
-    item_key = request.args.get(DbConstants.ITEM_KEY)
+    item_key = request.args.get(DbConstants.ISSUE_KEY)
     return Response(
-        response=dumps(db[DbConstants.SCRUM_SUBTASKS_DETAILS].find_one({DbConstants.ITEM_KEY: item_key}, {'_id': False})),
+        response=dumps(db[DbConstants.SCRUM_SUBTASKS_DETAILS].find_one({DbConstants.ISSUE_KEY: item_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
-
-
-@app.route('/sprint', methods=['GET', 'POST'])
+@app.route('/sprint', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_sprint():
     return Response(response=dumps(db[DbConstants.SCRUM_SPRINT].find_one({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
 
-@app.route('/sprint-timeline', methods=['GET', 'POST'])
+@app.route('/sprint-timeline', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_sprint_timeline():
     # ToDo: move to constants/separated collection and create constant for timeline
@@ -66,7 +64,7 @@ def get_sprint_timeline():
                     status=200,
                     mimetype="application/json")
 
-@app.route('/team', methods=['GET', 'POST'])
+@app.route('/team', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_team():
     # ToDo: move to constants/separated collection
@@ -74,7 +72,24 @@ def get_team():
                     status=200,
                     mimetype="application/json")
 
-@app.route('/assign-task', methods=['GET', 'POST'])
-def set_task_assignment():
-    #ToDo: assign task to someone (if allowed)
-    return NotImplementedError
+@app.route('/assignments', methods=['GET'])
+def get_assignments():
+    return Response(response=dumps(db[DbConstants.SCRUM_ASSIGNMENTS].find({}, {'_id': False})),
+                    status=200,
+                    mimetype="application/json")
+
+@app.route('/assign', methods=['POST'])
+def allocate():
+    #ToDo: assign validation/warnings
+    allocation = json.loads(request.data)
+    res = db[DbConstants.SCRUM_ASSIGNMENTS].update_one({DbConstants.ISSUE_KEY: allocation[DbConstants.ISSUE_KEY],
+                                                        DbConstants.ASSIGNMENT_DATE: allocation[
+                                                            DbConstants.ASSIGNMENT_DATE],
+                                                        DbConstants.ASSIGNMENT_GROUP: allocation[
+                                                            DbConstants.ASSIGNMENT_GROUP],
+                                                        DbConstants.ASSIGNMENT_EMPLOYEE: allocation[
+                                                            DbConstants.ASSIGNMENT_EMPLOYEE]}, {"$set": allocation},
+                                                       upsert=True)
+    return Response(response=dumps({res.upserted_id}),
+                    status=200,
+                    mimetype="application/json")
