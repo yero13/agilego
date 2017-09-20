@@ -81,6 +81,7 @@ def allocate():
     #ToDo: assign validation/warnings
     allocation = json.loads(request.data)
     res = db[DbConstants.SCRUM_ASSIGNMENTS].update_one({DbConstants.ISSUE_KEY: allocation[DbConstants.ISSUE_KEY],
+                                                        DbConstants.ISSUE_PARENT: allocation[DbConstants.ISSUE_PARENT],
                                                         DbConstants.ASSIGNMENT_DATE: allocation[
                                                             DbConstants.ASSIGNMENT_DATE],
                                                         DbConstants.ASSIGNMENT_GROUP: allocation[
