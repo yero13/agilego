@@ -13,8 +13,6 @@ CORS(app)
 #cache = Cache(app)
 db = MongoDb(DbConstants.CFG_DB_SCRUM).connection
 
-# ToDo: generate dinamically based on cfg
-
 @app.route('/sprint-backlog', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_backlog():
