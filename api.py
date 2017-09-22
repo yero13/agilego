@@ -77,18 +77,37 @@ def get_assignments():
                     mimetype="application/json")
 
 @app.route('/assign', methods=['POST'])
-def allocate():
+def assign():
     #ToDo: assign validation/warnings
-    allocation = json.loads(request.data)
-    res = db[DbConstants.SCRUM_ASSIGNMENTS].update_one({DbConstants.ISSUE_KEY: allocation[DbConstants.ISSUE_KEY],
-                                                        DbConstants.ISSUE_PARENT: allocation[DbConstants.ISSUE_PARENT],
-                                                        DbConstants.ASSIGNMENT_DATE: allocation[
+    # ToDo: update estimates
+    assignment = json.loads(request.data)
+    res = db[DbConstants.SCRUM_ASSIGNMENTS].update_one({DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
+                                                        DbConstants.ISSUE_PARENT: assignment[DbConstants.ISSUE_PARENT],
+                                                        DbConstants.ASSIGNMENT_DATE: assignment[
                                                             DbConstants.ASSIGNMENT_DATE],
-                                                        DbConstants.ASSIGNMENT_GROUP: allocation[
+                                                        DbConstants.ASSIGNMENT_GROUP: assignment[
                                                             DbConstants.ASSIGNMENT_GROUP],
-                                                        DbConstants.ASSIGNMENT_EMPLOYEE: allocation[
-                                                            DbConstants.ASSIGNMENT_EMPLOYEE]}, {"$set": allocation},
+                                                        DbConstants.ASSIGNMENT_EMPLOYEE: assignment[
+                                                            DbConstants.ASSIGNMENT_EMPLOYEE]}, {"$set": assignment},
                                                        upsert=True)
     return Response(response=dumps({res.upserted_id}),
                     status=200,
                     mimetype="application/json")
+
+@app.route('/assignment-remove', methods=['POST'])
+def remove_assignment():
+    # ToDo: update estimates
+    assignment = json.loads(request.data)
+    res = db[DbConstants.SCRUM_ASSIGNMENTS].delete_one({DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
+                                                        #DbConstants.ISSUE_PARENT: assignment[DbConstants.ISSUE_PARENT],
+                                                        DbConstants.ASSIGNMENT_DATE: assignment[
+                                                            DbConstants.ASSIGNMENT_DATE],
+                                                        DbConstants.ASSIGNMENT_GROUP: assignment[
+                                                            DbConstants.ASSIGNMENT_GROUP],
+                                                        DbConstants.ASSIGNMENT_EMPLOYEE: assignment[
+                                                            DbConstants.ASSIGNMENT_EMPLOYEE]})
+    return Response(response=dumps({res.deleted_count}),
+                    status=200,
+                    mimetype="application/json")
+
+
