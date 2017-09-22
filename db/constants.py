@@ -13,8 +13,8 @@ class DbConstants:
     SCRUM_ORG_TEAM = 'org.team'
 
     # ToDo: move to API constants?
-    ISSUE_KEY = 'key'
-    ISSUE_PARENT = 'parent'
+    ITEM_KEY = 'key'
+    ITEM_PARENT = 'parent'
     ASSIGNMENT_DATE = 'date'
     ASSIGNMENT_GROUP = 'group'
     ASSIGNMENT_EMPLOYEE = 'employee'

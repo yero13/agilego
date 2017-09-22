@@ -23,27 +23,27 @@ def get_backlog():
 @app.route('/backlog-details', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_backlog_item_details():
-    item_key = request.args.get(DbConstants.ISSUE_KEY)
+    item_key = request.args.get(DbConstants.ITEM_KEY)
     return Response(response=dumps(
-        db[DbConstants.SCRUM_BACKLOG_DETAILS].find_one({DbConstants.ISSUE_KEY: item_key}, {'_id': False})),
+        db[DbConstants.SCRUM_BACKLOG_DETAILS].find_one({DbConstants.ITEM_KEY: item_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
 @app.route('/subtasks', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_subtasks():
-    parent_key = request.args.get(DbConstants.ISSUE_PARENT)
+    parent_key = request.args.get(DbConstants.ITEM_PARENT)
     return Response(
-        response=dumps(db[DbConstants.SCRUM_SUBTASKS].find({DbConstants.ISSUE_PARENT: parent_key}, {'_id': False})),
+        response=dumps(db[DbConstants.SCRUM_SUBTASKS].find({DbConstants.ITEM_PARENT: parent_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
 @app.route('/subtask-details', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_subtask_details():
-    issue_key = request.args.get(DbConstants.ISSUE_KEY)
+    issue_key = request.args.get(DbConstants.ITEM_KEY)
     return Response(
-        response=dumps(db[DbConstants.SCRUM_SUBTASKS_DETAILS].find_one({DbConstants.ISSUE_KEY: issue_key}, {'_id': False})),
+        response=dumps(db[DbConstants.SCRUM_SUBTASKS_DETAILS].find_one({DbConstants.ITEM_KEY: issue_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
@@ -80,13 +80,13 @@ def get_assignments():
 @app.route('/assignment', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_assignment():
-    issue_key = request.args.get(DbConstants.ISSUE_KEY)
+    issue_key = request.args.get(DbConstants.ITEM_KEY)
     assignment_date = request.args.get(DbConstants.ASSIGNMENT_DATE)
     assignment_group = request.args.get(DbConstants.ASSIGNMENT_GROUP)
     assignment_employee = request.args.get(DbConstants.ASSIGNMENT_EMPLOYEE)
     return Response(
         response=dumps(db[DbConstants.SCRUM_ASSIGNMENTS].find_one(
-            {DbConstants.ISSUE_KEY: issue_key, DbConstants.ASSIGNMENT_DATE: assignment_date,
+            {DbConstants.ITEM_KEY: issue_key, DbConstants.ASSIGNMENT_DATE: assignment_date,
              DbConstants.ASSIGNMENT_GROUP: assignment_group, DbConstants.ASSIGNMENT_EMPLOYEE: assignment_employee},
             {'_id': False})),
         status=200,
@@ -98,7 +98,7 @@ def assign():
     # ToDo: update estimates
     assignment = json.loads(request.data)
     return Response(response=dumps({(db[DbConstants.SCRUM_ASSIGNMENTS].update_one(
-        {DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
+        {DbConstants.ITEM_KEY: assignment[DbConstants.ITEM_KEY],
          DbConstants.ASSIGNMENT_DATE: assignment[DbConstants.ASSIGNMENT_DATE],
          DbConstants.ASSIGNMENT_GROUP: assignment[DbConstants.ASSIGNMENT_GROUP],
          DbConstants.ASSIGNMENT_EMPLOYEE: assignment[DbConstants.ASSIGNMENT_EMPLOYEE]}, {"$set": assignment},
@@ -111,7 +111,7 @@ def remove_assignment():
     # ToDo: update estimates
     assignment = json.loads(request.data)
     return Response(response=dumps({(db[DbConstants.SCRUM_ASSIGNMENTS].delete_one(
-        {DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
+        {DbConstants.ITEM_KEY: assignment[DbConstants.ITEM_KEY],
          DbConstants.ASSIGNMENT_DATE: assignment[DbConstants.ASSIGNMENT_DATE],
          DbConstants.ASSIGNMENT_GROUP: assignment[DbConstants.ASSIGNMENT_GROUP],
          DbConstants.ASSIGNMENT_EMPLOYEE: assignment[DbConstants.ASSIGNMENT_EMPLOYEE]})).deleted_count}),
