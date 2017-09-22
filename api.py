@@ -41,9 +41,9 @@ def get_subtasks():
 @app.route('/subtask-details', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_subtask_details():
-    item_key = request.args.get(DbConstants.ISSUE_KEY)
+    issue_key = request.args.get(DbConstants.ISSUE_KEY)
     return Response(
-        response=dumps(db[DbConstants.SCRUM_SUBTASKS_DETAILS].find_one({DbConstants.ISSUE_KEY: item_key}, {'_id': False})),
+        response=dumps(db[DbConstants.SCRUM_SUBTASKS_DETAILS].find_one({DbConstants.ISSUE_KEY: issue_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
@@ -71,10 +71,26 @@ def get_team():
                     mimetype="application/json")
 
 @app.route('/assignments', methods=['GET'])
+#@cache.cached(timeout=60)
 def get_assignments():
     return Response(response=dumps(db[DbConstants.SCRUM_ASSIGNMENTS].find({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
+
+@app.route('/assignment', methods=['GET'])
+#@cache.cached(timeout=60)
+def get_assignment():
+    issue_key = request.args.get(DbConstants.ISSUE_KEY)
+    assignment_date = request.args.get(DbConstants.ASSIGNMENT_DATE)
+    assignment_group = request.args.get(DbConstants.ASSIGNMENT_GROUP)
+    assignment_employee = request.args.get(DbConstants.ASSIGNMENT_EMPLOYEE)
+    return Response(
+        response=dumps(db[DbConstants.SCRUM_ASSIGNMENTS].find_one(
+            {DbConstants.ISSUE_KEY: issue_key, DbConstants.ASSIGNMENT_DATE: assignment_date,
+             DbConstants.ASSIGNMENT_GROUP: assignment_group, DbConstants.ASSIGNMENT_EMPLOYEE: assignment_employee},
+            {'_id': False})),
+        status=200,
+        mimetype="application/json")
 
 @app.route('/assign', methods=['POST'])
 def assign():
@@ -82,7 +98,7 @@ def assign():
     # ToDo: update estimates
     assignment = json.loads(request.data)
     res = db[DbConstants.SCRUM_ASSIGNMENTS].update_one({DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
-                                                        DbConstants.ISSUE_PARENT: assignment[DbConstants.ISSUE_PARENT],
+                                                        #DbConstants.ISSUE_PARENT: assignment[DbConstants.ISSUE_PARENT],
                                                         DbConstants.ASSIGNMENT_DATE: assignment[
                                                             DbConstants.ASSIGNMENT_DATE],
                                                         DbConstants.ASSIGNMENT_GROUP: assignment[
