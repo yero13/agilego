@@ -26,8 +26,8 @@ def get_backlog_item_details():
     item_key = request.args.get(DbConstants.ISSUE_KEY)
     return Response(response=dumps(
         db[DbConstants.SCRUM_BACKLOG_DETAILS].find_one({DbConstants.ISSUE_KEY: item_key}, {'_id': False})),
-                    status=200,
-                    mimetype="application/json")
+        status=200,
+        mimetype="application/json")
 
 @app.route('/subtasks', methods=['GET'])
 #@cache.cached(timeout=60)
@@ -97,16 +97,12 @@ def assign():
     #ToDo: assign validation/warnings
     # ToDo: update estimates
     assignment = json.loads(request.data)
-    res = db[DbConstants.SCRUM_ASSIGNMENTS].update_one({DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
-                                                        #DbConstants.ISSUE_PARENT: assignment[DbConstants.ISSUE_PARENT],
-                                                        DbConstants.ASSIGNMENT_DATE: assignment[
-                                                            DbConstants.ASSIGNMENT_DATE],
-                                                        DbConstants.ASSIGNMENT_GROUP: assignment[
-                                                            DbConstants.ASSIGNMENT_GROUP],
-                                                        DbConstants.ASSIGNMENT_EMPLOYEE: assignment[
-                                                            DbConstants.ASSIGNMENT_EMPLOYEE]}, {"$set": assignment},
-                                                       upsert=True)
-    return Response(response=dumps({res.upserted_id}),
+    return Response(response=dumps({(db[DbConstants.SCRUM_ASSIGNMENTS].update_one(
+        {DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
+         DbConstants.ASSIGNMENT_DATE: assignment[DbConstants.ASSIGNMENT_DATE],
+         DbConstants.ASSIGNMENT_GROUP: assignment[DbConstants.ASSIGNMENT_GROUP],
+         DbConstants.ASSIGNMENT_EMPLOYEE: assignment[DbConstants.ASSIGNMENT_EMPLOYEE]}, {"$set": assignment},
+        upsert=True)).upserted_id}),
                     status=200,
                     mimetype="application/json")
 
@@ -114,16 +110,10 @@ def assign():
 def remove_assignment():
     # ToDo: update estimates
     assignment = json.loads(request.data)
-    res = db[DbConstants.SCRUM_ASSIGNMENTS].delete_one({DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
-                                                        #DbConstants.ISSUE_PARENT: assignment[DbConstants.ISSUE_PARENT],
-                                                        DbConstants.ASSIGNMENT_DATE: assignment[
-                                                            DbConstants.ASSIGNMENT_DATE],
-                                                        DbConstants.ASSIGNMENT_GROUP: assignment[
-                                                            DbConstants.ASSIGNMENT_GROUP],
-                                                        DbConstants.ASSIGNMENT_EMPLOYEE: assignment[
-                                                            DbConstants.ASSIGNMENT_EMPLOYEE]})
-    return Response(response=dumps({res.deleted_count}),
+    return Response(response=dumps({(db[DbConstants.SCRUM_ASSIGNMENTS].delete_one(
+        {DbConstants.ISSUE_KEY: assignment[DbConstants.ISSUE_KEY],
+         DbConstants.ASSIGNMENT_DATE: assignment[DbConstants.ASSIGNMENT_DATE],
+         DbConstants.ASSIGNMENT_GROUP: assignment[DbConstants.ASSIGNMENT_GROUP],
+         DbConstants.ASSIGNMENT_EMPLOYEE: assignment[DbConstants.ASSIGNMENT_EMPLOYEE]})).deleted_count}),
                     status=200,
                     mimetype="application/json")
-
-
