@@ -124,6 +124,11 @@
 									"type": "int",
 									"ext_id": "estimate"
 								},
+								"AGILEGO_Label": {
+									"key": "customfield_10049",
+									"type": "array",
+									"ext_id": "assignments"
+								},
 								"blocked_by": {
 									"key": "issuelinks",
 									"type": "array",

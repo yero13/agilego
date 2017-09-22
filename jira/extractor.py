@@ -1,6 +1,6 @@
 import logging
 from db.connect import MongoDb
-from jira.request import Request, SingleObjectRequest, MultiPageRequest
+from jira.request import ExtractRequest, SingleObjectExtractRequest, MultiPageExtractRequest
 
 
 class Extractor():
@@ -24,12 +24,12 @@ class Extractor():
             request_cfg = self.__cfg[Extractor.__CFG_KEY_REQUESTS][request][Extractor.__CFG_KEY_REQUEST_CFG_FILE]
             request_dest = self.__cfg[Extractor.__CFG_KEY_REQUESTS][request][Extractor.__CFG_KEY_REQUEST_DEST]
             self.__db[request_dest].drop()
-            if request_type == Request.TYPE_SINGLE_OBJECT:
-                result = SingleObjectRequest(request_cfg, self.__login, self.__pswd).result
+            if request_type == ExtractRequest.TYPE_SINGLE_OBJECT:
+                result = SingleObjectExtractRequest(request_cfg, self.__login, self.__pswd).result
                 res = self.__db[request_dest].insert_one(result)
                 self.__logger.info('collection: {} data {} is saved'.format(request_dest, result))
-            elif request_type == Request.TYPE_MULTI_PAGE:
-                result = MultiPageRequest(request_cfg, self.__login, self.__pswd).result
+            elif request_type == ExtractRequest.TYPE_MULTI_PAGE:
+                result = MultiPageExtractRequest(request_cfg, self.__login, self.__pswd).result
                 self.__db[request_dest].insert_many([item for item in result.values()])
                 self.__logger.info('collection: {} {:d} items are saved'.format(request_dest, len(result.keys())))
             else:

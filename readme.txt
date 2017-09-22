@@ -15,3 +15,5 @@ pip install flask_cache
 
 ToDo: create package and set paths
 
++ describe https://confluence.atlassian.com/adminjiraserver071/adding-a-custom-field-802592519.html
+
