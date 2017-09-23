@@ -113,7 +113,7 @@ class Field:
                 target.append(casted_value)
 
 
-class ExtractRequest():
+class ImportRequest():
     """
     Requests data from Jira. Parses response data accordingly to given rules
     """
@@ -136,15 +136,15 @@ class ExtractRequest():
         self._logger = logging.getLogger(__class__.__name__)
         self.__login = login
         self.__pswd = pswd
-        self.__request_cfg = cfg[ExtractRequest.__CFG_KEY_REQUEST]
-        self._response_cfg = cfg[ExtractRequest.__CFG_KEY_RESPONSE]
+        self.__request_cfg = cfg[ImportRequest.__CFG_KEY_REQUEST]
+        self._response_cfg = cfg[ImportRequest.__CFG_KEY_RESPONSE]
         self._content_root = self._response_cfg[
-            ExtractRequest.__CFG_KEY_CONTENT_ROOT] if ExtractRequest.__CFG_KEY_CONTENT_ROOT in self._response_cfg else None
+            ImportRequest.__CFG_KEY_CONTENT_ROOT] if ImportRequest.__CFG_KEY_CONTENT_ROOT in self._response_cfg else None
         self.__response_values = {}
         self._logger.debug('\n{}'.format(self._response_cfg))
-        if request_type == ExtractRequest.TYPE_MULTI_PAGE:
+        if request_type == ImportRequest.TYPE_MULTI_PAGE:
             self.__perform_multi_page_request()
-        elif request_type == ExtractRequest.TYPE_SINGLE_OBJECT:
+        elif request_type == ImportRequest.TYPE_SINGLE_OBJECT:
             self.__perform_single_object_request()
         else:
             raise NotImplementedError('{} - request is not supported'.format(request_type))
@@ -162,24 +162,24 @@ class ExtractRequest():
             response = self.__perform_request()
             self._parse_response(response if not self._content_root else response[self._content_root],
                                  self.__response_values)
-            total = int(response[ExtractRequest.__CFG_KEY_PARAM_TOTAL])
-            max_results = int(response[ExtractRequest.__CFG_KEY_PARAM_MAX_RESULTS])
-            start_at = int(response[ExtractRequest.__CFG_KEY_PARAM_START_AT])
+            total = int(response[ImportRequest.__CFG_KEY_PARAM_TOTAL])
+            max_results = int(response[ImportRequest.__CFG_KEY_PARAM_MAX_RESULTS])
+            start_at = int(response[ImportRequest.__CFG_KEY_PARAM_START_AT])
             start_at += max_results
             if start_at < total:
-                self.__request_cfg[ExtractRequest.__CFG_KEY_REQUEST_DATA].update({ExtractRequest.__CFG_KEY_PARAM_START_AT: start_at})
+                self.__request_cfg[ImportRequest.__CFG_KEY_REQUEST_DATA].update({ImportRequest.__CFG_KEY_PARAM_START_AT: start_at})
                 continue
             break
 
     def __get_request_params(self):
-        self.__request_url = self.__request_cfg[ExtractRequest.__CFG_KEY_REQUEST_URL]
+        self.__request_url = self.__request_cfg[ImportRequest.__CFG_KEY_REQUEST_URL]
         self.__request_data = self.__request_cfg[
-            ExtractRequest.__CFG_KEY_REQUEST_DATA] if ExtractRequest.__CFG_KEY_REQUEST_DATA in self.__request_cfg else None
+            ImportRequest.__CFG_KEY_REQUEST_DATA] if ImportRequest.__CFG_KEY_REQUEST_DATA in self.__request_cfg else None
 
     def __perform_request(self):
-        request_url = self.__request_cfg[ExtractRequest.__CFG_KEY_REQUEST_URL]
+        request_url = self.__request_cfg[ImportRequest.__CFG_KEY_REQUEST_URL]
         request_data = self.__request_cfg[
-            ExtractRequest.__CFG_KEY_REQUEST_DATA] if ExtractRequest.__CFG_KEY_REQUEST_DATA in self.__request_cfg else None
+            ImportRequest.__CFG_KEY_REQUEST_DATA] if ImportRequest.__CFG_KEY_REQUEST_DATA in self.__request_cfg else None
         self._logger.info('request {} from {}'.format(request_data, request_url))
         # ToDo: implement post/get methods
         response = requests.get(request_url,
@@ -202,10 +202,10 @@ class ExtractRequest():
         return NotImplemented
 
 
-class SingleObjectExtractRequest(ExtractRequest):
+class SingleObjectImportRequest(ImportRequest):
     def __init__(self, cfg, login, pswd):
         with open(cfg) as cfg_file:
-            ExtractRequest.__init__(self, json.load(cfg_file, strict=False), login, pswd, ExtractRequest.TYPE_SINGLE_OBJECT)
+            ImportRequest.__init__(self, json.load(cfg_file, strict=False), login, pswd, ImportRequest.TYPE_SINGLE_OBJECT)
 
     def _parse_response(self, response, out_data):
         Field.parse_field(response, self._response_cfg, out_data)
@@ -213,10 +213,10 @@ class SingleObjectExtractRequest(ExtractRequest):
         return out_data
 
 
-class MultiPageExtractRequest(ExtractRequest):
+class MultiPageImportRequest(ImportRequest):
     def __init__(self, cfg, login, pswd):
         with open(cfg) as cfg_file:
-            ExtractRequest.__init__(self, json.load(cfg_file, strict=False), login, pswd, ExtractRequest.TYPE_MULTI_PAGE)
+            ImportRequest.__init__(self, json.load(cfg_file, strict=False), login, pswd, ImportRequest.TYPE_MULTI_PAGE)
 
     def _parse_response(self, response, out_data):
         backlog = []

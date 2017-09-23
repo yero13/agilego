@@ -1,6 +1,13 @@
 {
-	"jira": {
+	"jira-import": {
 		"MONGO_DBNAME": "agilego-jira",
+		"MONGO_HOST": "127.0.0.1",
+		"MONGO_PORT": 27017,
+		"MONGO_USER": "agilego",
+		"MONGO_PASSWORD": "1"
+	},
+	"scrum-transform": {
+		"MONGO_DBNAME": "agilego",
 		"MONGO_HOST": "127.0.0.1",
 		"MONGO_PORT": 27017,
 		"MONGO_USER": "agilego",
@@ -12,5 +19,11 @@
 		"MONGO_PORT": 27017,
 		"MONGO_USER": "agilego",
 		"MONGO_PASSWORD": "1"
-	}	
+	},
+	"scrum-api": {
+		"scrum": "to be renamed to scrum-transform"
+	},
+	"jira-export": {
+
+	}
 }

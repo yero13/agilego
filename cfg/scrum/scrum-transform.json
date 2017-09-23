@@ -1,0 +1,20 @@
+{
+	"version": 0.1,
+	"transformation-sets": {
+		"src-transform": {
+			"db": {
+				"src": "jira-import",
+				"dest": "scrum-transform"
+			},
+			"transformations": {
+				"sprint-definition": "./cfg/scrum/scrum-sprint-definition.json",
+				"sprint-timeline": "./cfg/scrum/scrum-sprint-timeline.json",
+				"sprint-backlog": "./cfg/scrum/scrum-sprint-backlog.json"
+			}
+		},
+		"intern-transform": {
+		},
+		"dest-transform": {
+		}
+	}
+}

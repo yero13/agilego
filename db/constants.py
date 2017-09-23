@@ -1,7 +1,7 @@
 class DbConstants:
-    CFG_DB_JIRA = 'jira'
-    JIRA_BACKLOG = 'backlog'
-    JIRA_SPRINT = 'sprint'
+    CFG_DB_JIRA_IMPORT = 'jira-import'
+    JIRA_IMPORT_BACKLOG = 'backlog'
+    JIRA_IMPORT_SPRINT = 'sprint'
 
     CFG_DB_SCRUM = 'scrum'
     SCRUM_SPRINT = 'sprint.definition'

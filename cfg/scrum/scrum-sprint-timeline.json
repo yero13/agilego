@@ -1,0 +1,10 @@
+{
+	"version": 0.1,
+	"type": "single_object",
+	"src": "jira.sprint",
+	"dest": "sprint.timeline",
+	"tranformations": {
+		"timeline": "obj['timeline'] = pd.date_range(obj['startDate'], obj['endDate']).strftime('%Y-%m-%d').tolist()"
+	},
+	"fields_to_remove": ["name", "startDate", "endDate", "goal"]
+}

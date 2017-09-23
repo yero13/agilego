@@ -1,0 +1,6 @@
+{
+	"version": 0.1,
+	"type": "single_object",
+	"src": "jira.sprint",
+	"dest": "sprint.definition"
+}

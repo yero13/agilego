@@ -1,4 +1,5 @@
 {
+	"version": 0.1,
 	"requests": {
 		"backlog": {
 			"cfg": "./cfg/jira/jira-sprint-backlog-request.json",
@@ -11,5 +12,5 @@
 			"dest": "sprint"
 		}		
 	},
-	"db": "jira"
+	"db": "jira-import"
 }
