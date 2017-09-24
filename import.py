@@ -4,7 +4,7 @@ import logging.config
 
 from jira.importer import Importer
 
-CFG_LOG_IMPORT = './cfg/extract-logging-config.json'
+CFG_LOG_IMPORT = './cfg/import-logging-config.json'
 CFG_IMPORT = './cfg/jira/jira-import.json'
 
 if __name__ == '__main__':

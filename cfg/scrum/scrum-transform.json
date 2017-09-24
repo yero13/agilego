@@ -3,18 +3,39 @@
 	"transformation-sets": {
 		"src-transform": {
 			"db": {
-				"src": "jira-import",
-				"dest": "scrum-transform"
+				"src.db": "jira-import",
+				"dest.db": "scrum-transform"
 			},
 			"transformations": {
-				"sprint-definition": "./cfg/scrum/scrum-sprint-definition.json",
-				"sprint-timeline": "./cfg/scrum/scrum-sprint-timeline.json",
-				"sprint-backlog": "./cfg/scrum/scrum-sprint-backlog.json"
+				"sprint-timeline": {
+					"type": "single_object",
+					"cfg": {
+						"src.collection": "sprint",
+						"dest.collection": "sprint.timeline",
+						"transformations": {
+							"timeline": "obj['timeline'] = pd.date_range(obj['startDate'], obj['endDate']).strftime('%Y-%m-%d').tolist()"
+						},
+						"fields": ["timeline"]
+					}
+				},
+				"sprint-definition": {
+					"type": "single_object",
+					"cfg": {
+						"src.collection": "sprint",
+						"dest.collection": "sprint.definition"					
+					}
+				},
+				"sprint-backlog": {
+					"type": "cursor",
+					"cfg": {
+						"src.collection": "backlog",
+						"dest.collection": "sprint.all_items",
+						"tranformations": {
+							"estimate": "cursor['estimate'] = cursor['estimate']/3600"
+						}						
+					}
+				}
 			}
-		},
-		"intern-transform": {
-		},
-		"dest-transform": {
 		}
 	}
 }
