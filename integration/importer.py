@@ -1,6 +1,6 @@
 import logging
 from db.connect import MongoDb
-from jira.request import ImportRequest, SingleObjectImportRequest, MultiPageImportRequest
+from integration.request import ImportRequest, SingleObjectImportRequest, MultiPageImportRequest
 
 
 class Importer():

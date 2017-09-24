@@ -1,4 +1,4 @@
-from db.constants import DbConstants
+from services.constants import ApiConstants
 
 teams = [
 	{
@@ -30,5 +30,5 @@ class Team():
         return
 
     def to_db(self, db):
-        db[DbConstants.SCRUM_ORG_TEAM].remove()  # ToDo: move to clean-up
-        db[DbConstants.SCRUM_ORG_TEAM].insert_many(teams)
+        db[ApiConstants.SCRUM_ORG_TEAM].remove()  # ToDo: move to clean-up
+        db[ApiConstants.SCRUM_ORG_TEAM].insert_many(teams)

@@ -31,7 +31,9 @@
 						"src.collection": "backlog",
 						"dest.collection": "sprint.all_items",
 						"transformation": {
-							"estimate": "dataset['estimate'] = dataset['estimate']/3600"
+							"transform_values": {
+								"sec2hrs": "dataset['estimate'] = dataset['estimate']/3600"
+							}
 						}						
 					}
 				}
@@ -43,17 +45,91 @@
 				"dest.db": "scrum-transform"
 			},
 			"transformations": {
-				"subtasks": {
+				"blocked_by": {
 					"type": "transpose_array",
 					"cfg": {
 						"src.collection": "sprint.all_items",
-						"dest.collection": "sprint.idx_subtasks",
+						"dest.collection": "sprint.idx_blocked_by",
 						"transformation": {
-							"l1key": "parent",
-							"l2key": "key"
+							"key": "key",
+							"values": "blocked_by"
 						}
 					}
 				}			
+			}
+		},
+		"dest-transform": {
+			"db": {
+				"src.db": "scrum-transform",
+				"dest.db": "scrum-api"
+			},
+			"transformations": {
+				"sprint.definition": {
+					"type": "single_object",
+					"cfg": {
+						"src.collection": "sprint.definition",
+						"dest.collection": "sprint.definition"						
+					}
+				},
+				"sprint.timeline": {
+					"type": "single_object",
+					"cfg": {
+						"src.collection": "sprint.timeline",
+						"dest.collection": "sprint.timeline"						
+					}
+				},
+				"backlog": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.all_items",
+						"dest.collection": "sprint.backlog",
+						"transformation": {
+							"where": "type == 'Story' or type == 'Bug'",
+							"order": {
+								"by_column": "priority",
+								"sort_order": ["Highest", "High", "Medium", "Low", "Lowest"]
+							}
+						},
+						"fields": ["key", "type", "priority"]
+					}
+				},
+				"backlog-details": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.all_items",
+						"dest.collection": "sprint.backlog-details",
+						"transformation": {
+							"where": "type == 'Story' or type == 'Bug'"
+						},	
+						"fields": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by"]
+					}
+				},
+				"subtasks": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.all_items",
+						"dest.collection": "sprint.subtasks",
+						"transformation": {
+							"where": "type == 'Sub-task'",
+							"order": {
+								"by_column": "priority",
+								"sort_order": ["Highest", "High", "Medium", "Low", "Lowest"]
+							}
+						},
+						"fields": ["key", "parent", "type", "priority", "status"]
+					}				
+				},
+				"subtasks-details": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.all_items",
+						"dest.collection": "sprint.subtasks-details",
+						"transformation": {
+							"where": "type == 'Sub-task'"
+						},	
+						"fields": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by"]
+					}
+				}				
 			}
 		}
 	}

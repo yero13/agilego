@@ -53,8 +53,8 @@ class Transformation:
     __TYPE_DATASET = 'dataset'
     __TYPE_TRANSPOSE_ARRAY = 'transpose_array'
 
-    @classmethod
-    def factory(cls, cfg, src_db, dest_db):
+    @staticmethod
+    def factory(cfg, src_db, dest_db):
         tranform_type = cfg[Transformation.__CFG_KEY_TRANSFORMATION_TYPE]
         if tranform_type == Transformation.__TYPE_SINGLE_OBJECT:
             return SingleObjectTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
@@ -93,9 +93,9 @@ class Transformation:
 
     def transform_data(self):
         self._load()
+        self.__cleanup()
         if self._transformation:
             self._transform()
-        self.__cleanup()
         self._save()
 
 
@@ -112,42 +112,74 @@ class SingleObjectTransformation(Transformation):
 
     def _transform(self):
         for transformation in self._transformation:
-            obj = self.__object # for access from timeline
+            obj = self.__object # for access from exec
             exec(self._transformation[transformation])  # ToDo: change to compile/eval (need to add key as target in cfg)
 
 
 class DatasetTransformation(Transformation):
+    __CFG_KEY_TRANSFORM_VALUES = 'transform_values'
+    __CFG_KEY_TRANSFORM_WHERE = 'where'
+    __CFG_KEY_TRANSFORM_ORDER = 'order'
+    __CFG_KEY_ORDER_BY = 'by_column'
+    __CFG_KEY_ORDER_SORT = 'sort_order'
+
     def _load(self):
         self.__dataset = list(self._src_db[self._src_collection].find({}, {'_id': False}))
 
     def _transform(self):
-        dataset = pd.DataFrame.from_records(self.__dataset)
-        for transformation in self._transformation:
-            exec(self._transformation[transformation])  # ToDo: change to compile/eval (need to add key as target in cfg)
-        self.__dataset = json.loads(dataset.T.to_json()).values()
+        self.__df_dataset = pd.DataFrame.from_records(self.__dataset)
+        if DatasetTransformation.__CFG_KEY_TRANSFORM_VALUES in self._transformation:
+            self.__transform_values()
+        if DatasetTransformation.__CFG_KEY_TRANSFORM_WHERE in self._transformation:
+            self.__transform_where()
+        if DatasetTransformation.__CFG_KEY_TRANSFORM_ORDER in self._transformation:
+            self.__transform_order()
+        if self._fields:
+            self.__df_dataset = self.__df_dataset[self._fields]
+        self.__dataset = json.loads(self.__df_dataset.T.to_json()).values()
+
+    def __transform_values(self):
+        value_transformations = self._transformation[DatasetTransformation.__CFG_KEY_TRANSFORM_VALUES]
+        dataset = self.__df_dataset # dataset is required for access from exec
+        for transformation in value_transformations:
+            exec(value_transformations[transformation])
+
+    def __transform_where(self):
+        self.__df_dataset = self.__df_dataset.query(
+            self._transformation[DatasetTransformation.__CFG_KEY_TRANSFORM_WHERE])
+
+    def __transform_order(self): # ToDo: move to corresponding API call
+        order_cfg = self._transformation[DatasetTransformation.__CFG_KEY_TRANSFORM_ORDER]
+        sort = order_cfg[
+            DatasetTransformation.__CFG_KEY_ORDER_SORT] if DatasetTransformation.__CFG_KEY_ORDER_SORT in order_cfg else None
+        order = order_cfg[DatasetTransformation.__CFG_KEY_ORDER_BY]
+        if sort:
+            self.__df_dataset[order] = self.__df_dataset[order].astype('category')
+            self.__df_dataset[order].cat.set_categories(sort, inplace=True)
+        self.__df_dataset.sort_values(by=order, inplace=True)
 
     def _save(self):
         self._dest_db[self._dest_collection].insert_many(self.__dataset)
 
 
 class TransposeArrayTransformation(Transformation):
-    __CFG_KEY_L1KEY = 'l1key'
-    __CFG_KEY_L2KEY = 'l2key'
+    __CFG_KEY_TKEY = 'key'
+    __CFG_KEY_TVALUES = 'values'
 
     def _load(self):
-        self.__l1key = self._transformation[TransposeArrayTransformation.__CFG_KEY_L1KEY]
-        self.__l2key = self._transformation[TransposeArrayTransformation.__CFG_KEY_L2KEY]
-        self.__dataset = list(
-            self._src_db[self._src_collection].find({}, {self.__l1key: True, self.__l2key: True}))
+        self.__field_key = self._transformation[TransposeArrayTransformation.__CFG_KEY_TKEY]
+        self.__field_values = self._transformation[TransposeArrayTransformation.__CFG_KEY_TVALUES]
+        self.__dataset = list(self._src_db[self._src_collection].find({}, {self.__field_key: True, self.__field_values: True, '_id': False}))
 
     def _transform(self):
-        return
-        """
-        dataset = pd.DataFrame.from_records(self.__dataset)
-        for transformation in self._transformation:
-            exec(self._transformation[transformation])  # ToDo: change to compile/eval (need to add key as target in cfg)
-        self.__dataset = json.loads(dataset.T.to_json()).values()
-        """
+        # ToDo: implement check - tvalues must be list type and tkey must not be list
+        res = []
+        for item in self.__dataset:
+            if len(item[self.__field_values]) > 0: # No need to keep empty values
+                for value in item[self.__field_values]:
+                    res.append({item[self.__field_key]: value})
+        self.__dataset = res
 
     def _save(self):
         self._dest_db[self._dest_collection].insert_many(self.__dataset)
+
