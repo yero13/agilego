@@ -12,7 +12,7 @@
 					"cfg": {
 						"src.collection": "sprint",
 						"dest.collection": "sprint.timeline",
-						"transformations": {
+						"transformation": {
 							"timeline": "obj['timeline'] = pd.date_range(obj['startDate'], obj['endDate']).strftime('%Y-%m-%d').tolist()"
 						},
 						"fields": ["timeline"]
@@ -25,16 +25,35 @@
 						"dest.collection": "sprint.definition"					
 					}
 				},
-				"sprint-backlog": {
-					"type": "cursor",
+				"sprint-all_items": {
+					"type": "dataset",
 					"cfg": {
 						"src.collection": "backlog",
 						"dest.collection": "sprint.all_items",
-						"tranformations": {
-							"estimate": "cursor['estimate'] = cursor['estimate']/3600"
+						"transformation": {
+							"estimate": "dataset['estimate'] = dataset['estimate']/3600"
 						}						
 					}
 				}
+			}
+		},
+		"int-transform": {
+			"db": {
+				"src.db": "scrum-transform",
+				"dest.db": "scrum-transform"
+			},
+			"transformations": {
+				"subtasks": {
+					"type": "transpose_array",
+					"cfg": {
+						"src.collection": "sprint.all_items",
+						"dest.collection": "sprint.idx_subtasks",
+						"transformation": {
+							"l1key": "parent",
+							"l2key": "key"
+						}
+					}
+				}			
 			}
 		}
 	}
