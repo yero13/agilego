@@ -19,7 +19,14 @@
 						},
 						"fields": ["key", "label", "json"]						
 					}
-				}
+				},
+				"sprint-all-items": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.idx_all_items",
+						"dest.collection": "sprint.idx_all_items"
+					}
+				}				
 			}
 		},
 		"integration-transform": {
@@ -28,7 +35,7 @@
 				"dest.db": "jira-export"
 			},
 			"transformations": {
-				"sprint-assignment-search": {
+				"sprint-assignment-search-transpose": {
 					"type": "transpose_to_array",
 					"cfg": {
 						"src.collection": "sprint.assignments_raw",
@@ -39,7 +46,7 @@
 						}						
 					}
 				},
-				"sprint-assignment-json": {
+				"sprint-assignment-json-transpose": {
 					"type": "transpose_to_array",
 					"cfg": {
 						"src.collection": "sprint.assignments_raw",
@@ -47,6 +54,54 @@
 						"transformation": {
 								"key": "key",
 								"values": "json"
+						}
+					}
+				},
+				"sprint-assignment-label-join": {
+					"type": "left_join",
+					"cfg": {
+						"src.collection": "sprint.idx_all_items",
+						"dest.collection": "sprint.assignments_search_labels",
+						"transformation": {
+								"left": "sprint.assignments_search_labels",
+								"join_on": "key"
+						},
+						"fields": ["key", "label"]
+					}
+				},
+				"sprint-assignment-json-join": {
+					"type": "left_join",
+					"cfg": {
+						"src.collection": "sprint.idx_all_items",
+						"dest.collection": "sprint.assignments_json",
+						"transformation": {
+								"left": "sprint.assignments_json",
+								"join_on": "key"
+						},
+						"fields": ["key", "json"]
+					}
+				},
+				"sprint-assignment-label-notnull": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.assignments_search_labels",
+						"dest.collection": "sprint.assignments_search_labels",
+						"transformation": {
+							"transform_values": {
+								"label_notnull": "row.update({'label': [] if not row['label'] else row['label']})"
+							}
+						}
+					}
+				},
+				"sprint-assignment-json-notnull": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.assignments_json",
+						"dest.collection": "sprint.assignments_json",
+						"transformation": {
+							"transform_values": {
+								"json_notnull": "row.update({'json': [] if not row['json'] else row['json']})"
+							}
 						}
 					}
 				}				

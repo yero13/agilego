@@ -53,6 +53,7 @@ class Transformation:
     __TYPE_DATASET = 'dataset'
     __TYPE_TRANSPOSE_FROM_ARRAY = 'transpose_from_array'
     __TYPE_TRANSPOSE_TO_ARRAY = 'transpose_to_array'
+    __TYPE_LEFT_JOIN = 'left_join'
 
     @staticmethod
     def factory(cfg, src_db, dest_db):
@@ -65,6 +66,8 @@ class Transformation:
             return TransposeFromArrayTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
         elif tranform_type == Transformation.__TYPE_TRANSPOSE_TO_ARRAY:
             return TransposeToArrayTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
+        elif tranform_type == Transformation.__TYPE_LEFT_JOIN:
+            return LeftJoinTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
         else:
             raise NotImplementedError('Not supported transformation type - {}'.format(tranform_type))
 
@@ -212,3 +215,21 @@ class TransposeToArrayTransformation(TransposeTransformation):
         for key, value in tdict.items():
             res.append({self._field_key: key, self._field_values: value})
         self._dataset = res
+
+
+class LeftJoinTransformation(Transformation):
+    __CFG_KEY_LEFT = 'left'
+    __CFG_KEY_JOIN_ON = 'join_on'
+
+    def _load(self):
+        self.__right_df = pd.DataFrame.from_records(list(self._src_db[self._src_collection].find({}, {'_id': False})))
+        self.__left_df = pd.DataFrame.from_records(
+            list(self._src_db[self._transformation[LeftJoinTransformation.__CFG_KEY_LEFT]].find({}, {'_id': False})))
+
+    def _transform(self):
+        join_on = self._transformation[LeftJoinTransformation.__CFG_KEY_JOIN_ON]
+        self.__result = self.__right_df.set_index(join_on, drop=False).join(
+            self.__left_df.set_index(join_on, drop=False), on=[join_on], rsuffix='_right')
+
+    def _save(self):
+        self._dest_db[self._dest_collection].insert_many(json.loads(self.__result[self._fields].T.to_json()).values())
