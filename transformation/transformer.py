@@ -194,7 +194,6 @@ class TransposeTransformation(Transformation):
 
 class TransposeFromArrayTransformation(TransposeTransformation):
     def _transform(self):
-        # ToDo: implement check - tvalues must be list type and tkey must not be list
         res = []
         for item in self._dataset:
             if len(item[self._field_values]) > 0: # No need to keep empty values
