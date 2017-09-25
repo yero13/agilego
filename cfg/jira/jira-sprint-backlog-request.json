@@ -1,9 +1,9 @@
 {
 	"version": 0.1,
 	"request": {
-		"url": "https://yero13.atlassian.net/rest/api/2/search",
+		"url": "$url/rest/api/2/search",
 		"data": {
-			"jql": "project=\"Agilego\" AND sprint in (1)",
+			"jql": "sprint in ($sprint)",
 			"maxResults": 5,
 			"startAt": 0
 		}

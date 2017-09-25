@@ -1,5 +1,9 @@
 {
 	"version": 0.1,
+	"mapping": {
+		"url": "https://yero13.atlassian.net",
+		"sprint": 1
+	},
 	"requests": {
 		"backlog": {
 			"cfg": "./cfg/jira/jira-sprint-backlog-request.json",
@@ -9,7 +13,7 @@
 		"sprint": {
 			"cfg": "./cfg/jira/jira-sprint-definition-request.json",
 			"type": "single_object",
-			"dest": "sprint"
+			"dest": "sprint"		
 		}		
 	},
 	"db": "jira-import"

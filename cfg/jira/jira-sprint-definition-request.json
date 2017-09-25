@@ -1,7 +1,7 @@
 {
 	"version": 0.1,
 	"request": {
-		"url": "https://yero13.atlassian.net/rest/agile/1.0/sprint/1"
+		"url": "$url/rest/agile/1.0/sprint/$sprint"
 	},
 	"response": {
 		"noname": "True",
