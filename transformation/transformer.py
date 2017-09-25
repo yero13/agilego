@@ -101,6 +101,10 @@ class Transformation:
             self._transform()
         self._save()
 
+    @staticmethod
+    def _filter_fields(obj, fields):
+        return {k:v for k,v in obj.items() if k in fields}
+
 
 class SingleObjectTransformation(Transformation):
     def _load(self):
@@ -108,7 +112,7 @@ class SingleObjectTransformation(Transformation):
 
     def _save(self):
         if self._fields:
-            obj = {k:v for k,v in self.__object.items() if k in self._fields}
+            obj = Transformation._filter_fields(self.__object, self._fields)
         else:
             obj = self.__object
         self._dest_db[self._dest_collection].insert_one(obj)
@@ -137,8 +141,6 @@ class DatasetTransformation(Transformation):
             self.__transform_where()
         if DatasetTransformation.__CFG_KEY_TRANSFORM_ORDER in self._transformation:
             self.__transform_order()
-        if self._fields:
-            self.__df_dataset = self.__df_dataset[self._fields]
         self.__dataset = json.loads(self.__df_dataset.T.to_json()).values()
 
     def __transform_values(self):
@@ -164,12 +166,19 @@ class DatasetTransformation(Transformation):
         self.__df_dataset.sort_values(by=order, inplace=True)
 
     def _save(self):
+        if self._fields:
+            res = []
+            for item in self.__dataset:
+                obj = Transformation._filter_fields(item, self._fields)
+                res.append(obj)
+            self.__dataset = res
         self._dest_db[self._dest_collection].insert_many(self.__dataset)
 
 
 class TransposeTransformation(Transformation):
     __CFG_KEY_TKEY = 'key'
     __CFG_KEY_TVALUES = 'values'
+    # ToDo: implement support for multi arrays
 
     def _load(self):
         self._field_key = self._transformation[TransposeTransformation.__CFG_KEY_TKEY]
