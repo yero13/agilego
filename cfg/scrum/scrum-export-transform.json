@@ -1,6 +1,6 @@
 {
 	"transformation-sets": {
-		"src-transform": {
+		"raw-transform": {
 			"db": {
 				"src.db": "scrum-api",
 				"dest.db": "jira-export"
@@ -20,6 +20,36 @@
 						"fields": ["key", "label", "json"]						
 					}
 				}
+			}
+		},
+		"integration-transform": {
+			"db": {
+				"src.db": "jira-export",
+				"dest.db": "jira-export"
+			},
+			"transformations": {
+				"sprint-assignment-search": {
+					"type": "transpose_to_array",
+					"cfg": {
+						"src.collection": "sprint.assignments_raw",
+						"dest.collection": "sprint.assignments_search_labels",
+						"transformation": {
+								"key": "key",
+								"values": "label"
+						}						
+					}
+				},
+				"sprint-assignment-json": {
+					"type": "transpose_to_array",
+					"cfg": {
+						"src.collection": "sprint.assignments_raw",
+						"dest.collection": "sprint.assignments_json",
+						"transformation": {
+								"key": "key",
+								"values": "json"
+						}
+					}
+				}				
 			}
 		}
 	}

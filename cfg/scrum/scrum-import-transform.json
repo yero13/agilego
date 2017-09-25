@@ -46,7 +46,7 @@
 			},
 			"transformations": {
 				"blocked_by": {
-					"type": "transpose_array",
+					"type": "transpose_from_array",
 					"cfg": {
 						"src.collection": "sprint.all_items",
 						"dest.collection": "sprint.idx_blocked_by",

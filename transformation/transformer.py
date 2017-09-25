@@ -51,7 +51,8 @@ class Transformation:
 
     __TYPE_SINGLE_OBJECT = 'single_object'
     __TYPE_DATASET = 'dataset'
-    __TYPE_TRANSPOSE_ARRAY = 'transpose_array'
+    __TYPE_TRANSPOSE_FROM_ARRAY = 'transpose_from_array'
+    __TYPE_TRANSPOSE_TO_ARRAY = 'transpose_to_array'
 
     @staticmethod
     def factory(cfg, src_db, dest_db):
@@ -60,8 +61,10 @@ class Transformation:
             return SingleObjectTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
         elif tranform_type == Transformation.__TYPE_DATASET:
             return DatasetTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
-        elif tranform_type == Transformation.__TYPE_TRANSPOSE_ARRAY:
-            return TransposeArrayTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
+        elif tranform_type == Transformation.__TYPE_TRANSPOSE_FROM_ARRAY:
+            return TransposeFromArrayTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
+        elif tranform_type == Transformation.__TYPE_TRANSPOSE_TO_ARRAY:
+            return TransposeToArrayTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
         else:
             raise NotImplementedError('Not supported transformation type - {}'.format(tranform_type))
 
@@ -140,7 +143,6 @@ class DatasetTransformation(Transformation):
 
     def __transform_values(self):
         value_transformations = self._transformation[DatasetTransformation.__CFG_KEY_TRANSFORM_VALUES]
-        #dataset = self.__df_dataset # dataset is required for access from exec
         dataset = self.__df_dataset.to_dict(orient='records')
         for transformation in value_transformations:
             for row in dataset: # row is required for exec
@@ -165,24 +167,39 @@ class DatasetTransformation(Transformation):
         self._dest_db[self._dest_collection].insert_many(self.__dataset)
 
 
-class TransposeArrayTransformation(Transformation):
+class TransposeTransformation(Transformation):
     __CFG_KEY_TKEY = 'key'
     __CFG_KEY_TVALUES = 'values'
 
     def _load(self):
-        self.__field_key = self._transformation[TransposeArrayTransformation.__CFG_KEY_TKEY]
-        self.__field_values = self._transformation[TransposeArrayTransformation.__CFG_KEY_TVALUES]
-        self.__dataset = list(self._src_db[self._src_collection].find({}, {self.__field_key: True, self.__field_values: True, '_id': False}))
+        self._field_key = self._transformation[TransposeTransformation.__CFG_KEY_TKEY]
+        self._field_values = self._transformation[TransposeTransformation.__CFG_KEY_TVALUES]
+        self._dataset = list(self._src_db[self._src_collection].find({}, {self._field_key: True, self._field_values: True, '_id': False}))
 
+    def _save(self):
+        self._dest_db[self._dest_collection].insert_many(self._dataset)
+
+
+class TransposeFromArrayTransformation(TransposeTransformation):
     def _transform(self):
         # ToDo: implement check - tvalues must be list type and tkey must not be list
         res = []
-        for item in self.__dataset:
-            if len(item[self.__field_values]) > 0: # No need to keep empty values
-                for value in item[self.__field_values]:
-                    res.append({item[self.__field_key]: value})
-        self.__dataset = res
+        for item in self._dataset:
+            if len(item[self._field_values]) > 0: # No need to keep empty values
+                for value in item[self._field_values]:
+                    res.append({item[self._field_key]: value})
+        self._dataset = res
 
-    def _save(self):
-        self._dest_db[self._dest_collection].insert_many(self.__dataset)
 
+class TransposeToArrayTransformation(TransposeTransformation):
+    def _transform(self):
+        tdict = {}
+        for item in self._dataset:
+            if not item[self._field_key] in tdict:
+                tdict.update({item[self._field_key]: [item[self._field_values]]})
+            else:
+                tdict[item[self._field_key]].append(item[self._field_values])
+        res = []
+        for key, value in tdict.items():
+            res.append({self._field_key: key, self._field_values: value})
+        self._dataset = res
