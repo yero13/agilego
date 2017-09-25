@@ -19,6 +19,6 @@ if __name__ == '__main__':
     try:
         logger.info('Init JIRA importer: {}'.format(CFG_IMPORT))
         with open(CFG_IMPORT) as cfg_file:
-            Importer(json.load(cfg_file, strict=False), args.login, args.pswd).import_data()
+            Importer(json.load(cfg_file, strict=False), args.login, args.pswd).perform()
     except Exception as e:
         logging.error(e, exc_info=True)
