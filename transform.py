@@ -7,7 +7,7 @@ from transformation.team import Team
 from transformation.transformer import Transformer
 
 CFG_LOG_TRANSFORM = './cfg/transform-logging-config.json'
-CFG_TRANSFORM = './cfg/scrum/scrum-transform.json'
+CFG_TRANSFORM = './cfg/scrum/scrum-import-transform.json'
 
 if __name__ == '__main__':
     with open(CFG_LOG_TRANSFORM) as logging_cfg_file:

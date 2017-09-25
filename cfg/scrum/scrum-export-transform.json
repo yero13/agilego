@@ -1,0 +1,26 @@
+{
+	"transformation-sets": {
+		"src-transform": {
+			"db": {
+				"src.db": "scrum-api",
+				"dest.db": "jira-export"
+			},
+			"transformations": {
+				"sprint-assignments": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.assignments",
+						"dest.collection": "sprint.assignments_raw",
+						"transformation": {
+							"transform_values": {
+								"assignment2json": "row.update({'json': json.dumps(row)})",
+								"assignment2label": "row.update({'label': '{}_{}'.format(row['group'], row['date'])})"
+							}
+						},
+						"fields": ["key", "label", "json"]						
+					}
+				}
+			}
+		}
+	}
+}

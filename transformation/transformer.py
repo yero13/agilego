@@ -140,9 +140,12 @@ class DatasetTransformation(Transformation):
 
     def __transform_values(self):
         value_transformations = self._transformation[DatasetTransformation.__CFG_KEY_TRANSFORM_VALUES]
-        dataset = self.__df_dataset # dataset is required for access from exec
+        #dataset = self.__df_dataset # dataset is required for access from exec
+        dataset = self.__df_dataset.to_dict(orient='records')
         for transformation in value_transformations:
-            exec(value_transformations[transformation])
+            for row in dataset: # row is required for exec
+                exec(value_transformations[transformation]) # ToDo: compile, etc
+        self.__df_dataset = pd.DataFrame.from_records(dataset)
 
     def __transform_where(self):
         self.__df_dataset = self.__df_dataset.query(

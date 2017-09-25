@@ -32,7 +32,7 @@
 						"dest.collection": "sprint.all_items",
 						"transformation": {
 							"transform_values": {
-								"sec2hrs": "dataset['estimate'] = dataset['estimate']/3600"
+								"sec2hrs": "row['estimate'] = row['estimate']/3600"
 							}
 						}						
 					}
