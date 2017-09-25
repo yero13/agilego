@@ -1,9 +1,7 @@
-import logging
-from db.connect import MongoDb
+from integration.integrator import Integrator
 
 
-class Exporter():
-    def __init__(self):
-        self.__cfg = cfg
-        self.__logger = logging.getLogger(__class__.__name__)
+class Exporter(Integrator):
+    def export_data(self):
+        return
 

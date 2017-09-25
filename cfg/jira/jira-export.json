@@ -1,0 +1,21 @@
+{
+	"version": 0.1,
+	"mapping": {
+		"url": "https://yero13.atlassian.net"
+	},
+	"requests": {
+		"set_search_label": {
+			"cfg": "./cfg/jira/jira-set-issue-field.json",
+			"type": "set_field",
+			"src.collection": "sprint.assignments_search_labels",
+			"static_mapping": {
+				"field": "customfield_10049"
+			},
+			"dynamic_mapping": {
+				"key": "key",
+				"value": "label"
+			}
+		}		
+	},
+	"db": "jira-export"
+}

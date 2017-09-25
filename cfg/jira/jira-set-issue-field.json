@@ -1,0 +1,11 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/api/2/issue/$key",
+		"data": {
+			"update": {
+				"$field": ["set": $value]
+			}
+		}
+	}
+}

@@ -125,11 +125,22 @@ class Request:
         self._pswd = pswd
         self._request_cfg = cfg[Request._CFG_KEY_REQUEST]
         self._format_params = mappings
+        if self._format_params:
+            self._substitute_request(self._request_cfg)
 
     @abc.abstractmethod
     def result(self):
         return NotImplemented
 
+    def _substitute_request(self, cfg):
+        for cfg_param in cfg:
+            cfg_param_value = cfg[cfg_param]
+            if isinstance(cfg_param_value, str):
+                cfg[cfg_param] = Template(cfg_param_value).safe_substitute(self._format_params)
+            elif isinstance(cfg_param_value, dict):
+                self._substitute_request(cfg_param_value)
+            else:
+                pass
 
 class ImportRequest(Request):
     """
@@ -157,8 +168,6 @@ class ImportRequest(Request):
 
     def __init__(self, cfg, login, pswd, request_type, mappings=None):
         Request.__init__(self, cfg, login, pswd, mappings)
-        if self._format_params:
-            self.__substitute_request(self._request_cfg)
         self._response_cfg = cfg[ImportRequest.__CFG_KEY_RESPONSE]
         self._content_root = self._response_cfg[
             ImportRequest.__CFG_KEY_CONTENT_ROOT] if ImportRequest.__CFG_KEY_CONTENT_ROOT in self._response_cfg else None
@@ -177,16 +186,6 @@ class ImportRequest(Request):
     @abc.abstractmethod
     def _get_result(self):
         return NotImplemented
-
-    def __substitute_request(self, cfg):
-        for cfg_param in cfg:
-            cfg_param_value = cfg[cfg_param]
-            if isinstance(cfg_param_value, str):
-                cfg[cfg_param] = Template(cfg_param_value).safe_substitute(self._format_params)
-            elif isinstance(cfg_param_value, dict):
-                self.__substitute_request(cfg_param_value)
-            else:
-                pass
 
     def __perform_single_object_request(self):
         response = self._perform_request()
