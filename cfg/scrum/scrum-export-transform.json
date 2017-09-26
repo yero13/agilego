@@ -13,11 +13,11 @@
 						"dest.collection": "sprint.assignments_raw",
 						"transformation": {
 							"transform_values": {
-								"assignment2json": "row.update({'json': json.dumps(row)})",
+								"assignment2tech": "row.update({'tech': '{}_{}_{}_{}_{}_{}'.format(row['key'], row['parent'], row['date'], row['group'], row['employee'], row['whrs'])})",
 								"assignment2label": "row.update({'label': '{}_{}'.format(row['group'], row['date'])})"
 							}
 						},
-						"fields": ["key", "label", "json"]						
+						"fields": ["key", "label", "tech"]						
 					}
 				},
 				"sprint-all-items": {
@@ -46,14 +46,14 @@
 						}						
 					}
 				},
-				"sprint-assignment-json-transpose": {
+				"sprint-assignment-tech-transpose": {
 					"type": "transpose_to_array",
 					"cfg": {
 						"src.collection": "sprint.assignments_raw",
-						"dest.collection": "sprint.assignments_json",
+						"dest.collection": "sprint.assignments_tech",
 						"transformation": {
 								"key": "key",
-								"values": "json"
+								"values": "tech"
 						}
 					}
 				},
@@ -69,16 +69,16 @@
 						"fields": ["key", "label"]
 					}
 				},
-				"sprint-assignment-json-join": {
+				"sprint-assignment-tech-join": {
 					"type": "left_join",
 					"cfg": {
 						"src.collection": "sprint.idx_all_items",
-						"dest.collection": "sprint.assignments_json",
+						"dest.collection": "sprint.assignments_tech",
 						"transformation": {
-								"left": "sprint.assignments_json",
+								"left": "sprint.assignments_tech",
 								"join_on": "key"
 						},
-						"fields": ["key", "json"]
+						"fields": ["key", "tech"]
 					}
 				},
 				"sprint-assignment-label-notnull": {
@@ -93,14 +93,14 @@
 						}
 					}
 				},
-				"sprint-assignment-json-notnull": {
+				"sprint-assignment-tech-notnull": {
 					"type": "dataset",
 					"cfg": {
-						"src.collection": "sprint.assignments_json",
-						"dest.collection": "sprint.assignments_json",
+						"src.collection": "sprint.assignments_tech",
+						"dest.collection": "sprint.assignments_tech",
 						"transformation": {
 							"transform_values": {
-								"json_notnull": "row.update({'json': [] if not row['json'] else row['json']})"
+								"tech_notnull": "row.update({'tech': [] if not row['tech'] else row['tech']})"
 							}
 						}
 					}

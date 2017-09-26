@@ -6,7 +6,7 @@
 	"requests": {
 		"set_search_label": {
 			"cfg": "./cfg/jira/jira-set-issue-field.json",
-			"type": "set_field",
+			"type": "set_field_value",
 			"src.collection": "sprint.assignments_search_labels",
 			"static_mapping": {
 				"field": "customfield_10049"
@@ -14,6 +14,18 @@
 			"dynamic_mapping": {
 				"key": "key",
 				"value": "label"
+			}
+		},
+		"set_tech": {
+			"cfg": "./cfg/jira/jira-set-issue-field.json",
+			"type": "set_field_value",
+			"src.collection": "sprint.assignments_tech",
+			"static_mapping": {
+				"field": "customfield_10050"
+			},
+			"dynamic_mapping": {
+				"key": "key",
+				"value": "tech"
 			}
 		}		
 	},

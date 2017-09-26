@@ -6,7 +6,6 @@ import json
 import jsonschema
 from jsonschema import validate
 from datetime import datetime
-from string import Template
 
 
 class Field:
@@ -119,28 +118,55 @@ class Request:
     _CFG_KEY_REQUEST_URL = 'url'
     _CFG_KEY_REQUEST_DATA = 'data'
 
-    def __init__(self, cfg, login, pswd, mappings=None):
+    def __init__(self, cfg, login, pswd):
         self._logger = logging.getLogger(__class__.__name__)
         self._login = login
         self._pswd = pswd
-        self._request_cfg = cfg[Request._CFG_KEY_REQUEST]
-        self._format_params = mappings
-        if self._format_params:
-            self._substitute_request(self._request_cfg)
+        self._cfg = cfg
+        self._request_cfg = self._cfg[Request._CFG_KEY_REQUEST]
 
     @abc.abstractmethod
     def result(self):
         return NotImplemented
 
-    def _substitute_request(self, cfg):
-        for cfg_param in cfg:
-            cfg_param_value = cfg[cfg_param]
-            if isinstance(cfg_param_value, str):
-                cfg[cfg_param] = Template(cfg_param_value).safe_substitute(self._format_params)
-            elif isinstance(cfg_param_value, dict):
-                self._substitute_request(cfg_param_value)
-            else:
-                pass
+
+class ExportRequest(Request):
+    TYPE_SET_FIELD_VALUE = 'set_field_value'
+
+    @staticmethod
+    def factory(cfg, login, pswd, request_type, mappings=None):
+        if request_type == ExportRequest.TYPE_SET_FIELD_VALUE:
+            return SetFieldValueRequest(cfg, login, pswd)
+        else:
+            raise NotImplementedError('Not supported request type - {}'.format(request_type))
+
+    def __init__(self, cfg, login, pswd, mappings=None):
+        Request.__init__(self, cfg, login, pswd)
+        self.__result = self._perform_request()
+
+    @abc.abstractmethod
+    def _perform_request(self):
+        return NotImplemented
+
+    @property
+    def result(self):
+        return self.__result
+
+
+class SetFieldValueRequest(ExportRequest):
+    def _perform_request(self):
+        request_url = self._request_cfg[Request._CFG_KEY_REQUEST_URL]
+        request_data = self._request_cfg[
+            Request._CFG_KEY_REQUEST_DATA] if Request._CFG_KEY_REQUEST_DATA in self._request_cfg else None
+        self._logger.info('update {} on {}'.format(request_data, request_url))
+        response = requests.put(request_url,
+                                json.dumps(request_data),
+                                headers={"Content-Type": "application/json"},
+                                auth=HTTPBasicAuth(self._login, self._pswd),
+                                verify=True)
+        if not response.ok:
+            response.raise_for_status()
+
 
 class ImportRequest(Request):
     """
@@ -154,27 +180,27 @@ class ImportRequest(Request):
     __CFG_KEY_RESPONSE = 'response'
     __CFG_KEY_CONTENT_ROOT = 'content-root'
 
-    TYPE_SINGLE_OBJECT = 'single_object'
-    TYPE_MULTI_PAGE = 'multi_page'
+    TYPE_GET_SINGLE_OBJECT = 'single_object'
+    TYPE_GET_MULTI_PAGE = 'multi_page'
 
     @staticmethod
-    def factory(cfg, login, pswd, request_type, mappings=None):
-        if request_type == ImportRequest.TYPE_MULTI_PAGE:
-            return MultiPageImportRequest(cfg, login, pswd, mappings)
-        elif request_type == ImportRequest.TYPE_SINGLE_OBJECT:
-            return SingleObjectImportRequest(cfg, login, pswd, mappings)
+    def factory(cfg, login, pswd, request_type):
+        if request_type == ImportRequest.TYPE_GET_MULTI_PAGE:
+            return MultiPageImportRequest(cfg, login, pswd)
+        elif request_type == ImportRequest.TYPE_GET_SINGLE_OBJECT:
+            return SingleObjectImportRequest(cfg, login, pswd)
         else:
             raise NotImplementedError('Not supported request type - {}'.format(request_type))
 
-    def __init__(self, cfg, login, pswd, request_type, mappings=None):
-        Request.__init__(self, cfg, login, pswd, mappings)
-        self._response_cfg = cfg[ImportRequest.__CFG_KEY_RESPONSE]
+    def __init__(self, cfg, login, pswd, request_type):
+        Request.__init__(self, cfg, login, pswd)
+        self._response_cfg = self._cfg[ImportRequest.__CFG_KEY_RESPONSE]
         self._content_root = self._response_cfg[
             ImportRequest.__CFG_KEY_CONTENT_ROOT] if ImportRequest.__CFG_KEY_CONTENT_ROOT in self._response_cfg else None
         self._logger.debug('\n{}'.format(self._response_cfg))
-        if request_type == ImportRequest.TYPE_MULTI_PAGE:
+        if request_type == ImportRequest.TYPE_GET_MULTI_PAGE:
             self.__perform_multi_page_request()
-        elif request_type == ImportRequest.TYPE_SINGLE_OBJECT:
+        elif request_type == ImportRequest.TYPE_GET_SINGLE_OBJECT:
             self.__perform_single_object_request()
         else:
             raise NotImplementedError('{} - request is not supported'.format(request_type))
@@ -235,10 +261,9 @@ class ImportRequest(Request):
 
 
 class SingleObjectImportRequest(ImportRequest):
-    def __init__(self, cfg, login, pswd, mappings=None):
+    def __init__(self, cfg, login, pswd):
         self.__response_values = {}
-        with open(cfg) as cfg_file:
-            ImportRequest.__init__(self, json.load(cfg_file, strict=False), login, pswd, ImportRequest.TYPE_SINGLE_OBJECT, mappings)
+        ImportRequest.__init__(self, cfg, login, pswd, ImportRequest.TYPE_GET_SINGLE_OBJECT)
 
     def _parse_response(self, response):
         Field.parse_field(response, self._response_cfg, self.__response_values)
@@ -250,8 +275,7 @@ class SingleObjectImportRequest(ImportRequest):
 class MultiPageImportRequest(ImportRequest):
     def __init__(self, cfg, login, pswd, mappings=None):
         self.__response_values = []
-        with open(cfg) as cfg_file:
-            ImportRequest.__init__(self, json.load(cfg_file, strict=False), login, pswd, ImportRequest.TYPE_MULTI_PAGE, mappings)
+        ImportRequest.__init__(self, cfg, login, pswd, ImportRequest.TYPE_GET_MULTI_PAGE)
 
     def _parse_response(self, response):
         backlog = []
