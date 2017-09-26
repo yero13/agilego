@@ -55,7 +55,18 @@
 							"values": "blocked_by"
 						}
 					}
-				}			
+				},
+				"assignments": {
+					"type": "transpose_from_array",
+					"cfg": {
+						"src.collection": "sprint.all_items",
+						"dest.collection": "sprint.idx_assignments",
+						"transformation": {
+							"key": "key",
+							"values": "assignments"
+						}
+					}
+				}				
 			}
 		},
 		"dest-transform": {
@@ -136,6 +147,28 @@
 							"where": "type == 'Sub-task'"
 						},	
 						"fields": ["key", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by"]
+					}
+				},
+				"assignments": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "sprint.idx_assignments",
+						"dest.collection": "sprint.assignments",
+						"transformation": {
+							"regex": {
+								"pattern": "^(\\S+-\\d+){1}_(\\S+-\\d+){0,1}_(\\d{4}-\\d{2}-\\d{2})_(\\S+)_(\\S+)_(\\d+(\\.\\d{1,2})*)_(\\S*)$",
+								"input": "assignments"
+							},
+							"transform_values": {
+								"parent": "row['parent'] = regex[1] if regex[1] != '' else None",
+								"date": "row['date'] = regex[2]",
+								"group": "row['group'] = regex[3]",
+								"employee": "row['employee'] = regex[4]",
+								"whrs": "row['whrs'] = regex[5]",
+								"comment": "row['comment'] = regex[7]"
+							}
+						},	
+						"fields": ["key", "parent", "date", "group", "employee", "whrs", "comment"]
 					}
 				}				
 			}

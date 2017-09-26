@@ -3,6 +3,7 @@ from db.connect import MongoDb
 import abc
 import pandas as pd
 import json
+import re
 
 
 class Transformer():
@@ -132,12 +133,17 @@ class DatasetTransformation(Transformation):
     __CFG_KEY_TRANSFORM_ORDER = 'order'
     __CFG_KEY_ORDER_BY = 'by_column'
     __CFG_KEY_ORDER_SORT = 'sort_order'
+    __CFG_KEY_REGEX = 'regex'
+    __CFG_KEY_REGEX_PATTERN = 'pattern'
+    __CFG_KEY_REGEX_INPUT = 'input'
 
     def _load(self):
         self.__dataset = list(self._src_db[self._src_collection].find({}, {'_id': False}))
 
     def _transform(self):
         self.__df_dataset = pd.DataFrame.from_records(self.__dataset)
+        self.__regex = re.compile(self._transformation[DatasetTransformation.__CFG_KEY_REGEX][
+                                      DatasetTransformation.__CFG_KEY_REGEX_PATTERN]) if DatasetTransformation.__CFG_KEY_REGEX in self._transformation else None
         if DatasetTransformation.__CFG_KEY_TRANSFORM_VALUES in self._transformation:
             self.__transform_values()
         if DatasetTransformation.__CFG_KEY_TRANSFORM_WHERE in self._transformation:
@@ -151,7 +157,13 @@ class DatasetTransformation(Transformation):
         dataset = self.__df_dataset.to_dict(orient='records')
         for transformation in value_transformations:
             for row in dataset: # row is required for exec
-                exec(value_transformations[transformation]) # ToDo: compile, etc
+                if self.__regex:
+                    regex = self.__regex.findall(row[self._transformation[DatasetTransformation.__CFG_KEY_REGEX][DatasetTransformation.__CFG_KEY_REGEX_INPUT]])
+                    if regex:
+                        regex = regex[0] if regex else None
+                        exec(value_transformations[transformation]) # ToDo: compile, etc
+                else:
+                    exec(value_transformations[transformation])
         self.__df_dataset = pd.DataFrame.from_records(dataset)
 
     def __transform_where(self):
@@ -196,9 +208,9 @@ class TransposeFromArrayTransformation(TransposeTransformation):
     def _transform(self):
         res = []
         for item in self._dataset:
-            if len(item[self._field_values]) > 0: # No need to keep empty values
+            if item[self._field_values] and len(item[self._field_values]) > 0:# No need to keep empty values
                 for value in item[self._field_values]:
-                    res.append({item[self._field_key]: value})
+                    res.append({self._field_key: item[self._field_key], self._field_values: value})
         self._dataset = res
 
 
