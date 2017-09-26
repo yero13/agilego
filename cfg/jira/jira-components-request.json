@@ -1,8 +1,25 @@
 {
 	"version": 0.1,
 	"request": {
-		"url": "https://yero13.atlassian.net/rest/api/2/project/AGILEGO/components"
+		"url": "$url/rest/api/2/project/$project/components"
 	},
 	"response": {
+		"components": {
+			"noname": "True",
+			"type": "array",
+			"fields": {
+				"component": {
+					"type": "object",
+					"explicit": "True",
+					"noname": "True",
+					"fields": {
+						"name": {
+							"key": "name",
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
 	}
 }

@@ -181,12 +181,12 @@ class ImportRequest(Request):
     __CFG_KEY_CONTENT_ROOT = 'content-root'
 
     TYPE_GET_SINGLE_OBJECT = 'single_object'
-    TYPE_GET_MULTI_PAGE = 'multi_page'
+    TYPE_GET_LIST = 'list'
 
     @staticmethod
     def factory(cfg, login, pswd, request_type):
-        if request_type == ImportRequest.TYPE_GET_MULTI_PAGE:
-            return MultiPageImportRequest(cfg, login, pswd)
+        if request_type == ImportRequest.TYPE_GET_LIST:
+            return ListImportRequest(cfg, login, pswd)
         elif request_type == ImportRequest.TYPE_GET_SINGLE_OBJECT:
             return SingleObjectImportRequest(cfg, login, pswd)
         else:
@@ -198,8 +198,8 @@ class ImportRequest(Request):
         self._content_root = self._response_cfg[
             ImportRequest.__CFG_KEY_CONTENT_ROOT] if ImportRequest.__CFG_KEY_CONTENT_ROOT in self._response_cfg else None
         self._logger.debug('\n{}'.format(self._response_cfg))
-        if request_type == ImportRequest.TYPE_GET_MULTI_PAGE:
-            self.__perform_multi_page_request()
+        if request_type == ImportRequest.TYPE_GET_LIST:
+            self.__perform_list_request()
         elif request_type == ImportRequest.TYPE_GET_SINGLE_OBJECT:
             self.__perform_single_object_request()
         else:
@@ -217,10 +217,12 @@ class ImportRequest(Request):
         response = self._perform_request()
         self._parse_response(response)
 
-    def __perform_multi_page_request(self):
+    def __perform_list_request(self):
         while True:
             response = self._perform_request()
             self._parse_response(response if not self._content_root else response[self._content_root])
+            if not ImportRequest.__CFG_KEY_PARAM_TOTAL in response:
+                break
             total = int(response[ImportRequest.__CFG_KEY_PARAM_TOTAL])
             max_results = int(response[ImportRequest.__CFG_KEY_PARAM_MAX_RESULTS])
             start_at = int(response[ImportRequest.__CFG_KEY_PARAM_START_AT])
@@ -272,15 +274,19 @@ class SingleObjectImportRequest(ImportRequest):
         return self.__response_values
 
 
-class MultiPageImportRequest(ImportRequest):
+class ListImportRequest(ImportRequest):
     def __init__(self, cfg, login, pswd, mappings=None):
         self.__response_values = []
-        ImportRequest.__init__(self, cfg, login, pswd, ImportRequest.TYPE_GET_MULTI_PAGE)
+        ImportRequest.__init__(self, cfg, login, pswd, ImportRequest.TYPE_GET_LIST)
 
     def _parse_response(self, response):
-        backlog = []
-        Field.parse_field(response, self._response_cfg[self._content_root], backlog)
-        self.__response_values.extend(backlog)
+        result = []
+        if self._content_root:
+            Field.parse_field(response, self._response_cfg[self._content_root], result)
+        else:
+            for field in self._response_cfg: # ToDo: check if several root items is real case
+                Field.parse_field(response, self._response_cfg[field], result)
+        self.__response_values.extend(result)
 
     def _get_result(self):
         return self.__response_values

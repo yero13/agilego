@@ -2,12 +2,23 @@
 	"version": 0.1,
 	"mapping": {
 		"url": "https://yero13.atlassian.net",
+		"project": "AGILEGO",
 		"sprint": 1
 	},
 	"requests": {
+		"components": {
+			"cfg": "./cfg/jira/jira-components-request.json",
+			"type": "list",
+			"dest": "components"		
+		},
+		"employees": {
+			"cfg": "./cfg/jira/jira-team-request.json",
+			"type": "list",
+			"dest": "employees"		
+		},		
 		"backlog": {
 			"cfg": "./cfg/jira/jira-sprint-backlog-request.json",
-			"type": "multi_page",
+			"type": "list",
 			"dest": "backlog"
 		},
 		"sprint": {

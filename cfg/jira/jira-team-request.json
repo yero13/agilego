@@ -1,13 +1,34 @@
 {
 	"version": 0.1,
 	"request": {
-		"url": "https://yero13.atlassian.net/rest/api/2/user/assignable/search",
+		"url": "$url/rest/api/2/user/assignable/search",
 		"data": {
-			"project": "AGILEGO",
-			"maxResults": 50,
+			"project": "$project",
+			"maxResults": 100,
 			"startAt": 0
 		}
 	},
 	"response": {
+		"employees": {
+			"noname": "True",
+			"type": "array",
+			"fields": {
+				"employee": {
+					"type": "object",
+					"explicit": "True",
+					"noname": "True",
+					"fields": {
+						"name": {
+							"key": "name",
+							"type": "string"
+						},
+						"displayName": {
+							"key": "displayName",
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
 	}
 }
