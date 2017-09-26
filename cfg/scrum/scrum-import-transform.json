@@ -7,6 +7,20 @@
 				"dest.db": "scrum-transform"
 			},
 			"transformations": {
+				"components": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "components",
+						"dest.collection": "project.components"
+					}
+				},
+				"employees": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "employees",
+						"dest.collection": "project.employees"
+					}
+				},				
 				"sprint-timeline": {
 					"type": "single_object",
 					"cfg": {
@@ -75,6 +89,20 @@
 				"dest.db": "scrum-api"
 			},
 			"transformations": {
+				"components": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "project.components",
+						"dest.collection": "project.components"
+					}
+				},
+				"employees": {
+					"type": "dataset",
+					"cfg": {
+						"src.collection": "project.employees",
+						"dest.collection": "project.employees"
+					}
+				},
 				"sprint.definition": {
 					"type": "single_object",
 					"cfg": {

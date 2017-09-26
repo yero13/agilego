@@ -14,12 +14,14 @@ CORS(app)
 #cache = Cache(app)
 db = MongoDb(ApiConstants.CFG_DB_SCRUM_API).connection
 
+
 @app.route('/sprint-backlog', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_backlog():
     return Response(response=dumps(db[ApiConstants.SCRUM_SPRINT_BACKLOG].find({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
+
 
 @app.route('/backlog-details', methods=['GET'])
 #@cache.cached(timeout=60)
@@ -30,6 +32,7 @@ def get_backlog_item_details():
         status=200,
         mimetype="application/json")
 
+
 @app.route('/subtasks', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_subtasks():
@@ -38,6 +41,7 @@ def get_subtasks():
         response=dumps(db[ApiConstants.SCRUM_SUBTASKS].find({ApiConstants.ITEM_PARENT: parent_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
+
 
 @app.route('/subtask-details', methods=['GET'])
 #@cache.cached(timeout=60)
@@ -48,12 +52,14 @@ def get_subtask_details():
         status=200,
         mimetype="application/json")
 
+
 @app.route('/sprint', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_sprint():
     return Response(response=dumps(db[ApiConstants.SCRUM_SPRINT].find_one({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
+
 
 @app.route('/sprint-timeline', methods=['GET'])
 #@cache.cached(timeout=60)
@@ -63,13 +69,29 @@ def get_sprint_timeline():
                     status=200,
                     mimetype="application/json")
 
+
 @app.route('/team', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_team():
-    # ToDo: move to constants/separated collection
     return Response(response=dumps(db[ApiConstants.SCRUM_ORG_TEAM].find({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
+
+
+@app.route('/employees', methods=['GET'])
+#@cache.cached(timeout=60)
+def get_employees():
+    return Response(response=dumps(db[ApiConstants.PROJECT_EMPLOYEES].find({}, {'_id': False})),
+                    status=200,
+                    mimetype="application/json")
+
+@app.route('/components', methods=['GET'])
+#@cache.cached(timeout=60)
+def get_components():
+    return Response(response=dumps(db[ApiConstants.PROJECT_COMPONENTS].find({}, {'_id': False})),
+                    status=200,
+                    mimetype="application/json")
+
 
 @app.route('/assignments', methods=['GET'])
 #@cache.cached(timeout=60)
@@ -77,6 +99,7 @@ def get_assignments():
     return Response(response=dumps(db[ApiConstants.SCRUM_ASSIGNMENTS].find({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
+
 
 @app.route('/assignment', methods=['GET'])
 #@cache.cached(timeout=60)
@@ -93,10 +116,11 @@ def get_assignment():
         status=200,
         mimetype="application/json")
 
+
 @app.route('/assign', methods=['POST'])
 def assign():
-    #ToDo: assign validation/warnings
-    # ToDo: update estimates
+    #ToDo: assign validation/warnings -> services
+    # ToDo: update estimates -> services
     assignment = json.loads(request.data)
     return Response(response=dumps({(db[ApiConstants.SCRUM_ASSIGNMENTS].update_one(
         {ApiConstants.ITEM_KEY: assignment[ApiConstants.ITEM_KEY],
@@ -107,9 +131,10 @@ def assign():
                     status=200,
                     mimetype="application/json")
 
+
 @app.route('/assignment-remove', methods=['POST'])
 def remove_assignment():
-    # ToDo: update estimates
+    # ToDo: update estimates -> services
     assignment = json.loads(request.data)
     return Response(response=dumps({(db[ApiConstants.SCRUM_ASSIGNMENTS].delete_one(
         {ApiConstants.ITEM_KEY: assignment[ApiConstants.ITEM_KEY],
