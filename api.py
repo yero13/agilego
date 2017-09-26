@@ -143,3 +143,45 @@ def remove_assignment():
          ApiConstants.ASSIGNMENT_EMPLOYEE: assignment[ApiConstants.ASSIGNMENT_EMPLOYEE]})).deleted_count}),
                     status=200,
                     mimetype="application/json")
+
+
+@app.route('/group-remove', methods=['POST'])
+def remove_group():
+    # ToDo: remove group assignments + remove group
+    return
+
+
+@app.route('/group-rename', methods=['POST'])
+def rename_group():
+    # ToDo: update group assignments + remove group
+    return
+
+
+@app.route('/group-add', methods=['POST'])
+def add_group():
+    # ToDo: update group assignments + remove group
+    return
+
+
+@app.route('/group-component-remove', methods=['POST'])
+def remove_group_component():
+    # ToDo: just remove component
+    return
+
+
+@app.route('/group-component-add', methods=['POST'])
+def add_group_component():
+    # ToDo: just remove component
+    return
+
+
+@app.route('/group-employee-remove', methods=['POST'])
+def remove_group_employee():
+    # ToDo: just employee assignments + remove group
+    return
+
+
+@app.route('/group-employee-add', methods=['POST'])
+def add_group_employee():
+    # ToDo: just employee assignments + remove group
+    return
