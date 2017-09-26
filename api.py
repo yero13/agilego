@@ -26,9 +26,9 @@ def get_backlog():
 @app.route('/backlog-details', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_backlog_item_details():
-    item_key = request.args.get(ApiConstants.ITEM_KEY)
+    item_key = request.args.get(ApiConstants.PARAM_ITEM_KEY)
     return Response(response=dumps(
-        db[ApiConstants.SCRUM_BACKLOG_DETAILS].find_one({ApiConstants.ITEM_KEY: item_key}, {'_id': False})),
+        db[ApiConstants.SCRUM_BACKLOG_DETAILS].find_one({ApiConstants.PARAM_ITEM_KEY: item_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
@@ -36,9 +36,9 @@ def get_backlog_item_details():
 @app.route('/subtasks', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_subtasks():
-    parent_key = request.args.get(ApiConstants.ITEM_PARENT)
+    parent_key = request.args.get(ApiConstants.PARAM_ITEM_PARENT)
     return Response(
-        response=dumps(db[ApiConstants.SCRUM_SUBTASKS].find({ApiConstants.ITEM_PARENT: parent_key}, {'_id': False})),
+        response=dumps(db[ApiConstants.SCRUM_SUBTASKS].find({ApiConstants.PARAM_ITEM_PARENT: parent_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
@@ -46,9 +46,9 @@ def get_subtasks():
 @app.route('/subtask-details', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_subtask_details():
-    issue_key = request.args.get(ApiConstants.ITEM_KEY)
+    issue_key = request.args.get(ApiConstants.PARAM_ITEM_KEY)
     return Response(
-        response=dumps(db[ApiConstants.SCRUM_SUBTASKS_DETAILS].find_one({ApiConstants.ITEM_KEY: issue_key}, {'_id': False})),
+        response=dumps(db[ApiConstants.SCRUM_SUBTASKS_DETAILS].find_one({ApiConstants.PARAM_ITEM_KEY: issue_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
@@ -73,7 +73,7 @@ def get_sprint_timeline():
 @app.route('/team', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_team():
-    return Response(response=dumps(db[ApiConstants.SCRUM_ORG_TEAM].find({}, {'_id': False})),
+    return Response(response=dumps(db[ApiConstants.PROJECT_TEAM].find({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
 
@@ -104,14 +104,14 @@ def get_assignments():
 @app.route('/assignment', methods=['GET'])
 #@cache.cached(timeout=60)
 def get_assignment():
-    issue_key = request.args.get(ApiConstants.ITEM_KEY)
-    assignment_date = request.args.get(ApiConstants.ASSIGNMENT_DATE)
-    assignment_group = request.args.get(ApiConstants.ASSIGNMENT_GROUP)
-    assignment_employee = request.args.get(ApiConstants.ASSIGNMENT_EMPLOYEE)
+    issue_key = request.args.get(ApiConstants.PARAM_ITEM_KEY)
+    assignment_date = request.args.get(ApiConstants.PARAM_DATE)
+    assignment_group = request.args.get(ApiConstants.PARAM_GROUP)
+    assignment_employee = request.args.get(ApiConstants.PARAM_EMPLOYEE)
     return Response(
         response=dumps(db[ApiConstants.SCRUM_ASSIGNMENTS].find_one(
-            {ApiConstants.ITEM_KEY: issue_key, ApiConstants.ASSIGNMENT_DATE: assignment_date,
-             ApiConstants.ASSIGNMENT_GROUP: assignment_group, ApiConstants.ASSIGNMENT_EMPLOYEE: assignment_employee},
+            {ApiConstants.PARAM_ITEM_KEY: issue_key, ApiConstants.PARAM_DATE: assignment_date,
+             ApiConstants.PARAM_GROUP: assignment_group, ApiConstants.PARAM_EMPLOYEE: assignment_employee},
             {'_id': False})),
         status=200,
         mimetype="application/json")
@@ -123,10 +123,10 @@ def assign():
     # ToDo: update estimates -> services
     assignment = json.loads(request.data)
     return Response(response=dumps({(db[ApiConstants.SCRUM_ASSIGNMENTS].update_one(
-        {ApiConstants.ITEM_KEY: assignment[ApiConstants.ITEM_KEY],
-         ApiConstants.ASSIGNMENT_DATE: assignment[ApiConstants.ASSIGNMENT_DATE],
-         ApiConstants.ASSIGNMENT_GROUP: assignment[ApiConstants.ASSIGNMENT_GROUP],
-         ApiConstants.ASSIGNMENT_EMPLOYEE: assignment[ApiConstants.ASSIGNMENT_EMPLOYEE]}, {"$set": assignment},
+        {ApiConstants.PARAM_ITEM_KEY: assignment[ApiConstants.PARAM_ITEM_KEY],
+         ApiConstants.PARAM_DATE: assignment[ApiConstants.PARAM_DATE],
+         ApiConstants.PARAM_GROUP: assignment[ApiConstants.PARAM_GROUP],
+         ApiConstants.PARAM_EMPLOYEE: assignment[ApiConstants.PARAM_EMPLOYEE]}, {"$set": assignment},
         upsert=True)).upserted_id}),
                     status=204,
                     mimetype="application/json")
@@ -137,10 +137,10 @@ def remove_assignment():
     # ToDo: update estimates -> services
     assignment = json.loads(request.data)
     return Response(response=dumps({(db[ApiConstants.SCRUM_ASSIGNMENTS].delete_one(
-        {ApiConstants.ITEM_KEY: assignment[ApiConstants.ITEM_KEY],
-         ApiConstants.ASSIGNMENT_DATE: assignment[ApiConstants.ASSIGNMENT_DATE],
-         ApiConstants.ASSIGNMENT_GROUP: assignment[ApiConstants.ASSIGNMENT_GROUP],
-         ApiConstants.ASSIGNMENT_EMPLOYEE: assignment[ApiConstants.ASSIGNMENT_EMPLOYEE]})).deleted_count}),
+        {ApiConstants.PARAM_ITEM_KEY: assignment[ApiConstants.PARAM_ITEM_KEY],
+         ApiConstants.PARAM_DATE: assignment[ApiConstants.PARAM_DATE],
+         ApiConstants.PARAM_GROUP: assignment[ApiConstants.PARAM_GROUP],
+         ApiConstants.PARAM_EMPLOYEE: assignment[ApiConstants.PARAM_EMPLOYEE]})).deleted_count}),
                     status=204,
                     mimetype="application/json")
 
@@ -157,25 +157,3 @@ def upsert_group():
     return
 
 
-@app.route('/group-component-remove', methods=['POST'])
-def remove_group_component():
-    # ToDo: just remove component
-    return
-
-
-@app.route('/group-component-add', methods=['POST'])
-def add_group_component():
-    # ToDo: just remove component
-    return
-
-
-@app.route('/group-employee-remove', methods=['POST'])
-def remove_group_employee():
-    # ToDo: just employee assignments + remove group
-    return
-
-
-@app.route('/group-employee-add', methods=['POST'])
-def add_group_employee():
-    # ToDo: just employee assignments + remove group
-    return

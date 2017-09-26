@@ -30,5 +30,5 @@ class Team():
         return
 
     def to_db(self, db):
-        db[ApiConstants.SCRUM_ORG_TEAM].remove()  # ToDo: move to clean-up
-        db[ApiConstants.SCRUM_ORG_TEAM].insert_many(teams)
+        db[ApiConstants.PROJECT_TEAM].remove()  # ToDo: move to clean-up
+        db[ApiConstants.PROJECT_TEAM].insert_many(teams)

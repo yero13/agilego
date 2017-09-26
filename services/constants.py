@@ -7,12 +7,13 @@ class ApiConstants:
     SCRUM_SUBTASKS = 'sprint.subtasks'
     SCRUM_SUBTASKS_DETAILS = 'sprint.subtasks-details'
     SCRUM_ASSIGNMENTS = 'sprint.assignments'
-    SCRUM_ORG_TEAM = 'org.team' # ToDo -> scrum -> project
+    PROJECT_TEAM = 'org.team' # ToDo -> scrum -> project
     PROJECT_EMPLOYEES = 'project.employees'
     PROJECT_COMPONENTS = 'project.components'
 
-    ITEM_KEY = 'key'
-    ITEM_PARENT = 'parent'
-    ASSIGNMENT_DATE = 'date'
-    ASSIGNMENT_GROUP = 'group'
-    ASSIGNMENT_EMPLOYEE = 'employee'
+    PARAM_ITEM_KEY = 'key'
+    PARAM_ITEM_PARENT = 'parent'
+    PARAM_DATE = 'date'
+    PARAM_GROUP = 'group'
+    PARAM_EMPLOYEE = 'employee'
+    PARAM_COMPONENT = 'component'
