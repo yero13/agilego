@@ -4,17 +4,17 @@ teams = [
 	{
 		"group": "BA",
 		"components": ["BA"],
-		"employees": ["fbyero", "yero13"]
+		"employees": [{"name":"fbyero", "displayName": "roman.yepifanov"}, {"name":"yero13", "displayName": "Roman Yepifanov"}]
 	},
 	{
 		"group": "FE",
 		"components": ["FE", "HTML"],
-		"employees": ["Karl.Munchhausen"]
+		"employees": [{"name":"Karl.Munchhausen", "displayName": "Karl.Munchhausen.2012"}]
 	},
 	{
 		"group": "BE",
 		"components": ["BE", "INT"],
-		"employees": ["yero13"]
+		"employees": [{"name":"yero13", "displayName": "Roman Yepifanov"}]
 	},
 	{
 		"group": "QA",
