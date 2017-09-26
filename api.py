@@ -128,7 +128,7 @@ def assign():
          ApiConstants.ASSIGNMENT_GROUP: assignment[ApiConstants.ASSIGNMENT_GROUP],
          ApiConstants.ASSIGNMENT_EMPLOYEE: assignment[ApiConstants.ASSIGNMENT_EMPLOYEE]}, {"$set": assignment},
         upsert=True)).upserted_id}),
-                    status=200,
+                    status=204,
                     mimetype="application/json")
 
 
@@ -141,7 +141,7 @@ def remove_assignment():
          ApiConstants.ASSIGNMENT_DATE: assignment[ApiConstants.ASSIGNMENT_DATE],
          ApiConstants.ASSIGNMENT_GROUP: assignment[ApiConstants.ASSIGNMENT_GROUP],
          ApiConstants.ASSIGNMENT_EMPLOYEE: assignment[ApiConstants.ASSIGNMENT_EMPLOYEE]})).deleted_count}),
-                    status=200,
+                    status=204,
                     mimetype="application/json")
 
 
@@ -151,14 +151,8 @@ def remove_group():
     return
 
 
-@app.route('/group-rename', methods=['POST'])
-def rename_group():
-    # ToDo: update group assignments + remove group
-    return
-
-
-@app.route('/group-add', methods=['POST'])
-def add_group():
+@app.route('/group-upsert', methods=['POST'])
+def upsert_group():
     # ToDo: update group assignments + remove group
     return
 
