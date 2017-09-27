@@ -132,15 +132,11 @@ def assign():
                     mimetype="application/json")
 
 
-@app.route('/assignment-remove', methods=['POST'])
-def remove_assignment():
+@app.route('/assignments-remove', methods=['POST'])
+def remove_assignments():
     # ToDo: update estimates -> services
-    assignment = json.loads(request.data)
-    return Response(response=dumps({(db[ApiConstants.SCRUM_ASSIGNMENTS].delete_one(
-        {ApiConstants.PARAM_ITEM_KEY: assignment[ApiConstants.PARAM_ITEM_KEY],
-         ApiConstants.PARAM_DATE: assignment[ApiConstants.PARAM_DATE],
-         ApiConstants.PARAM_GROUP: assignment[ApiConstants.PARAM_GROUP],
-         ApiConstants.PARAM_EMPLOYEE: assignment[ApiConstants.PARAM_EMPLOYEE]})).deleted_count}),
+    params = json.loads(request.data)
+    return Response(response=dumps({db[ApiConstants.SCRUM_ASSIGNMENTS].delete_many(params).deleted_count}),
                     status=204,
                     mimetype="application/json")
 
