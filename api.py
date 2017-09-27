@@ -11,12 +11,12 @@ from db.connect import MongoDb
 
 app = Flask(__name__)
 CORS(app)
-#cache = Cache(app)
+# cache = Cache(app)
 db = MongoDb(ApiConstants.CFG_DB_SCRUM_API).connection
 
 
 @app.route('/sprint-backlog', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_backlog():
     return Response(response=dumps(db[ApiConstants.SCRUM_SPRINT_BACKLOG].find({}, {'_id': False})),
                     status=200,
@@ -24,7 +24,7 @@ def get_backlog():
 
 
 @app.route('/backlog-details', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_backlog_item_details():
     item_key = request.args.get(ApiConstants.PARAM_ITEM_KEY)
     return Response(response=dumps(
@@ -34,27 +34,29 @@ def get_backlog_item_details():
 
 
 @app.route('/subtasks', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_subtasks():
     parent_key = request.args.get(ApiConstants.PARAM_ITEM_PARENT)
     return Response(
-        response=dumps(db[ApiConstants.SCRUM_SUBTASKS].find({ApiConstants.PARAM_ITEM_PARENT: parent_key}, {'_id': False})),
+        response=dumps(
+            db[ApiConstants.SCRUM_SUBTASKS].find({ApiConstants.PARAM_ITEM_PARENT: parent_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
 
 @app.route('/subtask-details', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_subtask_details():
     issue_key = request.args.get(ApiConstants.PARAM_ITEM_KEY)
     return Response(
-        response=dumps(db[ApiConstants.SCRUM_SUBTASKS_DETAILS].find_one({ApiConstants.PARAM_ITEM_KEY: issue_key}, {'_id': False})),
+        response=dumps(
+            db[ApiConstants.SCRUM_SUBTASKS_DETAILS].find_one({ApiConstants.PARAM_ITEM_KEY: issue_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
 
 
 @app.route('/sprint', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_sprint():
     return Response(response=dumps(db[ApiConstants.SCRUM_SPRINT].find_one({}, {'_id': False})),
                     status=200,
@@ -62,7 +64,7 @@ def get_sprint():
 
 
 @app.route('/sprint-timeline', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_sprint_timeline():
     # ToDo: move to constants/separated collection and create constant for timeline
     return Response(response=dumps(db[ApiConstants.SCRUM_SPRINT_TIMELINE].find_one({}, {'_id': False})),
@@ -71,7 +73,7 @@ def get_sprint_timeline():
 
 
 @app.route('/team', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_team():
     return Response(response=dumps(db[ApiConstants.PROJECT_TEAM].find({}, {'_id': False})),
                     status=200,
@@ -79,14 +81,15 @@ def get_team():
 
 
 @app.route('/employees', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_employees():
     return Response(response=dumps(db[ApiConstants.PROJECT_EMPLOYEES].find({}, {'_id': False})),
                     status=200,
                     mimetype="application/json")
 
+
 @app.route('/components', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_components():
     return Response(response=dumps(db[ApiConstants.PROJECT_COMPONENTS].find({}, {'_id': False})),
                     status=200,
@@ -94,7 +97,7 @@ def get_components():
 
 
 @app.route('/assignments', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_assignments():
     return Response(response=dumps(db[ApiConstants.SCRUM_ASSIGNMENTS].find({}, {'_id': False})),
                     status=200,
@@ -102,24 +105,20 @@ def get_assignments():
 
 
 @app.route('/assignment', methods=['GET'])
-#@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_assignment():
-    issue_key = request.args.get(ApiConstants.PARAM_ITEM_KEY)
-    assignment_date = request.args.get(ApiConstants.PARAM_DATE)
-    assignment_group = request.args.get(ApiConstants.PARAM_GROUP)
-    assignment_employee = request.args.get(ApiConstants.PARAM_EMPLOYEE)
     return Response(
-        response=dumps(db[ApiConstants.SCRUM_ASSIGNMENTS].find_one(
-            {ApiConstants.PARAM_ITEM_KEY: issue_key, ApiConstants.PARAM_DATE: assignment_date,
-             ApiConstants.PARAM_GROUP: assignment_group, ApiConstants.PARAM_EMPLOYEE: assignment_employee},
-            {'_id': False})),
+        response=dumps(db[ApiConstants.SCRUM_ASSIGNMENTS].find_one(request.args, {'_id': False})),
         status=200,
         mimetype="application/json")
 
 
+# ToDo: below listed services should be reviewed as they should trigger validations and KPIs (velocity, etc) review
+
+
 @app.route('/assign', methods=['POST'])
 def assign():
-    #ToDo: assign validation/warnings -> services
+    # ToDo: assign validation/warnings -> services
     # ToDo: update estimates -> services
     assignment = json.loads(request.data)
     return Response(response=dumps({(db[ApiConstants.SCRUM_ASSIGNMENTS].update_one(
@@ -141,15 +140,24 @@ def remove_assignments():
                     mimetype="application/json")
 
 
+# ToDo: implement diff -u group_to_update vs existing group and trigger corresponding changes
+
+
 @app.route('/group-remove', methods=['POST'])
 def remove_group():
     # ToDo: remove group assignments + remove group
-    return
+    group = json.loads(request.data)
+    return Response(response=dumps({(db[ApiConstants.PROJECT_TEAM].delete_one(
+        {ApiConstants.PARAM_GROUP: group[ApiConstants.PARAM_GROUP]})).deleted_count}), status=204,
+                    mimetype="application/json")
 
 
-@app.route('/group-upsert', methods=['POST'])
-def upsert_group():
+@app.route('/group-update', methods=['POST'])
+def update_group():
     # ToDo: update group assignments + remove group
-    return
-
-
+    group = json.loads(request.data)
+    return Response(response=dumps(
+        {(db[ApiConstants.PROJECT_TEAM].update_one({ApiConstants.PARAM_GROUP: group[ApiConstants.PARAM_GROUP]},
+                                                   {"$set": group}, upsert=True)).upserted_id}),
+        status=204,
+        mimetype="application/json")

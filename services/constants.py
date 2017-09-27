@@ -7,7 +7,7 @@ class ApiConstants:
     SCRUM_SUBTASKS = 'sprint.subtasks'
     SCRUM_SUBTASKS_DETAILS = 'sprint.subtasks-details'
     SCRUM_ASSIGNMENTS = 'sprint.assignments'
-    PROJECT_TEAM = 'org.team' # ToDo -> scrum -> project
+    PROJECT_TEAM = 'project.team'
     PROJECT_EMPLOYEES = 'project.employees'
     PROJECT_COMPONENTS = 'project.components'
 
@@ -16,4 +16,4 @@ class ApiConstants:
     PARAM_DATE = 'date'
     PARAM_GROUP = 'group'
     PARAM_EMPLOYEE = 'employee'
-    PARAM_COMPONENT = 'component'
+    PARAM_COMPONENT = 'component' # ToDo: remove?
