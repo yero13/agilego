@@ -66,8 +66,8 @@ def get_sprint():
 @app.route('/sprint-timeline', methods=['GET'])
 # @cache.cached(timeout=60)
 def get_sprint_timeline():
-    # ToDo: move to constants/separated collection and create constant for timeline
-    return Response(response=dumps(db[ApiConstants.SCRUM_SPRINT_TIMELINE].find_one({}, {'_id': False})),
+    found = db[ApiConstants.SCRUM_SPRINT_TIMELINE].find_one({}, {'_id': False})
+    return Response(response=dumps(found[ApiConstants.PARAM_TIMELINE] if ApiConstants.PARAM_TIMELINE in found else []),
                     status=200,
                     mimetype="application/json")
 
@@ -91,7 +91,8 @@ def get_employees():
 @app.route('/components', methods=['GET'])
 # @cache.cached(timeout=60)
 def get_components():
-    return Response(response=dumps(db[ApiConstants.PROJECT_COMPONENTS].find({}, {'_id': False})),
+    found = db[ApiConstants.PROJECT_COMPONENTS].find_one({}, {'_id': False})
+    return Response(response=dumps(found[ApiConstants.PARAM_COMPONENT] if ApiConstants.PARAM_COMPONENT in found else []),
                     status=200,
                     mimetype="application/json")
 

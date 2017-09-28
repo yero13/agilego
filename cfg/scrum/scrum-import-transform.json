@@ -8,10 +8,14 @@
 			},
 			"transformations": {
 				"components": {
-					"type": "dataset",
+					"type": "transpose_to_array",
 					"cfg": {
 						"src.collection": "components",
-						"dest.collection": "project.components"
+						"dest.collection": "project.components",
+						"transformation": {
+								"key": "project",
+								"values": "component"
+						}								
 					}
 				},
 				"employees": {
@@ -59,6 +63,14 @@
 				"dest.db": "scrum-transform"
 			},
 			"transformations": {
+				"components": {
+					"type": "single_object",
+					"cfg": {
+						"src.collection": "project.components",
+						"dest.collection": "project.components",
+						"fields": ["component"]
+					}
+				},			
 				"blocked_by": {
 					"type": "transpose_from_array",
 					"cfg": {

@@ -15,7 +15,13 @@
 					"fields": {
 						"name": {
 							"key": "name",
-							"type": "string"
+							"type": "string",
+							"ext_id": "component"
+						},
+						"project_id" : {
+							"key": "projectId",
+							"type": "string",
+							"ext_id": "project"
 						}
 					}
 				}

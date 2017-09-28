@@ -16,4 +16,5 @@ class ApiConstants:
     PARAM_DATE = 'date'
     PARAM_GROUP = 'group'
     PARAM_EMPLOYEE = 'employee'
-    PARAM_COMPONENT = 'component' # ToDo: remove?
+    PARAM_COMPONENT = 'component'
+    PARAM_TIMELINE = 'timeline'
