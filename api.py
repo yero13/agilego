@@ -161,3 +161,17 @@ def update_group():
                                                    {"$set": group}, upsert=True)).upserted_id}),
         status=204,
         mimetype="application/json")
+
+
+@app.route('/components', methods=['GET'])
+def get_components():
+    return Response(response=dumps(db[ApiConstants.PROJECT_COMPONENTS].find({}, {'_id': False})),
+                    status=200,
+                    mimetype="application/json")
+
+
+@app.route('/employees', methods=['GET'])
+def get_employees():
+    return Response(response=dumps(db[ApiConstants.PROJECT_EMPLOYEES].find({}, {'_id': False})),
+                    status=200,
+                    mimetype="application/json")
