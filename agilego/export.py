@@ -1,11 +1,11 @@
+import argparse
 import json
 import logging.config
-import argparse
 
-from transformation.transformer import Transformer
-from integration.exporter import Exporter
+from exporter import Exporter
+from transformer import Transformer
 
-CFG_LOG_EXPORT = './cfg/export-logging-config.json'
+CFG_LOG_EXPORT = './cfg/log/export-logging-config.json'
 CFG_TRANSFORM = './cfg/scrum/scrum-export-transform.json'
 CFG_EXPORT = './cfg/jira/jira-export.json'
 

@@ -2,9 +2,9 @@ import argparse
 import json
 import logging.config
 
-from integration.importer import Importer
+from importer import Importer
 
-CFG_LOG_IMPORT = './cfg/import-logging-config.json'
+CFG_LOG_IMPORT = './cfg/log/import-logging-config.json'
 CFG_IMPORT = './cfg/jira/jira-import.json'
 
 if __name__ == '__main__':

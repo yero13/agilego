@@ -1,7 +1,10 @@
-from integration.integrator import Integrator
-from integration.request import ImportRequest
 import json
 from string import Template
+
+from integration.request import ImportRequest
+
+from integrator import Integrator
+
 
 class Importer(Integrator):
     __CFG_KEY_REQUEST_DEST = 'dest'

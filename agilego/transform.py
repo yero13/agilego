@@ -1,11 +1,11 @@
 import json
 import logging.config
 
-from services.constants import ApiConstants
-from db.connect import MongoDb
-from transformation.transformer import Transformer
+from connect import MongoDb
+from constants import ApiConstants
+from transformer import Transformer
 
-CFG_LOG_TRANSFORM = './cfg/transform-logging-config.json'
+CFG_LOG_TRANSFORM = './cfg/log/transform-logging-config.json'
 CFG_TRANSFORM = './cfg/scrum/scrum-import-transform.json'
 
 if __name__ == '__main__':
