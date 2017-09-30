@@ -2,8 +2,8 @@ import copy
 import json
 from string import Template
 
-from integrator import Integrator
-from request import ExportRequest
+from integration.integrator import Integrator
+from integration.request import ExportRequest
 
 
 class Exporter(Integrator):

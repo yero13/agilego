@@ -6,8 +6,8 @@ from flask import Response
 from flask import request
 from flask_cors import CORS
 
-from connect import MongoDb
-from constants import ApiConstants
+from agilego.db.connect import MongoDb
+from agilego.services.constants import ApiConstants
 
 app = Flask(__name__)
 CORS(app)

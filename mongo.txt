@@ -1,3 +1,15 @@
+C:\Program Files\MongoDB\Server\3.4\bin>mongo --port 27017
+MongoDB shell version v3.4.7
+connecting to: mongodb://127.0.0.1:27017/
+MongoDB server version: 3.4.7
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+For more comprehensive documentation, see
+        http://docs.mongodb.org/
+Questions? Try the support group
+        http://groups.google.com/group/mongodb-user
+>
+
 use admin
 db.createUser(
   {
@@ -6,3 +18,33 @@ db.createUser(
     roles: [ { role: "root", db: "admin" } ]
   }
 )
+
+C:\Program Files\MongoDB\Server\3.4\bin>mongo --port 27017
+MongoDB shell version v3.4.7
+connecting to: mongodb://127.0.0.1:27017/
+MongoDB server version: 3.4.7
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+For more comprehensive documentation, see
+        http://docs.mongodb.org/
+Questions? Try the support group
+        http://groups.google.com/group/mongodb-user
+> use admin
+switched to db admin
+> db.createUser(
+...   {
+...     user: "agilego",
+...     pwd: "1",
+...     roles: [ { role: "root", db: "admin" } ]
+...   }
+... )
+Successfully added user: {
+        "user" : "agilego",
+        "roles" : [
+                {
+                        "role" : "root",
+                        "db" : "admin"
+                }
+        ]
+}
+>

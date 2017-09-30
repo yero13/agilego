@@ -5,7 +5,7 @@ import re
 
 import pandas as pd
 
-from connect import MongoDb
+from db.connect import MongoDb
 
 
 class Transformer():
