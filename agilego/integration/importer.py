@@ -23,7 +23,8 @@ class Importer(Integrator):
             res = self._db[request_dest].insert_one(result)
             self._logger.info('collection: {} data {} is saved'.format(request_dest, result))
         elif isinstance(result, list):
-            self._db[request_dest].insert_many([item for item in result])
+            if len(result) > 0:
+                self._db[request_dest].insert_many([item for item in result])
             self._logger.info('collection: {} {:d} items are saved'.format(request_dest, len(result)))
         else:
             raise NotImplementedError('{} - request is not supported'.format(request_type))

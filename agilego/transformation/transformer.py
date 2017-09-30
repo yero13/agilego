@@ -189,7 +189,8 @@ class DatasetTransformation(Transformation):
                 obj = Transformation._filter_fields(item, self._fields)
                 res.append(obj)
             self.__dataset = res
-        self._dest_db[self._dest_collection].insert_many(self.__dataset)
+        if len(self.__dataset) > 0:
+            self._dest_db[self._dest_collection].insert_many(self.__dataset)
 
 
 class TransposeTransformation(Transformation):
@@ -203,7 +204,8 @@ class TransposeTransformation(Transformation):
         self._dataset = list(self._src_db[self._src_collection].find({}, {self._field_key: True, self._field_values: True, '_id': False}))
 
     def _save(self):
-        self._dest_db[self._dest_collection].insert_many(self._dataset)
+        if len(self._dataset) > 0:
+            self._dest_db[self._dest_collection].insert_many(self._dataset)
 
 
 class TransposeFromArrayTransformation(TransposeTransformation):
@@ -245,4 +247,6 @@ class LeftJoinTransformation(Transformation):
             self.__left_df.set_index(join_on, drop=False), on=[join_on], rsuffix='_right')
 
     def _save(self):
-        self._dest_db[self._dest_collection].insert_many(json.loads(self.__result[self._fields].T.to_json()).values())
+        res = json.loads(self.__result[self._fields].T.to_json()).values()
+        if len(res) > 0:
+            self._dest_db[self._dest_collection].insert_many(res)
