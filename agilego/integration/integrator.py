@@ -1,7 +1,7 @@
 import abc
 import logging
 
-from connect import MongoDb
+from db.connect import MongoDb
 
 
 class Integrator():

@@ -3,7 +3,7 @@ from string import Template
 
 from integration.request import ImportRequest
 
-from integrator import Integrator
+from integration.integrator import Integrator
 
 
 class Importer(Integrator):
