@@ -39,4 +39,4 @@ Dependencies
 =============
 Configuration
 =============
-Please refer https://github.com/yero13/agilego.py/wiki
+Please refer https://github.com/yero13/agilego.ts/wiki
