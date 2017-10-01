@@ -4,7 +4,7 @@
 		"url": "$url/rest/api/2/search",
 		"data": {
 			"jql": "sprint in ($sprint)",
-			"maxResults": 5,
+			"maxResults": 50,
 			"startAt": 0
 		}
 	},
@@ -124,7 +124,7 @@
 									"type": "int",
 									"ext_id": "estimate"
 								},
-								"AGILEGO_Label": {
+								"AGILEGO_Tech": {
 									"key": "customfield_10050",
 									"type": "array",
 									"ext_id": "assignments"
