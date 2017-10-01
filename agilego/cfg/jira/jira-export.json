@@ -1,7 +1,7 @@
 {
 	"version": 0.1,
 	"mapping": {
-		"url": "https://yero13.atlassian.net"
+		"url": "__set_JIRA_url__here__"
 	},
 	"requests": {
 		"set_search_label": {

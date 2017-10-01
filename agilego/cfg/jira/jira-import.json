@@ -1,8 +1,8 @@
 {
 	"version": 0.1,
 	"mapping": {
-		"url": "https://yero13.atlassian.net",
-		"project": "AGILEGO",
+		"url": "__set_JIRA_url__here__",
+		"project": "__set_project__here__",
 		"sprint": 1
 	},
 	"requests": {
