@@ -2,7 +2,7 @@
 agilego.py
 ==========
 
-Please refer https://github.com/yero13/agilego.ts/wiki for Agilego application functionality description and https://github.com/yero13/agilego.ts for frontend installation guide
+Please refer https://github.com/yero13/agilego.ts/wiki/Agilego-scrum-sprint-planner for Agilego application functionality description and https://github.com/yero13/agilego.ts for frontend installation guide
 
 ============
 Installation
@@ -27,4 +27,4 @@ Dependencies
 =============
 Configuration
 =============
-Please refer https://github.com/yero13/agilego.ts/wiki
+Please refer https://github.com/yero13/agilego.ts/wiki/Agilego-scrum-sprint-planner
