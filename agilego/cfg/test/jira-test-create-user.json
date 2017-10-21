@@ -1,0 +1,12 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/api/2/user",
+		"data": {
+			"name": "$name",
+			"displayName": "$displayName",
+			"password": "$password",
+			"emailAddress": "$emailAddress"
+		}
+	}
+}

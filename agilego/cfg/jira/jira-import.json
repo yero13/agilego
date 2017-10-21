@@ -1,8 +1,8 @@
 {
 	"version": 0.1,
 	"mapping": {
-		"url": "__set_JIRA_url__here__",
-		"project": "__set_project__here__",
+		"url": "http://192.168.254.129:8080",
+		"project": "AGILEGO",
 		"sprint": 1
 	},
 	"requests": {

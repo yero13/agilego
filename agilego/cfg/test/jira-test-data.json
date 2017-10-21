@@ -1,30 +1,32 @@
 {
 	"version": 0.1,
 	"mapping": {
-		"url": "http://192.168.254.128:8080"
+		"url": "http://192.168.254.129:8080"
 	},
 	"requests": {
+		"create_users": {
+			"cfg": "./cfg/test/jira-test-create-user.json",
+			"type": "create_entity",
+			"src.collection": "test.users",
+			"dynamic_mapping": {
+				"name": "name",
+				"displayName": "displayName",
+				"password": "password",
+				"emailAddress": "emailAddress"
+			}
+		},	
 		"create_project": {
 			"cfg": "./cfg/test/jira-test-create-project.json",
 			"type": "create_entity",
 			"src.collection": "test.project",
 			"dynamic_mapping": {
 				"key": "key",
-				"value": "label"
+				"name": "name",
+				"projectTypeKey": "projectTypeKey",
+				"projectTemplateKey": "projectTemplateKey",
+				"lead": "lead"
 			}
-		},
-		"set_tech": {
-			"cfg": "./cfg/jira/jira-set-issue-field.json",
-			"type": "set_field_value",
-			"src.collection": "sprint.assignments_tech",
-			"static_mapping": {
-				"field": "customfield_10101"
-			},
-			"dynamic_mapping": {
-				"key": "key",
-				"value": "tech"
-			}
-		}		
+		}
 	},
 	"db": "jira-test-data"
 }

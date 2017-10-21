@@ -1,0 +1,13 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/api/2/project",
+		"data": {
+			"key": "$key",
+			"name": "$name",
+			"projectTypeKey": "$projectTypeKey",
+			"projectTemplateKey": "$projectTemplateKey",
+			"lead": "$lead"
+		}
+	}
+}

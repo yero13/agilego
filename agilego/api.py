@@ -67,6 +67,7 @@ def get_sprint():
 # @cache.cached(timeout=60)
 def get_sprint_timeline():
     found = db[ApiConstants.SCRUM_SPRINT_TIMELINE].find_one({}, {'_id': False})
+    print(found)
     return Response(response=dumps(found[ApiConstants.PARAM_TIMELINE] if ApiConstants.PARAM_TIMELINE in found else []),
                     status=200,
                     mimetype="application/json")
