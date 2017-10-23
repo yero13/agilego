@@ -181,7 +181,6 @@ class DeleteEntityRequest(ExportRequest):
             Request._CFG_KEY_REQUEST_DATA] if Request._CFG_KEY_REQUEST_DATA in self._request_cfg else None
         self._logger.info('delete {} on {}'.format(request_data, request_url))
         response = requests.delete(request_url,
-                                json.dumps(request_data),
                                 headers={"Content-Type": "application/json"},
                                 auth=HTTPBasicAuth(self._login, self._pswd),
                                 verify=True)

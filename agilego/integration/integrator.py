@@ -10,11 +10,16 @@ class Integrator():
     _CFG_KEY_REQUEST_CFG_FILE = 'cfg'
     _CFG_KEY_REQUEST_TYPE = 'type'
     _CFG_KEY_MAPPING = 'mapping'
+    _CFG_KEY_AUTH = 'auth'
+    _CFG_KEY_AUTH_LOGIN = 'login'
+    _CFG_KEY_AUTH_PSWD = 'pswd'
 
-    def __init__(self, cfg, login, pswd):
+    def __init__(self, cfg, login=None, pswd=None):
         self._cfg = cfg
-        self._login = login
-        self._pswd = pswd
+        if not login:
+            self._login = self._cfg[Integrator._CFG_KEY_AUTH][Integrator._CFG_KEY_AUTH_LOGIN]
+        if not pswd:
+            self._pswd = self._cfg[Integrator._CFG_KEY_AUTH][Integrator._CFG_KEY_AUTH_PSWD]
         self._logger = logging.getLogger(__class__.__name__)
         self._db = MongoDb(cfg[Integrator._CFG_KEY_DB]).connection
         self._mappings = self._cfg[

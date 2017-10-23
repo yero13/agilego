@@ -16,5 +16,20 @@ curl -D- \
   -u jira:jira \
   -X POST \
   -H "Content-Type: application/json" \
-  --data '{"key": "TEST", "name": "TEST", "projectTypeKey": "software", "projectTemplateKey": "com.pyxis.greenhopper.jira:gh-scrum-template", "lead": "jira"}' \
+  --data '{"key": "TEST", "name": "TEST", "projectTypeKey": "software", "projectTemplateKey": "com.pyxis.greenhopper.jira:gh-scrum-template", "lead": "testuser"}' \
   "http://127.0.0.1:8080/rest/api/2/project"
+  
+  
+curl -D- \
+  -u jira:jira \
+  -X DELETE \
+  -H "Content-Type: application/json" \
+  "http://127.0.0.1:8080/rest/api/2/project/TEST"
+  
+
+curl -D- \
+  -u jira:jira \
+  -X DELETE \
+  -H "Content-Type: application/json" \
+  "http://127.0.0.1:8080/rest/api/2/user?username=testuser"  
+  

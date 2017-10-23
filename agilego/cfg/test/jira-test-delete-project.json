@@ -1,0 +1,6 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/api/2/project/$key"
+	}
+}
