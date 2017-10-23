@@ -1,0 +1,20 @@
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.users /o D:\agilego-data\test.users.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.project /o D:\agilego-data\test.project.json
+
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.users /file:D:\agilego-data\test.users.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.project /file:D:\agilego-data\test.project.json
+
+curl -D- \
+  -u jira:jira \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"name": "testuser", "displayName": "testuser", "password": "1", "emailAddress": "test@test.com"}' \
+  "http://127.0.0.1:8080/rest/api/2/user"
+
+
+curl -D- \
+  -u jira:jira \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"key": "TEST", "name": "TEST", "projectTypeKey": "software", "projectTemplateKey": "com.pyxis.greenhopper.jira:gh-scrum-template", "lead": "jira"}' \
+  "http://127.0.0.1:8080/rest/api/2/project"
