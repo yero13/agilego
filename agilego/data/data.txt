@@ -19,6 +19,13 @@ curl -D- \
   --data '{"key": "TEST", "name": "TEST", "projectTypeKey": "software", "projectTemplateKey": "com.pyxis.greenhopper.jira:gh-scrum-template", "lead": "testuser"}' \
   "http://127.0.0.1:8080/rest/api/2/project"
   
+
+curl -D- \
+  -u jira:jira \
+  -X GET \
+  -H "Content-Type: application/json" \
+  "http://127.0.0.1:8080/rest/agile/1.0/board?name=TEST"  
+  
   
 curl -D- \
   -u jira:jira \

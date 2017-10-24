@@ -1,0 +1,27 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/agile/1.0/board?name=$project"
+	},
+	"response": {
+		"content-root": "values",
+		"values": {
+			"noname": "True",
+			"type": "array",
+			"fields": {
+				"board":{
+					"type": "object",
+					"explicit": "True",
+					"noname": "True",
+					"fields":{
+						"id": {
+							"key": "id",
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	}
+}
+

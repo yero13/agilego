@@ -1,9 +1,5 @@
 {
 	"version": 0.1,
-	"auth": {
-		"login": "jira",
-		"pswd": "jira"
-	},
 	"mapping": {
 		"url": "http://192.168.254.129:8080"
 	},

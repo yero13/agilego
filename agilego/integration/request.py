@@ -172,6 +172,7 @@ class CreateEntityRequest(ExportRequest):
                                 verify=True)
         if not response.ok:
             response.raise_for_status()
+        return json.loads(response.content, strict=False)
 
 
 class DeleteEntityRequest(ExportRequest):
@@ -201,6 +202,7 @@ class SetFieldValueRequest(ExportRequest):
                                 verify=True)
         if not response.ok:
             response.raise_for_status()
+        return json.loads(response.content, strict=False)
 
 
 class ImportRequest(Request):

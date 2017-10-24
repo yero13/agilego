@@ -1,0 +1,15 @@
+{
+	"version": 0.1,
+	"mapping": {
+		"url": "http://192.168.254.129:8080",
+		"project": "TEST"
+	},
+	"requests": {
+		"components": {
+			"cfg": "./cfg/test/jira-test-get-board.json",
+			"type": "list",
+			"dest": "test.board"		
+		}		
+	},
+	"db": "jira-test-data"
+}
