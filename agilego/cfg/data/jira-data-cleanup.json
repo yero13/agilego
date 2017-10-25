@@ -1,0 +1,9 @@
+{
+	"version": 0.1,
+	"steps": {
+		"jira_users_&_project": {
+			"type": "jira.export",
+			"cfg": "./cfg/data/cleanup/jira-data-cleanup.json"
+		}
+	}
+}

@@ -1,11 +1,11 @@
 {
 	"version": 0.1,
 	"mapping": {
-		"url": "http://192.168.254.129:8080"
+		"url": "$jira_url"
 	},
 	"requests": {
 		"create_users": {
-			"cfg": "./cfg/test/jira-test-create-user.json",
+			"cfg": "./cfg/data/generation/jira-data-create-user.json",
 			"type": "create_entity",
 			"src.collection": "test.users",
 			"dynamic_mapping": {
@@ -16,7 +16,7 @@
 			}
 		},	
 		"create_project": {
-			"cfg": "./cfg/test/jira-test-create-project.json",
+			"cfg": "./cfg/data/generation/jira-data-create-project.json",
 			"type": "create_entity",
 			"src.collection": "test.project",
 			"dynamic_mapping": {
@@ -28,5 +28,5 @@
 			}
 		}
 	},
-	"db": "jira-test-data"
+	"db": "$db_src_data"
 }

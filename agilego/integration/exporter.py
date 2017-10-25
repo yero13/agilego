@@ -1,6 +1,6 @@
 import copy
 import json
-from string import Template
+from utils.cfg import CfgUtils
 
 from integration.integrator import Integrator
 from integration.request import ExportRequest
@@ -26,5 +26,5 @@ class Exporter(Integrator):
             for mapping_key, item_key in dynamic_mapping.items():
                 item_mappings.update({mapping_key: json.dumps(item[item_key]) if isinstance(item[item_key], list) else item[item_key]})
             item_mappings.update(self._mappings)
-            itemstrcfg = Template(item_request_cfg).safe_substitute(item_mappings)
+            itemstrcfg = CfgUtils.substitute_params(item_request_cfg, item_mappings)
             ExportRequest.factory(json.loads(itemstrcfg), self._login, self._pswd, request_type).result

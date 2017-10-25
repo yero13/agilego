@@ -2,10 +2,21 @@ import json
 import unittest
 import logging.config
 from integration.importer import Importer
-from data.DataGenerator import DataGenerator
+from data.generator import Generator
 
 CFG_IMPORT = './cfg/jira/jira-import.json'
 CFG_LOG_TEST = './cfg/log/test-logging-config.json'
+CFG_DATA_GENERATION  = './cfg/data/jira-data-generation.json'
+CFG_DATA_CLEANUP  = './cfg/data/jira-data-cleanup.json'
+CFG_TEST_ENV = './cfg/test/test-env-params.json'
+CFG_KEY_JIRA_LOGIN = 'jira_login'
+CFG_KEY_JIRA_PSWD = 'jira_pswd'
+
+
+with open(CFG_LOG_TEST) as logging_cfg_file:
+    logging.config.dictConfig(json.load(logging_cfg_file, strict=False))
+with open(CFG_TEST_ENV) as test_env_cfg_file:
+    test_env_cfg = json.load(test_env_cfg_file, strict=False)
 
 CFG_MAPPING = 'mapping'
 CFG_MAPPING_URL = 'url'
@@ -17,14 +28,6 @@ TEST_JIRA_URL = 'http://192.168.254.129:8080'
 CFG_DB = 'db'
 TEST_DB = 'jira-test-data'
 
-cfg_data_gen = {
-    DataGenerator.CFG_JIRA_URL: 'http://192.168.254.129:8080',
-    DataGenerator.CFG_STATIC_ENTITIES_EXPORT: './cfg/test/jira-test-data.json',
-    DataGenerator.CFG_DYNAMIC_ENTITIES_IMPORT: './cfg/test/jira-test-data-ext.json',
-    DataGenerator.CFG_ENTITIES_CLEANUP: './cfg/test/jira-test-data-cleanup.json'
-}
-
-dg = DataGenerator(cfg_data_gen, 'jira', 'jira')
 
 def set_test_env(cfg):
     cfg[CFG_MAPPING][CFG_MAPPING_URL] = TEST_JIRA_URL
@@ -37,13 +40,15 @@ def set_test_project(cfg):
 
 
 def setUpModule():
-    with open(CFG_LOG_TEST) as logging_cfg_file:
-        logging.config.dictConfig(json.load(logging_cfg_file, strict=False))
-    dg.generate()
+    with open(CFG_DATA_GENERATION) as cfg_file:
+        Generator(json.load(cfg_file, strict=False), test_env_cfg[CFG_KEY_JIRA_LOGIN],
+              test_env_cfg[CFG_KEY_JIRA_PSWD], test_env_cfg).perform()
 
 
 def tearDownModule():
-    dg.cleanup()
+    with open(CFG_DATA_CLEANUP) as cfg_file:
+        Generator(json.load(cfg_file, strict=False), test_env_cfg[CFG_KEY_JIRA_LOGIN],
+              test_env_cfg[CFG_KEY_JIRA_PSWD], test_env_cfg).perform()
 
 
 class ImportTestCase(unittest.TestCase):

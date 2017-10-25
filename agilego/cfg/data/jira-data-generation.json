@@ -1,0 +1,21 @@
+{
+	"version": 0.1,
+	"steps": {
+		"jira_users_&_project": {
+			"type": "jira.export",
+			"cfg": "./cfg/data/generation/jira-data-static-entities-export.json"
+		},
+		"jira_agile_board": {
+			"type": "jira.import",
+			"cfg": "./cfg/data/generation/jira-data-dynamic-entities-import.json"
+		},
+		"db_sprint_&_issues": {
+			"type": "db.transformation",
+			"cfg": "ToDo"
+		},
+		"jira_sprint_&_issues": {
+			"type": "jira.export",
+			"cfg": "ToDo"
+		}
+	}
+}

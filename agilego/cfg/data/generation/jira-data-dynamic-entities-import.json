@@ -1,0 +1,15 @@
+{
+	"version": 0.1,
+	"mapping": {
+		"url": "$jira_url",
+		"project": "$scrum_project"
+	},
+	"requests": {
+		"boards": {
+			"cfg": "./cfg/data/generation/jira-data-get-board.json",
+			"type": "list",
+			"dest": "test.board"		
+		}		
+	},
+	"db": "$db_src_data"
+}
