@@ -1,8 +1,11 @@
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.users /o D:\agilego-data\test.users.json
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.project /o D:\agilego-data\test.project.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.sprint /o D:\agilego-data\test.sprint.json
 
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.users /file:D:\agilego-data\test.users.json
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.project /file:D:\agilego-data\test.project.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.sprint /file:D:\agilego-data\test.sprint.json
+
 
 curl -D- \
   -u jira:jira \
@@ -19,13 +22,31 @@ curl -D- \
   --data '{"key": "TEST", "name": "TEST", "projectTypeKey": "software", "projectTemplateKey": "com.pyxis.greenhopper.jira:gh-scrum-template", "lead": "testuser"}' \
   "http://127.0.0.1:8080/rest/api/2/project"
   
-
+curl -D- \
+  -u jira:jira \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"name": "TEST sprint", "startDate": "2017-11-01T00:00:00.000Z" , "endDate": "2017-11-07T00:00:00.000Z" , "originBoardId": 113, "goal": "TEST goal"}' \
+  "http://127.0.0.1:8080/rest/agile/1.0/sprint" 
+  
+ 
 curl -D- \
   -u jira:jira \
   -X GET \
   -H "Content-Type: application/json" \
   "http://127.0.0.1:8080/rest/agile/1.0/board?name=TEST"  
-  
+
+curl -D- \
+  -u jira:jira \
+  -X DELETE \
+  -H "Content-Type: application/json" \
+  "http://127.0.0.1:8080/rest/agile/1.0/sprint/65"    
+
+curl -D- \
+  -u jira:jira \
+  -X DELETE \
+  -H "Content-Type: application/json" \
+  "http://127.0.0.1:8080/rest/agile/1.0/board/113"      
   
 curl -D- \
   -u jira:jira \

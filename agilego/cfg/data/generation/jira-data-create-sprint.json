@@ -1,0 +1,13 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/agile/1.0/sprint",
+		"data": {
+			"name": "$name",
+			"startDate": "$startDate",
+			"endDate": "$endDate",		
+			"originBoardId": "$originBoardId",
+			"goal": "$goal"
+		}
+	}
+}

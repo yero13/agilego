@@ -1,0 +1,24 @@
+{
+	"version": 0.1,
+	"transformation-sets": {
+		"src-transform": {
+			"db": {
+				"src.db": "$db_src_data",
+				"dest.db": "$db_src_data"
+			},
+			"transformations": {
+				"set_sprint_board": {
+					"type": "update_collection",
+					"cfg": {
+						"src.collection": "test.sprint",
+						"dest.collection": "test.sprint",
+						"transformation": {
+								"collection": "test.board",
+								"fields": ["id"]
+						}								
+					}
+				}
+			}
+		}
+	}
+}

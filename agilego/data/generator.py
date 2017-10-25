@@ -6,12 +6,7 @@ from utils.cfg import CfgUtils
 
 
 class Generator():
-    # ToDo: remove
-    CFG_KEY_JIRA_URL = 'cfg_jira_url'
-    CFG_KEY_STATIC_ENTITIES_EXPORT = 'cfg_static_entities'
-    CFG_KEY_DYNAMIC_ENTITIES_IMPORT = 'cfg_dynamic_entities'
-    CFG_KEY_ENTITIES_CLEANUP = 'cfg_entities_cleanup'
-    CFG_KEY_DB_ENTITIES = 'db'
+    # ToDo: transfromation + test.* -> data.*
 
     __CFG_KEY_STEPS = 'steps'
     __CFG_KEY_STEP_TYPE = 'type'
@@ -44,27 +39,3 @@ class Generator():
                     pass
         except Exception as e:
             logging.error(e, exc_info=True)
-
-
-
-    #ToDo: remove
-    def generate(self):
-        try:
-            self.__logger.info('Init JIRA data creation exporter: {}'.format(self.__cfg[Generator.CFG_KEY_STATIC_ENTITIES_EXPORT]))
-            with open(self.__cfg[Generator.CFG_KEY_STATIC_ENTITIES_EXPORT]) as cfg_static_entities_export_file:
-                Exporter(json.load(cfg_static_entities_export_file, strict=False), self.__login, self.__pswd).perform()
-            with open(self.__cfg[Generator.CFG_KEY_DYNAMIC_ENTITIES_IMPORT]) as cfg_data_ext_file:
-                Importer(json.load(cfg_data_ext_file, strict=False), self.__login, self.__pswd).perform()
-        except Exception as e:
-            logging.error(e, exc_info=True)
-
-
-    def cleanup(self):
-        try:
-            self.__logger.info('Init JIRA test data cleanup exporter: {}'.format(self.__cfg[Generator.CFG_KEY_ENTITIES_CLEANUP]))
-            with open(self.__cfg[Generator.CFG_KEY_ENTITIES_CLEANUP]) as cfg_cleanup_entities_export_file:
-                Exporter(json.load(cfg_cleanup_entities_export_file, strict=False), self.__login, self.__pswd).perform()
-        except Exception as e:
-            logging.error(e, exc_info=True)
-
-

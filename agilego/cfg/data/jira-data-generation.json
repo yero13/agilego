@@ -11,7 +11,7 @@
 		},
 		"db_sprint_&_issues": {
 			"type": "db.transformation",
-			"cfg": "ToDo"
+			"cfg": "./cfg/data/generation/jira-data-dynamic-entities-transform.json"
 		},
 		"jira_sprint_&_issues": {
 			"type": "jira.export",
