@@ -3,6 +3,7 @@ import unittest
 import logging.config
 from integration.importer import Importer
 from data.generator import Generator
+from utils.cfg import CfgUtils
 
 CFG_IMPORT = './cfg/jira/jira-import.json'
 CFG_LOG_TEST = './cfg/log/test-logging-config.json'
@@ -17,26 +18,6 @@ with open(CFG_LOG_TEST) as logging_cfg_file:
     logging.config.dictConfig(json.load(logging_cfg_file, strict=False))
 with open(CFG_TEST_ENV) as test_env_cfg_file:
     test_env_cfg = json.load(test_env_cfg_file, strict=False)
-
-CFG_MAPPING = 'mapping'
-CFG_MAPPING_URL = 'url'
-CFG_MAPPING_PROJECT = 'project'
-TEST_PROJECT = 'TEST'
-CFG_MAPPING_SPRINT = 'sprint'
-TEST_SPRINT = '1'
-TEST_JIRA_URL = 'http://192.168.254.129:8080'
-CFG_DB = 'db'
-TEST_DB = 'jira-test-data'
-
-
-def set_test_env(cfg):
-    cfg[CFG_MAPPING][CFG_MAPPING_URL] = TEST_JIRA_URL
-    cfg[CFG_DB] = TEST_DB
-
-
-def set_test_project(cfg):
-    cfg[CFG_MAPPING][CFG_MAPPING_PROJECT] = TEST_PROJECT
-    cfg[CFG_MAPPING][CFG_MAPPING_SPRINT] = TEST_SPRINT
 
 
 def setUpModule():
@@ -57,13 +38,10 @@ class ImportTestCase(unittest.TestCase):
         try:
             logger.info('Init JIRA test data importer: {}'.format(CFG_IMPORT))
             with open(CFG_IMPORT) as cfg_file:
-                cfg = json.load(cfg_file, strict=False)
-            set_test_env(cfg)
-            set_test_project(cfg)
-            Importer(cfg, 'jira', 'jira').perform()
+                cfg = json.loads(CfgUtils.substitute_params(cfg_file.read(), test_env_cfg))
+            Importer(cfg, test_env_cfg[CFG_KEY_JIRA_LOGIN], test_env_cfg[CFG_KEY_JIRA_PSWD]).perform()
         except Exception as e:
             logging.error(e, exc_info=True)
-
 
     def test_import(self):
         logger = logging.getLogger(__name__)

@@ -3,7 +3,7 @@
 	"request": {
 		"url": "$url/rest/api/2/search",
 		"data": {
-			"jql": "sprint in ($sprint)",
+			"jql": "sprint in ('$sprint')",
 			"maxResults": 50,
 			"startAt": 0
 		}

@@ -25,6 +25,9 @@
 				"projectTypeKey": "projectTypeKey",
 				"projectTemplateKey": "projectTemplateKey",
 				"lead": "lead"
+			},
+			"callback.update_src": {
+				"id": "id"
 			}
 		}
 	},

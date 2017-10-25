@@ -172,7 +172,9 @@ class CreateEntityRequest(ExportRequest):
                                 verify=True)
         if not response.ok:
             response.raise_for_status()
-        return json.loads(response.content, strict=False)
+        res = json.loads(response.content, strict=False)
+        self._logger.debug('{} - result of {} on {}'.format(res, request_data, request_url))
+        return res
 
 
 class DeleteEntityRequest(ExportRequest):

@@ -10,6 +10,7 @@ class Exporter(Integrator):
     __CFG_KEY_SRC_COLLECTION = 'src.collection'
     __CFG_KEY_STATIC_MAPPING = 'static_mapping'
     __CFG_KEY_DYNAMIC_MAPPING = 'dynamic_mapping'
+    __CFG_KEY_CALLBACK = 'callback.update_src'
 
     def _process_request(self, request_id, request_type, request_cfg_file):
         with open(request_cfg_file) as cfg_file:
@@ -27,4 +28,7 @@ class Exporter(Integrator):
                 item_mappings.update({mapping_key: json.dumps(item[item_key]) if isinstance(item[item_key], list) else item[item_key]})
             item_mappings.update(self._mappings)
             itemstrcfg = CfgUtils.substitute_params(item_request_cfg, item_mappings)
-            ExportRequest.factory(json.loads(itemstrcfg), self._login, self._pswd, request_type).result
+            res = ExportRequest.factory(json.loads(itemstrcfg), self._login, self._pswd, request_type).result
+            if Exporter.__CFG_KEY_CALLBACK in request_cfg:
+                upd_count = self._db[src_collection].update_one(item, {"$set": res}, upsert=False).modified_count
+                self._logger.debug('{} items updated filter: {}, update {}'.format(upd_count, item_mappings, res))
