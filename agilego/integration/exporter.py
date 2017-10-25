@@ -29,6 +29,6 @@ class Exporter(Integrator):
             item_mappings.update(self._mappings)
             itemstrcfg = CfgUtils.substitute_params(item_request_cfg, item_mappings)
             res = ExportRequest.factory(json.loads(itemstrcfg), self._login, self._pswd, request_type).result
-            if Exporter.__CFG_KEY_CALLBACK in request_cfg:
+            if Exporter.__CFG_KEY_CALLBACK in request_cfg and bool(request_cfg[Exporter.__CFG_KEY_CALLBACK]):
                 upd_count = self._db[src_collection].update_one(item, {"$set": res}, upsert=False).modified_count
                 self._logger.debug('{} items updated filter: {}, update {}'.format(upd_count, item_mappings, res))

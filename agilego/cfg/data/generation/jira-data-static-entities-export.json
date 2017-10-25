@@ -26,9 +26,7 @@
 				"projectTemplateKey": "projectTemplateKey",
 				"lead": "lead"
 			},
-			"callback.update_src": {
-				"id": "id"
-			}
+			"callback.update_src": "True"
 		}
 	},
 	"db": "$db_src_data"
