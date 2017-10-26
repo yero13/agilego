@@ -10,10 +10,10 @@
 				"set_sprint_board": {
 					"type": "update_collection",
 					"cfg": {
-						"src.collection": "test.sprint",
-						"dest.collection": "test.sprint",
+						"src.collection": "data.sprint",
+						"dest.collection": "data.sprint",
 						"transformation": {
-								"collection": "test.board",
+								"collection": "data.board",
 								"fields": ["id"]
 						}								
 					}

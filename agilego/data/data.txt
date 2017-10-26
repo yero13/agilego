@@ -1,10 +1,10 @@
-"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.users /o D:\agilego-data\test.users.json
-"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.project /o D:\agilego-data\test.project.json
-"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.sprint /o D:\agilego-data\test.sprint.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.users /o D:\GitHub\agilego.py\agilego\data\unittest\data.users.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.project /o D:\GitHub\agilego.py\agilego\data\unittest\data.project.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.sprint /o D:\GitHub\agilego.py\agilego\data\unittest\data.sprint.json
 
-"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.users /file:D:\agilego-data\test.users.json
-"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.project /file:D:\agilego-data\test.project.json
-"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c test.sprint /file:D:\agilego-data\test.sprint.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.users /file:D:\GitHub\agilego.py\agilego\data\unittest\data.users.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.project /file:D:\GitHub\agilego.py\agilego\data\unittest\data.project.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.sprint /file:D:\GitHub\agilego.py\agilego\data\unittest\data.sprint.json
 
 
 curl -D- \

@@ -7,7 +7,7 @@
 		"delete_board": {
 			"cfg": "./cfg/data/cleanup/jira-data-delete-board.json",
 			"type": "delete_entity",
-			"src.collection": "test.board",
+			"src.collection": "data.board",
 			"dynamic_mapping": {
 				"id": "id"
 			}
@@ -15,7 +15,7 @@
 		"delete_project": {
 			"cfg": "./cfg/data/cleanup/jira-data-delete-project.json",
 			"type": "delete_entity",
-			"src.collection": "test.project",
+			"src.collection": "data.project",
 			"dynamic_mapping": {
 				"key": "key"
 			}
@@ -23,7 +23,7 @@
 		"delete_users": {
 			"cfg": "./cfg/data/cleanup/jira-data-delete-user.json",
 			"type": "delete_entity",
-			"src.collection": "test.users",
+			"src.collection": "data.users",
 			"dynamic_mapping": {
 				"name": "name"
 			}

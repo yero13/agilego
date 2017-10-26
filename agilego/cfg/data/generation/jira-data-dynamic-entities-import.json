@@ -8,7 +8,7 @@
 		"boards": {
 			"cfg": "./cfg/data/generation/jira-data-get-board.json",
 			"type": "list",
-			"dest": "test.board"		
+			"dest": "data.board"
 		}		
 	},
 	"db": "$db_src_data"

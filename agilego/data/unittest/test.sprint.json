@@ -1,1 +1,0 @@
-{"_id":{"$oid":"59f0f3c67c4da05704a7be6f"},"name":"TEST sprint","startDate":{"$date":"2017-11-01T00:00:00.000Z"},"endDate":{"$date":"2017-11-07T00:00:00.000Z"},"originBoardId":{"$numberLong":"0"},"goal":"TEST goal"}

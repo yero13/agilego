@@ -7,7 +7,7 @@
 		"create_users": {
 			"cfg": "./cfg/data/generation/jira-data-create-user.json",
 			"type": "create_entity",
-			"src.collection": "test.users",
+			"src.collection": "data.users",
 			"dynamic_mapping": {
 				"name": "name",
 				"displayName": "displayName",
@@ -18,7 +18,7 @@
 		"create_project": {
 			"cfg": "./cfg/data/generation/jira-data-create-project.json",
 			"type": "create_entity",
-			"src.collection": "test.project",
+			"src.collection": "data.project",
 			"dynamic_mapping": {
 				"key": "key",
 				"name": "name",
