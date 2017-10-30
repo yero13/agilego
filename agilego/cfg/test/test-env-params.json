@@ -1,5 +1,5 @@
 {
-	"jira_url": "http://192.168.254.131:8080",
+	"jira_url": "http://192.168.254.132:8080",
 	"jira_login": "jira",
 	"jira_pswd": "jira",
 	"scrum_project": "TEST",

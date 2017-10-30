@@ -13,8 +13,8 @@
 						"src.collection": "data.sprint",
 						"dest.collection": "data.sprint",
 						"transformation": {
-								"collection": "data.board",
-								"fields": ["id"]
+								"upd.collection": "data.board",
+								"upd.fields": ["board_id"]
 						}								
 					}
 				}

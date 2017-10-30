@@ -1,6 +1,7 @@
 import logging
 from integration.exporter import Exporter
 from integration.importer import Importer
+from transformation.transformer import Transformer
 import json
 from utils.cfg import CfgUtils
 
@@ -36,6 +37,6 @@ class Generator():
                 elif step_type == Generator.__CFG_STEP_TYPE_IMPORT:
                     Importer(step_cfg, self.__login, self.__pswd).perform()
                 elif step_type == Generator.__CFG_STEP_TYPE_TRANSFORMATION:
-                    pass
+                    Transformer(step_cfg).transform_data()
         except Exception as e:
             logging.error(e, exc_info=True)

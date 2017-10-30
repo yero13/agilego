@@ -16,7 +16,8 @@
 					"fields":{
 						"id": {
 							"key": "id",
-							"type": "string"
+							"type": "string",
+							"ext_id": "board_id"
 						}
 					}
 				}

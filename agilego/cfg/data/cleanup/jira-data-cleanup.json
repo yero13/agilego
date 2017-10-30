@@ -9,7 +9,7 @@
 			"type": "delete_entity",
 			"src.collection": "data.board",
 			"dynamic_mapping": {
-				"id": "id"
+				"board_id": "board_id"
 			}
 		},	
 		"delete_project": {

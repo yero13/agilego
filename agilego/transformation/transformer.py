@@ -57,6 +57,7 @@ class Transformation:
     __TYPE_TRANSPOSE_FROM_ARRAY = 'transpose_from_array'
     __TYPE_TRANSPOSE_TO_ARRAY = 'transpose_to_array'
     __TYPE_LEFT_JOIN = 'left_join'
+    __TYPE_UPDATE_COLLECTION = 'update_collection'
 
     @staticmethod
     def factory(cfg, src_db, dest_db):
@@ -71,6 +72,8 @@ class Transformation:
             return TransposeToArrayTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
         elif tranform_type == Transformation.__TYPE_LEFT_JOIN:
             return LeftJoinTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
+        elif tranform_type == Transformation.__TYPE_UPDATE_COLLECTION:
+            return UpdateTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
         else:
             raise NotImplementedError('Not supported transformation type - {}'.format(tranform_type))
 
@@ -248,5 +251,25 @@ class LeftJoinTransformation(Transformation):
 
     def _save(self):
         res = json.loads(self.__result[self._fields].T.to_json()).values()
+        if len(res) > 0:
+            self._dest_db[self._dest_collection].insert_many(res)
+
+
+class UpdateTransformation(Transformation):
+    __CFG_KEY_UPD_COLLECTION = 'upd.collection'
+    __CFG_KEY_UPD_FIELDS = 'upd.fields'
+
+    def _load(self):
+        self.__dataset = list(self._src_db[self._src_collection].find({}, {'_id': False}))
+        self.__update_data = self._src_db[self._transformation[UpdateTransformation.__CFG_KEY_UPD_COLLECTION]].find_one({}, {'_id': False})
+
+    def _transform(self):
+        self.__df_dataset = pd.DataFrame.from_records(self.__dataset)
+        if len(self.__update_data) > 0 and len(self.__dataset) > 0:
+            for field in self._transformation[UpdateTransformation.__CFG_KEY_UPD_FIELDS]:
+                self.__df_dataset[field] = self.__update_data[field]
+
+    def _save(self):
+        res = json.loads(self.__df_dataset.T.to_json()).values()
         if len(res) > 0:
             self._dest_db[self._dest_collection].insert_many(res)
