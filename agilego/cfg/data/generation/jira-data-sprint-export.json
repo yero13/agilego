@@ -1,0 +1,22 @@
+{
+	"version": 0.1,
+	"mapping": {
+		"url": "$jira_url"
+	},
+	"requests": {
+		"create_sprint": {
+			"cfg": "./cfg/data/generation/jira-data-create-sprint.json",
+			"type": "create_entity",
+			"src.collection": "data.sprint",
+			"dynamic_mapping": {
+				"name": "name",
+				"startDate": "startDate",
+				"endDate": "endDate",		
+				"board_id": "board_id",
+				"goal": "goal"			
+			},
+			"callback.update_src": "True"
+		}
+	},
+	"db": "$db_src_data"
+}

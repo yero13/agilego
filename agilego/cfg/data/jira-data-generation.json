@@ -7,15 +7,19 @@
 		},
 		"jira_agile_board": {
 			"type": "jira.import",
-			"cfg": "./cfg/data/generation/jira-data-dynamic-entities-import.json"
+			"cfg": "./cfg/data/generation/jira-data-board-import.json"
 		},
-		"db_sprint_&_issues": {
+		"db_agile_board": {
 			"type": "db.transformation",
-			"cfg": "./cfg/data/generation/jira-data-dynamic-entities-transform.json"
+			"cfg": "./cfg/data/generation/jira-data-board-transform.json"
 		},
-		"jira_sprint_&_issues": {
+		"jira_sprint": {
 			"type": "jira.export",
-			"cfg": "ToDo"
+			"cfg": "./cfg/data/generation/jira-data-sprint-export.json"
+		},
+		"db_sprint": {
+			"type": "db.transformation",
+			"cfg": "./cfg/data/generation/jira-data-sprint-transform.json"
 		}
 	}
 }

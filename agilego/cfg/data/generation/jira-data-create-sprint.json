@@ -6,7 +6,7 @@
 			"name": "$name",
 			"startDate": "$startDate",
 			"endDate": "$endDate",		
-			"originBoardId": "$originBoardId",
+			"originBoardId": "$board_id",
 			"goal": "$goal"
 		}
 	}

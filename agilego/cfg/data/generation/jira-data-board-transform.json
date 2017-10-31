@@ -14,7 +14,7 @@
 						"dest.collection": "data.sprint",
 						"transformation": {
 								"upd.collection": "data.board",
-								"upd.fields": ["board_id"]
+								"upd.fields": [{"board_id": "board_id"}]
 						}								
 					}
 				}

@@ -1,0 +1,24 @@
+{
+	"version": 0.1,
+	"transformation-sets": {
+		"src-transform": {
+			"db": {
+				"src.db": "$db_src_data",
+				"dest.db": "$db_src_data"
+			},
+			"transformations": {
+				"set_issue_sprint": {
+					"type": "update_collection",
+					"cfg": {
+						"src.collection": "data.issues",
+						"dest.collection": "data.issues",
+						"transformation": {
+								"upd.collection": "data.sprint",
+								"upd.fields": [{"id": "sprint_id"}]
+						}								
+					}
+				}				
+			}
+		}
+	}
+}

@@ -4,6 +4,14 @@
 		"url": "$jira_url"
 	},
 	"requests": {
+		"delete_sprint": {
+			"cfg": "./cfg/data/cleanup/jira-data-delete-sprint.json",
+			"type": "delete_entity",
+			"src.collection": "data.sprint",
+			"dynamic_mapping": {
+				"sprint_id": "id"
+			}
+		},	
 		"delete_board": {
 			"cfg": "./cfg/data/cleanup/jira-data-delete-board.json",
 			"type": "delete_entity",

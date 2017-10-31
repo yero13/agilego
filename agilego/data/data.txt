@@ -1,11 +1,12 @@
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.users /o D:\GitHub\agilego.py\agilego\data\unittest\data.users.json
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.project /o D:\GitHub\agilego.py\agilego\data\unittest\data.project.json
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.sprint /o D:\GitHub\agilego.py\agilego\data\unittest\data.sprint.json
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoexport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.issues /o D:\GitHub\agilego.py\agilego\data\unittest\data.issues.json
 
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.users /file:D:\GitHub\agilego.py\agilego\data\unittest\data.users.json
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.project /file:D:\GitHub\agilego.py\agilego\data\unittest\data.project.json
 "C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.sprint /file:D:\GitHub\agilego.py\agilego\data\unittest\data.sprint.json
-
+"C:\Program Files\MongoDB\Server\3.4\bin\mongoimport" /h 127.0.0.1:27018 /u agilego /p 1 /d jira-test-data /authenticationDatabase:admin /c data.issues /file:D:\GitHub\agilego.py\agilego\data\unittest\data.issues.json
 
 curl -D- \
   -u jira:jira \
@@ -13,7 +14,6 @@ curl -D- \
   -H "Content-Type: application/json" \
   --data '{"name": "testuser", "displayName": "testuser", "password": "1", "emailAddress": "test@test.com"}' \
   "http://127.0.0.1:8080/rest/api/2/user"
-
 
 curl -D- \
   -u jira:jira \
@@ -28,8 +28,14 @@ curl -D- \
   -H "Content-Type: application/json" \
   --data '{"name": "TEST sprint", "startDate": "2017-11-01T00:00:00.000Z" , "endDate": "2017-11-07T00:00:00.000Z" , "originBoardId": 113, "goal": "TEST goal"}' \
   "http://127.0.0.1:8080/rest/agile/1.0/sprint" 
+
+curl -D- \
+  -u jira:jira \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"fields": {"project": {"key": "TEST"}, "summary": "TEST  issue", "description": "Test issue", "issuetype": {"name": "Story"}}}' \
+  "http://127.0.0.1:8080/rest/api/2/issue"
   
- 
 curl -D- \
   -u jira:jira \
   -X GET \
@@ -54,7 +60,6 @@ curl -D- \
   -H "Content-Type: application/json" \
   "http://127.0.0.1:8080/rest/api/2/project/TEST"
   
-
 curl -D- \
   -u jira:jira \
   -X DELETE \
