@@ -20,6 +20,10 @@
 		"db_sprint": {
 			"type": "db.transformation",
 			"cfg": "./cfg/data/generation/jira-data-sprint-transform.json"
-		}
+		},
+		"jira_issues": {
+			"type": "jira.export",
+			"cfg": "./cfg/data/generation/jira-data-issues-export.json"
+		}		
 	}
 }

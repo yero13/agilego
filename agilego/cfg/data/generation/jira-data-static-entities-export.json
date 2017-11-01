@@ -27,19 +27,7 @@
 				"lead": "lead"
 			},
 			"callback.update_src": "True"
-		},
-		"create_issues": {
-			"cfg": "./cfg/data/generation/jira-data-create-issue.json",
-			"type": "create_entity",
-			"src.collection": "data.issues",
-			"dynamic_mapping": {
-				"project": "project",
-				"summary": "summary",
-				"description": "description",
-				"type": "type"
-			},
-			"callback.update_src": "True"
-		}		
+		}
 	},
 	"db": "$db_src_data"
 }

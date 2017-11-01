@@ -35,6 +35,13 @@ curl -D- \
   -H "Content-Type: application/json" \
   --data '{"fields": {"project": {"key": "TEST"}, "summary": "TEST  issue", "description": "Test issue", "issuetype": {"name": "Story"}}}' \
   "http://127.0.0.1:8080/rest/api/2/issue"
+
+curl -D- \
+  -u jira:jira \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"issues": ["TEST-1"]}'
+  "http://127.0.0.1:8080/rest/agile/1.0/sprint/99/issue"  
   
 curl -D- \
   -u jira:jira \

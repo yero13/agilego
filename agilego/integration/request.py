@@ -134,15 +134,18 @@ class ExportRequest(Request):
     TYPE_SET_FIELD_VALUE = 'set_field_value'
     TYPE_CREATE_ENTITY = 'create_entity'
     TYPE_DELETE_ENTITY = 'delete_entity'
+    TYPE_CREATE_RELATION = 'create_relation'
 
     @staticmethod
     def factory(cfg, login, pswd, request_type, mappings=None):
         if request_type == ExportRequest.TYPE_SET_FIELD_VALUE:
             return SetFieldValueRequest(cfg, login, pswd)
         elif request_type == ExportRequest.TYPE_CREATE_ENTITY:
-            return  CreateEntityRequest(cfg, login, pswd)
+            return CreateEntityRequest(cfg, login, pswd)
         elif request_type == ExportRequest.TYPE_DELETE_ENTITY:
-            return  DeleteEntityRequest(cfg, login, pswd)
+            return DeleteEntityRequest(cfg, login, pswd)
+        elif request_type == ExportRequest.TYPE_CREATE_RELATION:
+            return CreateRelationRequest(cfg, login, pswd)
         else:
             raise NotImplementedError('Not supported request type - {}'.format(request_type))
 
@@ -164,7 +167,7 @@ class CreateEntityRequest(ExportRequest):
         request_url = self._request_cfg[Request._CFG_KEY_REQUEST_URL]
         request_data = self._request_cfg[
             Request._CFG_KEY_REQUEST_DATA] if Request._CFG_KEY_REQUEST_DATA in self._request_cfg else None
-        self._logger.info('create {} on {}'.format(request_data, request_url))
+        self._logger.info('create entity {} on {}'.format(request_data, request_url))
         response = requests.post(request_url,
                                 json.dumps(request_data),
                                 headers={"Content-Type": "application/json"},
@@ -172,9 +175,22 @@ class CreateEntityRequest(ExportRequest):
                                 verify=True)
         if not response.ok:
             response.raise_for_status()
-        res = json.loads(response.content, strict=False)
-        self._logger.debug('{} - result of {} on {}'.format(res, request_data, request_url))
-        return res
+        return json.loads(response.content, strict=False)
+
+
+class CreateRelationRequest(ExportRequest):
+    def _perform_request(self):
+        request_url = self._request_cfg[Request._CFG_KEY_REQUEST_URL]
+        request_data = self._request_cfg[
+            Request._CFG_KEY_REQUEST_DATA] if Request._CFG_KEY_REQUEST_DATA in self._request_cfg else None
+        self._logger.info('create relation {} on {}'.format(request_data, request_url))
+        response = requests.post(request_url,
+                                json.dumps(request_data),
+                                headers={"Content-Type": "application/json"},
+                                auth=HTTPBasicAuth(self._login, self._pswd),
+                                verify=True)
+        if not response.ok:
+            response.raise_for_status()
 
 
 class DeleteEntityRequest(ExportRequest):

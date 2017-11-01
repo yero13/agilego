@@ -1,1 +1,2 @@
-{"_id":{"$oid":"59f88da38b08ad036843fb2f"},"summary":"TEST issue","description":"TEST issue","type":"Story","project":"TEST"}
+{"summary":"TEST1 issue","description":"TEST1 issue","type":"Story","project":"TEST"}
+{"summary":"TEST2 issue","description":"TEST2 issue","type":"Story","project":"TEST"}

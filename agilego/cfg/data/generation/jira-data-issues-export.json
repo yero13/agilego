@@ -1,0 +1,30 @@
+{
+	"version": 0.1,
+	"mapping": {
+		"url": "$jira_url"
+	},
+	"requests": {
+		"create_issue": {
+			"cfg": "./cfg/data/generation/jira-data-create-issue.json",
+			"type": "create_entity",
+			"src.collection": "data.issues",
+			"dynamic_mapping": {
+				"project": "project",
+				"summary": "summary",
+				"description": "description",		
+				"type": "type"			
+			},
+			"callback.update_src": "True"
+		},
+		"move_to_sprint": {
+			"cfg": "./cfg/data/generation/jira-data-set-issue-sprint.json",
+			"type": "create_relation",
+			"src.collection": "data.issues",
+			"dynamic_mapping": {
+				"sprint_id": "sprint_id",
+				"key": "key"			
+			}
+		}
+	},
+	"db": "$db_src_data"
+}
