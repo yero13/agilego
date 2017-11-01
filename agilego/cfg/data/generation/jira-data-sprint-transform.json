@@ -17,7 +17,18 @@
 								"upd.fields": [{"id": "sprint_id"}]
 						}								
 					}
-				}		
+				},
+				"set_env_sprint": {
+					"type": "update_collection",
+					"cfg": {
+						"src.collection": "env.params",
+						"dest.collection": "env.params",
+						"transformation": {
+								"upd.collection": "data.sprint",
+								"upd.fields": [{"id": "scrum_sprint"}]
+						}
+					}
+				}
 			}
 		}
 	}
