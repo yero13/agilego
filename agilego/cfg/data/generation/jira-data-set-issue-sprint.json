@@ -1,0 +1,9 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/agile/1.0/sprint/$sprint_id/issue",
+		"data": {
+			"issues": ["$key"]
+		}
+	}
+}
