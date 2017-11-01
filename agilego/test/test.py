@@ -51,7 +51,7 @@ class ImportTestCase(unittest.TestCase):
         logger = logging.getLogger(__name__)
         self.__test_env_cfg = get_env_params()
         try:
-            logger.info('Init JIRA test data importer: {}'.format(CFG_IMPORT))
+            logger.info('Init JIRA test data importer: {}'.format(ImportTestCase.__CFG_IMPORT))
             with open(ImportTestCase.__CFG_IMPORT) as cfg_file:
                 cfg = json.loads(CfgUtils.substitute_params(cfg_file.read(), self.__test_env_cfg))
             Importer(cfg, self.__test_env_cfg[CFG_KEY_JIRA_LOGIN], self.__test_env_cfg[CFG_KEY_JIRA_PSWD]).perform()

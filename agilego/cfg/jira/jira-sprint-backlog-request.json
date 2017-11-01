@@ -125,7 +125,7 @@
 									"ext_id": "estimate"
 								},
 								"AGILEGO_Tech": {
-									"key": "customfield_10101",
+									"key": "$field_agilego_tech",
 									"type": "array",
 									"ext_id": "assignments"
 								},

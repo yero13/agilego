@@ -3,7 +3,8 @@
 	"mapping": {
 		"url": "$jira_url",
 		"project": "$scrum_project",
-		"sprint": "$scrum_sprint"
+		"sprint": "$scrum_sprint",
+		"field_agilego_tech": "$field_agilego_tech" 
 	},
 	"requests": {
 		"components": {
