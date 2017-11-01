@@ -2,8 +2,8 @@
 	"transformation-sets": {
 		"raw-transform": {
 			"db": {
-				"src.db": "scrum-api",
-				"dest.db": "jira-export"
+				"src.db": "$db_scrum_api",
+				"dest.db": "$db_jira_export"
 			},
 			"transformations": {
 				"sprint-assignments": {
@@ -31,8 +31,8 @@
 		},
 		"integration-transform": {
 			"db": {
-				"src.db": "jira-export",
-				"dest.db": "jira-export"
+				"src.db": "$db_jira_export",
+				"dest.db": "$db_jira_export"
 			},
 			"transformations": {
 				"sprint-assignment-search-transpose": {

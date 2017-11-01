@@ -3,8 +3,8 @@
 	"transformation-sets": {
 		"src-transform": {
 			"db": {
-				"src.db": "jira-import",
-				"dest.db": "scrum-transform"
+				"src.db": "$db_jira_import",
+				"dest.db": "$db_scrum_transform"
 			},
 			"transformations": {
 				"components": {
@@ -59,8 +59,8 @@
 		},
 		"int-transform": {
 			"db": {
-				"src.db": "scrum-transform",
-				"dest.db": "scrum-transform"
+				"src.db": "$db_scrum_transform",
+				"dest.db": "$db_scrum_transform"
 			},
 			"transformations": {
 				"components": {
@@ -97,8 +97,8 @@
 		},
 		"dest-transform": {
 			"db": {
-				"src.db": "scrum-transform",
-				"dest.db": "scrum-api"
+				"src.db": "$db_scrum_transform",
+				"dest.db": "$db_scrum_api"
 			},
 			"transformations": {
 				"components": {
