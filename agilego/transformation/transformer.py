@@ -120,6 +120,8 @@ class SingleObjectTransformation(Transformation):
         self.__object = self._src_db[self._src_collection].find_one({}, {'_id': False})
 
     def _save(self):
+        if not self.__object:
+            return
         if self._fields:
             obj = Transformation._filter_fields(self.__object, self._fields)
         else:
@@ -128,7 +130,7 @@ class SingleObjectTransformation(Transformation):
 
     def _transform(self):
         for transformation in self._transformation:
-            obj = self.__object # for access from exec
+            obj = self.__object # for access from exec # ToDo: check if notnull validation is required
             exec(self._transformation[transformation])  # ToDo: change to compile/eval (need to add key as target in cfg)
 
 
@@ -146,6 +148,8 @@ class DatasetTransformation(Transformation):
         self.__dataset = list(self._src_db[self._src_collection].find({}, {'_id': False}))
 
     def _transform(self):
+        if len(self.__dataset) == 0:
+            return
         self.__df_dataset = pd.DataFrame.from_records(self.__dataset)
         self.__regex = re.compile(self._transformation[DatasetTransformation.__CFG_KEY_REGEX][
                                       DatasetTransformation.__CFG_KEY_REGEX_PATTERN]) if DatasetTransformation.__CFG_KEY_REGEX in self._transformation else None

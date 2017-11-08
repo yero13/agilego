@@ -1,28 +1,37 @@
-import json
-
-from bson.json_util import dumps
+#import json
+from services.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group
+#from db.connect import MongoDb
+#from db.accessor import DataAccessor
+from flask_restful import Api #, Resource
+#from bson.json_util import dumps
 from flask import Flask
-from flask import Response
-from flask import request
+#from flask import Response
+#from flask import request
 from flask_cors import CORS
+from services.constants import RestConstants
 
-from agilego.db.connect import MongoDb
-from agilego.services.constants import ApiConstants
+
+#from agilego.db.connect import MongoDb
+#from agilego.services.constants import ApiConstants
 
 app = Flask(__name__)
+api = Api(app)
 CORS(app)
 # cache = Cache(app)
-db = MongoDb(ApiConstants.CFG_DB_SCRUM_API).connection
+#db = MongoDb(ApiConstants.CFG_DB_SCRUM_API).connection
+#extractor = DataAccessor(MongoDb(ApiConstants.CFG_DB_SCRUM_API).connection)
 
 
-@app.route('/sprint-backlog', methods=['GET'])
-# @cache.cached(timeout=60)
-def get_backlog():
-    return Response(response=dumps(db[ApiConstants.SCRUM_SPRINT_BACKLOG].find({}, {'_id': False})),
-                    status=200,
-                    mimetype="application/json")
+api.add_resource(Sprint, RestConstants.ROUTE_SPRINT)
+api.add_resource(Backlog, RestConstants.ROUTE_SPRINT_BACKLOG)
+api.add_resource(SprintTimeline, RestConstants.ROUTE_SPRINT_TIMELINE)
+api.add_resource(ComponentList, RestConstants.ROUTE_COMPONENTS)
+api.add_resource(GroupList, RestConstants.ROUTE_TEAM)
+api.add_resource(EmployeeList, RestConstants.ROUTE_EMPLOYEES)
+api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group_id>'.format(RestConstants.ROUTE_GROUP))
 
 
+'''
 @app.route('/backlog-details', methods=['GET'])
 # @cache.cached(timeout=60)
 def get_backlog_item_details():
@@ -53,49 +62,17 @@ def get_subtask_details():
             db[ApiConstants.SCRUM_SUBTASKS_DETAILS].find_one({ApiConstants.PARAM_ITEM_KEY: issue_key}, {'_id': False})),
         status=200,
         mimetype="application/json")
+'''
 
 
-@app.route('/sprint', methods=['GET'])
-# @cache.cached(timeout=60)
-def get_sprint():
-    return Response(response=dumps(db[ApiConstants.SCRUM_SPRINT].find_one({}, {'_id': False})),
-                    status=200,
-                    mimetype="application/json")
+'''
 
 
-@app.route('/sprint-timeline', methods=['GET'])
-# @cache.cached(timeout=60)
-def get_sprint_timeline():
-    found = db[ApiConstants.SCRUM_SPRINT_TIMELINE].find_one({}, {'_id': False})
-    print(found)
-    return Response(response=dumps(found[ApiConstants.PARAM_TIMELINE] if ApiConstants.PARAM_TIMELINE in found else []),
-                    status=200,
-                    mimetype="application/json")
 
 
-@app.route('/team', methods=['GET'])
-# @cache.cached(timeout=60)
-def get_team():
-    return Response(response=dumps(db[ApiConstants.PROJECT_TEAM].find({}, {'_id': False})),
-                    status=200,
-                    mimetype="application/json")
 
 
-@app.route('/employees', methods=['GET'])
-# @cache.cached(timeout=60)
-def get_employees():
-    return Response(response=dumps(db[ApiConstants.PROJECT_EMPLOYEES].find({}, {'_id': False})),
-                    status=200,
-                    mimetype="application/json")
 
-
-@app.route('/components', methods=['GET'])
-# @cache.cached(timeout=60)
-def get_components():
-    found = db[ApiConstants.PROJECT_COMPONENTS].find_one({}, {'_id': False})
-    return Response(response=dumps(found[ApiConstants.PARAM_COMPONENT] if ApiConstants.PARAM_COMPONENT in found else []),
-                    status=200,
-                    mimetype="application/json")
 
 
 @app.route('/assignments', methods=['GET'])
@@ -163,3 +140,4 @@ def update_group():
                                                    {"$set": group}, upsert=True)).upserted_id}),
         status=204,
         mimetype="application/json")
+'''

@@ -1,5 +1,5 @@
-class ApiConstants:
-    CFG_DB_SCRUM_API = 'scrum-api'
+class DbConstants:
+    CFG_DB_SCRUM_API = 'db_scrum_api'
     SCRUM_SPRINT = 'sprint.definition'
     SCRUM_SPRINT_TIMELINE = 'sprint.timeline'
     SCRUM_SPRINT_BACKLOG = 'sprint.backlog'
@@ -11,6 +11,18 @@ class ApiConstants:
     PROJECT_EMPLOYEES = 'project.employees'
     PROJECT_COMPONENTS = 'project.components'
 
+
+class RestConstants:
+    ROUTE_SPRINT = '/sprint'
+    ROUTE_SPRINT_BACKLOG = '/sprint-backlog'
+    ROUTE_SPRINT_TIMELINE = '/sprint-timeline'
+    ROUTE_COMPONENTS = '/components'
+    ROUTE_TEAM = '/team'
+    ROUTE_EMPLOYEES = '/employees'
+    ROUTE_GROUP = '/group'
+
+
+class ParamConstants:
     PARAM_ITEM_KEY = 'key'
     PARAM_ITEM_PARENT = 'parent'
     PARAM_DATE = 'date'
