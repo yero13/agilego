@@ -20,6 +20,11 @@ class RestConstants:
     ROUTE_TEAM = '/team'
     ROUTE_EMPLOYEES = '/employees'
     ROUTE_GROUP = '/group'
+    ROUTE_ASSIGNMENTS = '/assignments'
+    ROUTE_TASK = '/task'
+    ROUTE_SUBTASKS = '/subtasks'
+    ROUTE_ASSIGNMENT = '/assignment'
+    ROUTE_SUBTASK = '/subtask'
 
 
 class ParamConstants:

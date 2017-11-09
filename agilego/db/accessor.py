@@ -15,10 +15,18 @@ class DataAccessor:
         self.__logger = logging.getLogger(__class__.__name__)
 
     def __get_single(self, collection, where_params=None):
-        return self.__db[collection].find_one(where_params if where_params else {}, {'_id': False})
+        res = self.__db[collection].find_one(where_params if where_params else {})
+        if res:
+            res['id'] = str(res['_id'])
+            res.pop('_id', None)
+        return res
 
     def __get_multi(self, collection, where_params=None):
-        return list(self.__db[collection].find(where_params if where_params else {}, {'_id': False}))
+        res = list(self.__db[collection].find(where_params if where_params else {}))
+        for item in res:
+            item['id'] = str(item['_id'])
+            item.pop('_id', None)
+        return res
 
     def get(self, cfg):
         collection = cfg[DataAccessor.CFG_KEY_COLLECTION]
