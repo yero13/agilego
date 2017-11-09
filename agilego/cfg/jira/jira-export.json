@@ -1,7 +1,7 @@
 {
 	"version": 0.1,
 	"mapping": {
-		"url": "http://192.168.254.128:8080"
+		"url": "$jira_url"
 	},
 	"requests": {
 		"set_search_label": {
@@ -9,7 +9,7 @@
 			"type": "set_field_value",
 			"src.collection": "sprint.assignments_search_labels",
 			"static_mapping": {
-				"field": "customfield_10100"
+				"field": "$field_agilego_search"
 			},
 			"dynamic_mapping": {
 				"key": "key",
@@ -21,7 +21,7 @@
 			"type": "set_field_value",
 			"src.collection": "sprint.assignments_tech",
 			"static_mapping": {
-				"field": "customfield_10101"
+				"field": "$field_agilego_tech"
 			},
 			"dynamic_mapping": {
 				"key": "key",
@@ -29,5 +29,5 @@
 			}
 		}		
 	},
-	"db": "jira-export"
+	"db": "$db_jira_export"
 }

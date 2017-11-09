@@ -13,7 +13,7 @@
 						"dest.collection": "sprint.assignments_raw",
 						"transformation": {
 							"transform_values": {
-								"assignment2tech": "row.update({'tech': '{}_{}_{}_{}_{}_{}_{}'.format(row['key'], row['parent'] if row['parent'] else '', row['date'], row['group'], row['employee'], row['whrs'], '' if row['comment'] != row['comment'] else row['comment'])})",
+								"assignment2tech": "row.update({'tech': '{}_{}_{}_{}_{}_{}_{}'.format(row['key'], row['parent'] if row['parent'] else '', row['date'], row['group'], row['employee'], row['whrs'], row['comment'] if row['comment'] else '')})",
 								"assignment2label": "row.update({'label': '{}_{}'.format(row['group'], row['date'])})"
 							}
 						},
