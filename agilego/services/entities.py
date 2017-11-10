@@ -50,12 +50,17 @@ class EmployeeList(Resource):
 
 
 class Group(Resource):
-    # ToDo: remove assignments
-    def delete(self, group_id):
-        return ApiDataAccessor.get_instance().delete({DataAccessor.CFG_KEY_COLLECTION: DbConstants.PROJECT_TEAM,
-                                                      DataAccessor.CFG_KEY_TYPE: DataAccessor.CFG_TYPE_SINGLE,
-                                                      DataAccessor.CFG_KEY_WHERE_PARAMS: {
-                                                          ParamConstants.PARAM_GROUP: group_id}}), 204
+    def delete(self, group):
+        # ToDo: move dependencies cleanup to separated class
+        accessor = ApiDataAccessor.get_instance()
+        accessor.delete({DataAccessor.CFG_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+                         DataAccessor.CFG_KEY_TYPE: DataAccessor.CFG_TYPE_MULTI,
+                         DataAccessor.CFG_KEY_WHERE_PARAMS: {
+                             ParamConstants.PARAM_GROUP: group}})
+        return accessor.delete({DataAccessor.CFG_KEY_COLLECTION: DbConstants.PROJECT_TEAM,
+                                DataAccessor.CFG_KEY_TYPE: DataAccessor.CFG_TYPE_SINGLE,
+                                DataAccessor.CFG_KEY_WHERE_PARAMS: {
+                                                          ParamConstants.PARAM_GROUP: group}}), 204
 
     # ToDo: implement diff -u group_to_update vs existing group and trigger corresponding changes
     # ToDo: remove assignments if delete employee
@@ -74,27 +79,27 @@ class AssignmentList(Resource):
 
 
 class SubtaskList(Resource):
-    def get(self, parent_id):
+    def get(self, task_key):
         return ApiDataAccessor.get_instance().get({DataAccessor.CFG_KEY_COLLECTION: DbConstants.SCRUM_SUBTASKS,
                                                    DataAccessor.CFG_KEY_TYPE: DataAccessor.CFG_TYPE_MULTI,
                                                    DataAccessor.CFG_KEY_WHERE_PARAMS: {
-                                                       ParamConstants.PARAM_ITEM_PARENT: parent_id}})
+                                                       ParamConstants.PARAM_ITEM_PARENT: task_key}})
 
 
 class TaskDetails(Resource):
-    def get(self, task_id):
+    def get(self, task_key):
         return ApiDataAccessor.get_instance().get({DataAccessor.CFG_KEY_COLLECTION: DbConstants.SCRUM_BACKLOG_DETAILS,
                                                    DataAccessor.CFG_KEY_TYPE: DataAccessor.CFG_TYPE_SINGLE,
                                                    DataAccessor.CFG_KEY_WHERE_PARAMS: {
-                                                       ParamConstants.PARAM_ITEM_KEY: task_id}})
+                                                       ParamConstants.PARAM_ITEM_KEY: task_key}})
 
 
 class SubtaskDetails(Resource):
-    def get(self, subtask_id):
+    def get(self, subtask_key):
         return ApiDataAccessor.get_instance().get({DataAccessor.CFG_KEY_COLLECTION: DbConstants.SCRUM_SUBTASKS_DETAILS,
                                                    DataAccessor.CFG_KEY_TYPE: DataAccessor.CFG_TYPE_SINGLE,
                                                    DataAccessor.CFG_KEY_WHERE_PARAMS: {
-                                                       ParamConstants.PARAM_ITEM_KEY: subtask_id}})
+                                                       ParamConstants.PARAM_ITEM_KEY: subtask_key}})
 
 # ToDo: group/assignments services should be reviewed as they should trigger validations and KPIs (velocity, etc) review
 

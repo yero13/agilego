@@ -14,17 +14,17 @@ class DbConstants:
 
 class RestConstants:
     ROUTE_SPRINT = '/sprint'
-    ROUTE_SPRINT_BACKLOG = '/sprint-backlog'
-    ROUTE_SPRINT_TIMELINE = '/sprint-timeline'
+    ROUTE_SPRINT_TIMELINE = '{}/timeline'.format(ROUTE_SPRINT)
+    ROUTE_BACKLOG = '/backlog'
+    ROUTE_TASK = '/task'
+    ROUTE_SUBTASKS = '/subtasks'
+    ROUTE_SUBTASK = '/subtask'
+    ROUTE_ASSIGNMENT = '/assignment'
     ROUTE_COMPONENTS = '/components'
     ROUTE_TEAM = '/team'
     ROUTE_EMPLOYEES = '/employees'
     ROUTE_GROUP = '/group'
     ROUTE_ASSIGNMENTS = '/assignments'
-    ROUTE_TASK = '/task'
-    ROUTE_SUBTASKS = '/subtasks'
-    ROUTE_ASSIGNMENT = '/assignment'
-    ROUTE_SUBTASK = '/subtask'
 
 
 class ParamConstants:

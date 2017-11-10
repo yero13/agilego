@@ -117,24 +117,25 @@ class ApiTestCase(unittest.TestCase):
     __TEST_DATA_ISSUE = b'TEST-1'
     __TEST_DATA_EMPLOYEE = b'testuser'
 
-
     def setUp(self):
         self.__test_env_cfg = get_env_params()
         self.__app = flask.Flask(__name__)
         api = Api(self.__app)
         api.add_resource(Sprint, RestConstants.ROUTE_SPRINT)
         api.add_resource(SprintTimeline, RestConstants.ROUTE_SPRINT_TIMELINE)
-        api.add_resource(Backlog, RestConstants.ROUTE_SPRINT_BACKLOG)
+        api.add_resource(Backlog, RestConstants.ROUTE_BACKLOG)
         api.add_resource(ComponentList, RestConstants.ROUTE_COMPONENTS)
         api.add_resource(GroupList, RestConstants.ROUTE_TEAM)
         api.add_resource(EmployeeList, RestConstants.ROUTE_EMPLOYEES)
         # ToDo: add coverage
-        api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<string:group_id>'.format(RestConstants.ROUTE_GROUP))
+        api.add_resource(TaskDetails, '{}/<task_key>'.format(RestConstants.ROUTE_TASK))
+        api.add_resource(SubtaskList, '{}/<task_key>{}'.format(RestConstants.ROUTE_TASK, RestConstants.ROUTE_SUBTASKS))
+        api.add_resource(SubtaskDetails, '{}/<subtask_key>'.format(RestConstants.ROUTE_SUBTASK))
+        api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group>'.format(RestConstants.ROUTE_GROUP))
         api.add_resource(AssignmentList, RestConstants.ROUTE_ASSIGNMENTS)
-        api.add_resource(SubtaskList, '{}/<string:task_id>/{}'.format(RestConstants.ROUTE_TASK, RestConstants.ROUTE_SUBTASKS))
-        api.add_resource(TaskDetails, '{}/<task_id>'.format(RestConstants.ROUTE_TASK))
-        api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT, '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT))
-        api.add_resource(SubtaskDetails, '{}/<subtask_id>'.format(RestConstants.ROUTE_SUBTASK))
+        api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT,
+                         '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT),
+                         '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT))
 
     def test_api_sprint(self):
         result = self.__app.test_client().get(RestConstants.ROUTE_SPRINT)
@@ -159,7 +160,7 @@ class ApiTestCase(unittest.TestCase):
         self.assertIn(ApiTestCase.__TEST_DATA_EMPLOYEE, result.get_data())
 
     def test_api_backlog(self):
-        result = self.__app.test_client().get(RestConstants.ROUTE_SPRINT_BACKLOG)
+        result = self.__app.test_client().get(RestConstants.ROUTE_BACKLOG)
         self.assertEqual(result.status_code, 200)
         self.assertIn(ApiTestCase.__TEST_DATA_ISSUE, result.get_data())
 
