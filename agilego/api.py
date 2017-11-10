@@ -4,8 +4,15 @@ from flask_restful import Api
 from flask import Flask
 from flask_cors import CORS
 from services.constants import RestConstants
+import json
+import logging.config
+
+CFG_LOG_API = './cfg/log/api-logging-config.json'
 
 app = Flask(__name__)
+with open(CFG_LOG_API) as log_cfg_file:
+    logging.config.dictConfig(json.load(log_cfg_file, strict=False))
+
 api = Api(app)
 CORS(app)
 
@@ -19,6 +26,6 @@ api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group_id>'.format(RestCo
 api.add_resource(AssignmentList, RestConstants.ROUTE_ASSIGNMENTS)
 api.add_resource(SubtaskList, '{}/<parent_id>{}'.format(RestConstants.ROUTE_TASK, RestConstants.ROUTE_SUBTASKS))
 api.add_resource(TaskDetails, '{}/<task_id>'.format(RestConstants.ROUTE_TASK))
-api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT, '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT))
+api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT, '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT), RestConstants.ROUTE_ASSIGNMENT, '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT))
 api.add_resource(SubtaskDetails, '{}/<subtask_id>'.format(RestConstants.ROUTE_SUBTASK))
 

@@ -98,18 +98,15 @@ class SubtaskDetails(Resource):
 
 # ToDo: group/assignments services should be reviewed as they should trigger validations and KPIs (velocity, etc) review
 
-
 class Assignment(Resource):
-    '''
-
-    @app.route('/assignment', methods=['GET'])
-    # @cache.cached(timeout=60)
-    def get_assignment():
-        return Response(
-            response=dumps(db[ApiConstants.SCRUM_ASSIGNMENTS].find_one(request.args, {'_id': False})),
-            status=200,
-            mimetype="application/json")
-    '''
+    def get(self, key, date, group, employee):
+        return ApiDataAccessor.get_instance().get({DataAccessor.CFG_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+                                                   DataAccessor.CFG_KEY_TYPE: DataAccessor.CFG_TYPE_SINGLE,
+                                                   DataAccessor.CFG_KEY_WHERE_PARAMS: {
+                                                       ParamConstants.PARAM_ITEM_KEY: key,
+                                                       ParamConstants.PARAM_DATE: date,
+                                                       ParamConstants.PARAM_GROUP: group,
+                                                       ParamConstants.PARAM_EMPLOYEE: employee}})
 
     def post(self):
         assignment_details = request.get_json()
