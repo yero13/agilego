@@ -35,3 +35,4 @@ class ParamConstants:
     PARAM_EMPLOYEE = 'employee'
     PARAM_COMPONENT = 'component'
     PARAM_TIMELINE = 'timeline'
+    PARAM_WHRS = 'whrs'
