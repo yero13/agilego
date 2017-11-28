@@ -8,8 +8,8 @@ from transformation.transformer import Transformer
 from data.generator import Generator
 from db.connect import MongoDb
 from utils.cfg import CfgUtils
-from services.constants import DbConstants, RestConstants
-from services.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
+from service.constants import DbConstants, RestConstants
+from service.entity import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
     AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails
 from utils.env import get_env_params
 import utils.env

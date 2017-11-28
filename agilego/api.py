@@ -1,9 +1,9 @@
-from services.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
+from service.entity import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
     AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails
 from flask_restful import Api
 from flask import Flask
 from flask_cors import CORS
-from services.constants import RestConstants
+from service.constants import RestConstants
 import json
 import logging.config
 

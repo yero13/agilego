@@ -1,14 +1,19 @@
 from db.connect import MongoDb
 import logging
+from utils.env import get_env_params
 
 
-class DataAccessor:
-    CFG_KEY_TYPE = 'type'
-    CFG_TYPE_SINGLE = 'single'
-    CFG_TYPE_MULTI = 'multi'
-    CFG_KEY_COLLECTION = 'collection'
-    CFG_KEY_MATCH_PARAMS = 'where'
-    CFG_KEY_OBJECT = 'object'
+class Accessor:
+    PARAM_KEY_TYPE = 'type'
+    PARAM_TYPE_SINGLE = 'single'
+    PARAM_TYPE_MULTI = 'multi'
+    PARAM_KEY_COLLECTION = 'collection'
+    PARAM_KEY_MATCH_PARAMS = 'match'
+    PARAM_KEY_OBJECT = 'object'
+
+    @staticmethod
+    def factory(db):
+        return Accessor(get_env_params()[db])
 
     def __init__(self, db):
         self._db = MongoDb(db).connection
@@ -29,12 +34,13 @@ class DataAccessor:
         return res
 
     def get(self, cfg):
-        collection = cfg[DataAccessor.CFG_KEY_COLLECTION]
-        match_params = cfg[DataAccessor.CFG_KEY_MATCH_PARAMS] if DataAccessor.CFG_KEY_MATCH_PARAMS in cfg else None
+        collection = cfg[Accessor.PARAM_KEY_COLLECTION]
+        match_params = cfg[Accessor.PARAM_KEY_MATCH_PARAMS] if Accessor.PARAM_KEY_MATCH_PARAMS in cfg else None
 
-        if cfg[DataAccessor.CFG_KEY_TYPE] == DataAccessor.CFG_TYPE_SINGLE:
+        target_type = cfg[Accessor.PARAM_KEY_TYPE] if Accessor.PARAM_KEY_TYPE in cfg else Accessor.PARAM_TYPE_MULTI
+        if target_type == Accessor.PARAM_TYPE_SINGLE:
             return self.__get_single(collection, match_params)
-        elif cfg[DataAccessor.CFG_KEY_TYPE] == DataAccessor.CFG_TYPE_MULTI:
+        elif target_type == Accessor.PARAM_TYPE_MULTI:
             return self.__get_multi(collection, match_params)
 
     def __delete_single(self, collection, match_params=None):
@@ -44,12 +50,13 @@ class DataAccessor:
         return self._db[collection].delete_many(match_params).deleted_count
 
     def delete(self, cfg):
-        collection = cfg[DataAccessor.CFG_KEY_COLLECTION]
-        match_params = cfg[DataAccessor.CFG_KEY_MATCH_PARAMS] if DataAccessor.CFG_KEY_MATCH_PARAMS in cfg else {}
+        collection = cfg[Accessor.PARAM_KEY_COLLECTION]
+        match_params = cfg[Accessor.PARAM_KEY_MATCH_PARAMS] if Accessor.PARAM_KEY_MATCH_PARAMS in cfg else {}
 
-        if cfg[DataAccessor.CFG_KEY_TYPE] == DataAccessor.CFG_TYPE_SINGLE:
+        target_type = cfg[Accessor.PARAM_KEY_TYPE] if Accessor.PARAM_KEY_TYPE in cfg else Accessor.PARAM_TYPE_MULTI
+        if target_type == Accessor.PARAM_TYPE_SINGLE:
             return self.__delete_single(collection, match_params)
-        elif cfg[DataAccessor.CFG_KEY_TYPE] == DataAccessor.CFG_TYPE_MULTI:
+        elif target_type == Accessor.PARAM_TYPE_MULTI:
             return self.__delete_multi(collection, match_params)
 
     def __upsert_single(self, collection, object, match_params=None):
@@ -59,11 +66,11 @@ class DataAccessor:
         raise NotImplementedError
 
     def upsert(self, cfg):
-        object = cfg[DataAccessor.CFG_KEY_OBJECT]
-        collection = cfg[DataAccessor.CFG_KEY_COLLECTION]
-        match_params = cfg[DataAccessor.CFG_KEY_MATCH_PARAMS] if DataAccessor.CFG_KEY_MATCH_PARAMS in cfg else {}
+        object = cfg[Accessor.PARAM_KEY_OBJECT]
+        collection = cfg[Accessor.PARAM_KEY_COLLECTION]
+        match_params = cfg[Accessor.PARAM_KEY_MATCH_PARAMS] if Accessor.PARAM_KEY_MATCH_PARAMS in cfg else {}
 
-        if cfg[DataAccessor.CFG_KEY_TYPE] == DataAccessor.CFG_TYPE_SINGLE:
+        if cfg[Accessor.PARAM_KEY_TYPE] == Accessor.PARAM_TYPE_SINGLE:
             return self.__upsert_single(collection, object, match_params)
-        elif cfg[DataAccessor.CFG_KEY_TYPE] == DataAccessor.CFG_TYPE_MULTI:
+        elif cfg[Accessor.PARAM_KEY_TYPE] == Accessor.PARAM_TYPE_MULTI:
             return self.__upsert_multi(collection, object, match_params)

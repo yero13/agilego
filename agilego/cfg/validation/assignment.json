@@ -1,0 +1,30 @@
+{
+	"version": 0.1,
+	"checks": {
+		"day.whrs.limit": {
+			"type": "limit.exceed",
+			"violation": {
+				"severity": "warning",
+				"message": "daily whrs limit exceed {}"
+			},
+			"obj_to_validate": {
+				"field_to_validate": "whrs",
+				"match": ["employee", "date", "key"],
+				"collection": "sprint.assignments"
+			},
+			"target": {
+				"type": "aggregate",
+				"cfg": {
+					"agg.func": "sum",
+					"agg.field": "whrs",
+					"agg.collection": "sprint.assignments",
+					"agg.group": ["employee", "date"]
+				}
+			},
+			"constraint": {
+				"type": "constant",
+				"value": 6
+			}
+		}
+	}
+}
