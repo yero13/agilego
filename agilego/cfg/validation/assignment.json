@@ -1,11 +1,11 @@
 {
 	"version": 0.1,
 	"checks": {
-		"day.whrs.limit": {
+		"employee.daily-whrs-capacity.limit": {
 			"type": "limit.exceed",
 			"violation": {
 				"severity": "warning",
-				"message": "daily whrs limit exceed {}"
+				"message": "employee capality (whrs per day) exceed"
 			},
 			"obj_to_validate": {
 				"field_to_validate": "whrs",

@@ -1,5 +1,5 @@
 from service.entity import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails
+    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation
 from flask_restful import Api
 from flask import Flask
 from flask_cors import CORS
@@ -27,5 +27,7 @@ api.add_resource(GroupList, RestConstants.ROUTE_TEAM)
 api.add_resource(EmployeeList, RestConstants.ROUTE_EMPLOYEES)
 api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group>'.format(RestConstants.ROUTE_GROUP))
 api.add_resource(AssignmentList, RestConstants.ROUTE_ASSIGNMENTS)
-api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT, '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT), '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT))
-
+api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT,
+                 '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT),
+                 '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT))
+api.add_resource(AssignmentValidation, RestConstants.ROUTE_ASSIGNMENT_VALIDATION)

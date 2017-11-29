@@ -10,7 +10,7 @@ from db.connect import MongoDb
 from utils.cfg import CfgUtils
 from service.constants import DbConstants, RestConstants
 from service.entity import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails
+    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation
 from utils.env import get_env_params
 import utils.env
 
@@ -136,6 +136,7 @@ class ApiTestCase(unittest.TestCase):
         api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT,
                          '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT),
                          '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT))
+        api.add_resource(AssignmentValidation, RestConstants.ROUTE_ASSIGNMENT_VALIDATION)
 
     def test_api_sprint(self):
         result = self.__app.test_client().get(RestConstants.ROUTE_SPRINT)

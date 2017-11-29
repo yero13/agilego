@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from service.validator import Validator
 from db.data import Accessor
 import json
+import logging
 
 CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json'
 
@@ -131,8 +132,9 @@ class Assignment(Resource):
         assignment_details[ParamConstants.PARAM_WHRS] = int(
             assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
 
-        with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:
-            Validator(json.load(env_cfg_file, strict=False)).what_if(assignment_details) # ToDo: move cfg to constructor/cache
+#        with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:
+#            res = Validator(json.load(env_cfg_file, strict=False)).what_if(assignment_details) # ToDo: move cfg to constructor/cache
+#        logging.getLogger(__class__.__name__).debug(res)
 
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).upsert(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
@@ -154,3 +156,15 @@ class Assignment(Resource):
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
                  '_id': ObjectId(assignment_id)}}), 204
+
+
+class AssignmentValidation(Resource):
+    def post(self):
+        assignment_details = request.get_json()
+        assignment_details[ParamConstants.PARAM_WHRS] = int(
+            assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
+
+        with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:
+            res = Validator(json.load(env_cfg_file, strict=False)).what_if(assignment_details)
+        logging.debug('---->{}'.format(res))
+        return res, 200 # ToDo: move cfg to constructor/cache
