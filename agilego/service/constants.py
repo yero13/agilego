@@ -3,9 +3,9 @@ class DbConstants:
     SCRUM_SPRINT = 'sprint.definition'
     SCRUM_SPRINT_TIMELINE = 'sprint.timeline'
     SCRUM_SPRINT_BACKLOG = 'sprint.backlog'
-    SCRUM_BACKLOG_DETAILS = 'sprint.backlog-details'
-    SCRUM_SUBTASKS = 'sprint.subtasks'
-    SCRUM_SUBTASKS_DETAILS = 'sprint.subtasks-details'
+    #SCRUM_BACKLOG_DETAILS = 'sprint.backlog-details'
+    #SCRUM_SUBTASKS = 'sprint.subtasks'
+    #SCRUM_SUBTASKS_DETAILS = 'sprint.subtasks-details'
     SCRUM_ASSIGNMENTS = 'sprint.assignments'
     PROJECT_TEAM = 'project.team'
     PROJECT_EMPLOYEES = 'project.employees'
@@ -37,3 +37,9 @@ class ParamConstants:
     PARAM_COMPONENT = 'component'
     PARAM_TIMELINE = 'timeline'
     PARAM_WHRS = 'whrs'
+    PARAM_TYPE = 'type'
+
+
+class MatchConstants:
+    TYPE_STORY = 'Story'
+    TYPE_BUG = 'Bug'

@@ -11,6 +11,8 @@ class Accessor:
     PARAM_KEY_MATCH_PARAMS = 'match'
     PARAM_KEY_OBJECT = 'object'
 
+    OPERATOR_OR = '$or'
+
     @staticmethod
     def factory(db):
         return Accessor(get_env_params()[db])

@@ -1,5 +1,5 @@
 from flask_restful import Resource, request
-from service.constants import DbConstants, ParamConstants
+from service.constants import DbConstants, ParamConstants, MatchConstants
 from bson.objectid import ObjectId
 from service.validator import Validator
 from db.data import Accessor
@@ -13,7 +13,10 @@ class Backlog(Resource):
     def get(self):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI})
+             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI,
+             Accessor.PARAM_KEY_MATCH_PARAMS: {
+                 Accessor.OPERATOR_OR: [{ParamConstants.PARAM_TYPE: MatchConstants.TYPE_STORY},
+                                        {ParamConstants.PARAM_TYPE: MatchConstants.TYPE_BUG}]}})
 
 
 class Sprint(Resource):
@@ -90,7 +93,7 @@ class AssignmentList(Resource):
 class SubtaskList(Resource):
     def get(self, task_key):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SUBTASKS,
+            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_PARENT: task_key}})
@@ -99,7 +102,7 @@ class SubtaskList(Resource):
 class TaskDetails(Resource):
     def get(self, task_key):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_BACKLOG_DETAILS,
+            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: task_key}})
@@ -108,7 +111,7 @@ class TaskDetails(Resource):
 class SubtaskDetails(Resource):
     def get(self, subtask_key):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SUBTASKS_DETAILS,
+            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: subtask_key}})
