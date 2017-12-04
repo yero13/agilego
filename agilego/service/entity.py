@@ -169,5 +169,4 @@ class AssignmentValidation(Resource):
 
         with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:
             res = Validator(json.load(env_cfg_file, strict=False)).what_if(assignment_details)
-        logging.debug('---->{}'.format(res))
         return res, 200 # ToDo: move cfg to constructor/cache
