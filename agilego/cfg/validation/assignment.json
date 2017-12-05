@@ -32,7 +32,7 @@
 			"type": "date.overdue",
 			"violation": {
 				"severity": "warning",
-				"message": "task's due date is passed"
+				"message": "task's due date {} is passed"
 			},
 			"validate": {
 				"extract": {

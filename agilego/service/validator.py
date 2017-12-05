@@ -3,6 +3,7 @@ from db.data import Accessor
 from service.constants import DbConstants
 import logging
 import abc
+import datetime
 
 
 class Validator:
@@ -125,4 +126,12 @@ class DateOverdueValidation(Validation):
         return NotImplemented
 
     def what_if(self, obj_to_validate):
-        return
+        constraint_value = datetime.datetime.strptime(
+            self._get_value(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate), '%Y-%m-%d').date()
+        value_to_validate = datetime.datetime.strptime(obj_to_validate[
+                                                           self._cfg[Validation._CFG_KEY_VALIDATE][
+                                                               Validation._CFG_KEY_EXTRACT][
+                                                               Validation._CFG_KEY_EXTRACT_FIELD]], '%Y-%m-%d').date()
+        if value_to_validate > constraint_value:
+            return {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
+                    Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(constraint_value)}
