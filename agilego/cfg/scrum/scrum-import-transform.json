@@ -149,7 +149,7 @@
 								"sort_order": ["Highest", "High", "Medium", "Low", "Lowest"]
 							}
 						},
-						"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by"]
+						"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks"]
 					}
 				},
 				"assignments": {

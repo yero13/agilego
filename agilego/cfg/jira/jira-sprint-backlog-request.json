@@ -129,6 +129,43 @@
 									"type": "array",
 									"ext_id": "assignments"
 								},
+								"blocks": {
+									"key": "issuelinks",
+									"type": "array",
+									"ext_id": "blocks",
+									"match":{
+										"type": "object",
+										"properties": {
+											"type": {
+												"type": "object",
+												"properties": {
+													"outward": {"type": "string", "pattern": "blocks"}
+												},
+												"required": ["outward"]
+											},
+											"outwardIssue": {
+												"type": "object",
+												"properties": {
+													"key": {"type": "string"}
+												},
+												"required": ["key"]
+											}
+										},
+										"required": ["type", "outwardIssue"]
+									},									
+									"fields": {
+										"outwardIssue": {
+											"key": "outwardIssue",
+											"type": "object",
+											"fields": {
+												"key": {
+													"key": "key",
+													"type": "string"
+												}
+											}
+										}
+									}
+								},								
 								"blocked_by": {
 									"key": "issuelinks",
 									"type": "array",
