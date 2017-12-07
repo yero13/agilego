@@ -45,9 +45,40 @@
 				"extract": {
 					"extract.field": "duedate",
 					"match": ["key"],
-					"collection": "sprint.backlog"
+					"collection": "sprint.backlog",
+					"default": "9999-12-31"
 				}
 			}		
-		}
+		},
+		"assignment.blocked.conflict": {
+			"type": "dependency.blocked",
+			"violation": {
+				"severity": "warning",
+				"message": "Conflict with blocked {} assignment {}"
+			},
+			"validate": {
+				"extract": {
+					"extract.field": "date",
+					"match": ["employee", "date", "key", "group"],
+					"collection": "sprint.assignments"
+				}
+			},
+			"target": {
+				"extract": {
+					"extract.field": "blocks",
+					"match": ["key"],
+					"collection": "sprint.backlog"
+				}
+			},			
+			"constraint": {
+				"calculate": {
+					"calc.func": "min",
+					"agg.field": "date",
+					"agg.collection": "sprint.assignments",
+					"agg.group": ["key"],
+					"default": "9999-12-31"
+				}	
+			}		
+		}		
 	}
 }
