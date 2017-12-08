@@ -28,6 +28,35 @@
 				}
 			}
 		},
+		"task.originalestimate.exceed": {
+			"type": "limit.exceed",
+			"violation": {
+				"severity": "warning",
+				"message": "Task original estimate ({} hrs) exceed"
+			},
+			"validate": {
+				"extract": {
+					"extract.field": "whrs",
+					"match": ["employee", "date", "key", "group"],
+					"collection": "sprint.assignments"
+				}			
+			},
+			"target": {
+				"calculate": {
+					"calc.func": "sum",
+					"agg.field": "whrs",
+					"agg.collection": "sprint.assignments",
+					"agg.group": ["employee", "date"]
+				}				
+			},
+			"constraint": {
+				"extract": {
+					"extract.field": "estimate",
+					"match": ["key"],
+					"collection": "sprint.backlog"
+				}			
+			}
+		},
 		"task.duedate.overdue": {
 			"type": "date.overdue",
 			"violation": {
