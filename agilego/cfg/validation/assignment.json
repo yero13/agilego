@@ -7,14 +7,14 @@
 				"severity": "warning",
 				"message": "employee max capality ({} whrs per day) exceed"
 			},
-			"validate": {
+			"input": {
 				"extract": {
 					"extract.field": "whrs",
 					"match": ["employee", "date", "key", "group"],
 					"collection": "sprint.assignments"
 				}			
 			},
-			"target": {
+			"dependent": {
 				"calculate": {
 					"calc.func": "sum",
 					"agg.field": "whrs",
@@ -34,14 +34,14 @@
 				"severity": "warning",
 				"message": "Task original estimate ({} hrs) exceed"
 			},
-			"validate": {
+			"input": {
 				"extract": {
 					"extract.field": "whrs",
 					"match": ["employee", "date", "key", "group"],
 					"collection": "sprint.assignments"
 				}			
 			},
-			"target": {
+			"dependent": {
 				"calculate": {
 					"calc.func": "sum",
 					"agg.field": "whrs",
@@ -64,7 +64,7 @@
 				"severity": "warning",
 				"message": "task's due date {} is passed"
 			},
-			"validate": {
+			"input": {
 				"extract": {
 					"extract.field": "date",
 					"match": ["employee", "date", "key", "group"],
@@ -81,19 +81,19 @@
 			}		
 		},
 		"assignment.blocked.conflict": {
-			"type": "dependency.blocked",
+			"type": "schedule.integrity",
 			"violation": {
 				"severity": "warning",
 				"message": "Conflict with blocked {} assignment {}"
 			},
-			"validate": {
+			"input": {
 				"extract": {
 					"extract.field": "date",
 					"match": ["employee", "date", "key", "group"],
 					"collection": "sprint.assignments"
 				}
 			},
-			"target": {
+			"dependent": {
 				"extract": {
 					"extract.field": "blocks",
 					"match": ["key"],
