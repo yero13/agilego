@@ -80,6 +80,34 @@
 				}
 			}		
 		},
+		"assignment.expertise.conflict": {
+			"type": "sets.intersection",
+			"violation": {
+				"severity": "warning",
+				"message": "Task requires {} component(s) expertise"
+			},
+			"input": {
+				"extract": {
+					"extract.field": "key",
+					"match": ["employee", "date", "key", "group"],
+					"collection": "sprint.assignments"
+				}
+			},
+			"dependent": {
+				"extract": {
+					"extract.field": "components",
+					"match": ["key"],
+					"collection": "sprint.backlog"
+				}
+			},			
+			"constraint": {
+				"extract": {
+					"extract.field": "components",
+					"match": ["group"],
+					"collection": "project.team"
+				}
+			}			
+		},
 		"assignment.blocked.conflict": {
 			"type": "schedule.integrity",
 			"violation": {

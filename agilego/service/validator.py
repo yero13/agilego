@@ -28,12 +28,16 @@ class Validator:
                     result.extend(check_res)
         return None if len(result) == 0 else result
 
+# ToDo:
+# input - should take only field from input object
+# target - overriden object (e.g. for whrs)
 
 class Validation:
     _CFG_KEY_VALIDATOR_TYPE = 'type'
     __CFG_VALIDATOR_TYPE_LIMIT_EXCEED = 'limit.exceed'
     __CFG_VALIDATOR_TYPE_DATE_OVERDUE = 'date.overdue'
     __CFG_VALIDATOR_TYPE_SCHEDULE_INTEGRITY = 'schedule.integrity'
+    __CFG_VALIDATOR_TYPE_SETS_INTERSECTION = 'sets.intersection'
     _CFG_KEY_VIOLATION = 'violation'
     _CFG_KEY_VIOLATION_SEVERITY = 'severity'
     _CFG_KEY_VIOLATION_MSG = 'message'
@@ -60,6 +64,8 @@ class Validation:
             return DateOverdueValidation(cfg)
         elif type == Validation.__CFG_VALIDATOR_TYPE_SCHEDULE_INTEGRITY:
             return ScheduleIntegrityValidation(cfg)
+        elif type == Validation.__CFG_VALIDATOR_TYPE_SETS_INTERSECTION:
+            return SetsIntersectionValidation(cfg)
         else:
             raise NotImplementedError('Not supported request type - {}'.format(type))
 
@@ -164,20 +170,30 @@ class ScheduleIntegrityValidation(DependentValidation):
 
     def what_if(self, obj_to_validate):
         res = []
-        target_value = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
-        dependent_value = datetime.datetime.strptime(obj_to_validate[
+        input_value = datetime.datetime.strptime(obj_to_validate[
                                                            self._cfg[Validation._CFG_KEY_INPUT][
                                                                Validation._CFG_KEY_EXTRACT][
                                                                Validation._CFG_KEY_EXTRACT_FIELD]], '%Y-%m-%d').date()
-        for dependency in target_value:
+        dependencies = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
+        for dependency in dependencies:
             constraint_value = datetime.datetime.strptime(
                 self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], {ParamConstants.PARAM_ITEM_KEY: dependency}),
                 '%Y-%m-%d').date()
-            self._logger.debug('c: {} v: {}'.format(constraint_value, dependent_value))
-            if constraint_value < dependent_value:
+            if constraint_value < input_value:
                 res.append(
                     {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
                      Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(
                          dependency, constraint_value)})
-                self._logger.debug(res)
         return res if len(res) > 0 else None
+
+
+class SetsIntersectionValidation(DependentValidation):
+    def validate(self, obj_to_validate):
+        return NotImplemented
+
+    def what_if(self, obj_to_validate):
+        constraint_set = self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate)
+        dependent_set = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
+        return None if len(dependent_set) == 0 or len(set(constraint_set).intersection(dependent_set)) > 0 else {
+            Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
+            Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(dependent_set)}
