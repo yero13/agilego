@@ -42,6 +42,8 @@ class Validation:
     _CFG_KEY_VIOLATION_SEVERITY = 'severity'
     _CFG_KEY_VIOLATION_MSG = 'message'
     _CFG_KEY_INPUT = 'input'
+    _CFG_KEY_VALIDATION_SUBJECT = 'validation.subject'
+    _CFG_KEY_TARGET = 'target'
     _CFG_KEY_CONSTRAINT = 'constraint'
     _CFG_KEY_EXTRACT = 'extract'
     _CFG_KEY_EXTRACT_FIELD = 'extract.field'
@@ -138,10 +140,10 @@ class LimitExceedValidation(DependentValidation):
     def what_if(self, obj_to_validate):
         constraint_value = int(self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate))
         value_to_validate = int(obj_to_validate[
-            self._cfg[Validation._CFG_KEY_INPUT][Validation._CFG_KEY_EXTRACT][Validation._CFG_KEY_EXTRACT_FIELD]])
+            self._cfg[Validation._CFG_KEY_INPUT][Validation._CFG_KEY_VALIDATION_SUBJECT]])
         dependent_value = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
         dependent_value = 0 if not dependent_value else int(dependent_value)
-        current_value = self._get(self._cfg[Validation._CFG_KEY_INPUT], obj_to_validate)
+        current_value = self._get(self._cfg[Validation._CFG_KEY_TARGET], obj_to_validate)
         current_value = 0 if not current_value else int(current_value)
         if (dependent_value + value_to_validate - current_value) > constraint_value:
             return {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
@@ -157,8 +159,7 @@ class DateOverdueValidation(Validation):
             self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate), '%Y-%m-%d').date()
         value_to_validate = datetime.datetime.strptime(obj_to_validate[
                                                            self._cfg[Validation._CFG_KEY_INPUT][
-                                                               Validation._CFG_KEY_EXTRACT][
-                                                               Validation._CFG_KEY_EXTRACT_FIELD]], '%Y-%m-%d').date()
+                                                               Validation._CFG_KEY_VALIDATION_SUBJECT]], '%Y-%m-%d').date()
         if value_to_validate > constraint_value:
             return {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
                     Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(constraint_value)}
@@ -172,8 +173,7 @@ class ScheduleIntegrityValidation(DependentValidation):
         res = []
         input_value = datetime.datetime.strptime(obj_to_validate[
                                                            self._cfg[Validation._CFG_KEY_INPUT][
-                                                               Validation._CFG_KEY_EXTRACT][
-                                                               Validation._CFG_KEY_EXTRACT_FIELD]], '%Y-%m-%d').date()
+                                                               Validation._CFG_KEY_VALIDATION_SUBJECT]], '%Y-%m-%d').date()
         dependencies = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
         for dependency in dependencies:
             constraint_value = datetime.datetime.strptime(
