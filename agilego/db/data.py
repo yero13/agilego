@@ -22,6 +22,7 @@ class Accessor:
         self._logger = logging.getLogger(__class__.__name__)
 
     def __get_single(self, collection, match_params=None):
+        # ToDo: _id false / get from history
         res = self._db[collection].find_one(match_params if match_params else {})
         if res:
             res['id'] = str(res['_id'])
@@ -29,6 +30,7 @@ class Accessor:
         return res
 
     def __get_multi(self, collection, match_params=None):
+        # ToDo: _id false / get from history
         res = list(self._db[collection].find(match_params if match_params else {}))
         for item in res:
             item['id'] = str(item['_id'])

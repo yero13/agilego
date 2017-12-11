@@ -4,6 +4,7 @@ from service.constants import DbConstants, ParamConstants
 import logging
 import abc
 import datetime
+from utils.converter import Converter
 
 
 class Validator:
@@ -28,12 +29,9 @@ class Validator:
                     result.extend(check_res)
         return None if len(result) == 0 else result
 
-# ToDo:
-# input - should take only field from input object
-# target - overriden object (e.g. for whrs)
 
 class Validation:
-    _CFG_KEY_VALIDATOR_TYPE = 'type'
+    __CFG_KEY_VALIDATOR_TYPE = 'type'
     __CFG_VALIDATOR_TYPE_LIMIT_EXCEED = 'limit.exceed'
     __CFG_VALIDATOR_TYPE_DATE_OVERDUE = 'date.overdue'
     __CFG_VALIDATOR_TYPE_SCHEDULE_INTEGRITY = 'schedule.integrity'
@@ -42,11 +40,12 @@ class Validation:
     _CFG_KEY_VIOLATION_SEVERITY = 'severity'
     _CFG_KEY_VIOLATION_MSG = 'message'
     _CFG_KEY_INPUT = 'input'
-    _CFG_KEY_VALIDATION_SUBJECT = 'validation.subject'
     _CFG_KEY_TARGET = 'target'
     _CFG_KEY_CONSTRAINT = 'constraint'
     _CFG_KEY_EXTRACT = 'extract'
-    _CFG_KEY_EXTRACT_FIELD = 'extract.field'
+    __CFG_KEY_OBJECT = 'object'
+    __CFG_KEY_EXTRACT_FIELD = 'extract.field'
+    __CFG_KEY_FIELD_TYPE = 'field.type'
     __CFG_KEY_DEFAULT = 'default'
     __CFG_KEY_CONSTANT = 'constant'
     __CFG_KEY_CONSTANT_VALUE = 'value'
@@ -59,7 +58,7 @@ class Validation:
 
     @staticmethod
     def factory(cfg):
-        type = cfg[Validation._CFG_KEY_VALIDATOR_TYPE]
+        type = cfg[Validation.__CFG_KEY_VALIDATOR_TYPE]
         if type == Validation.__CFG_VALIDATOR_TYPE_LIMIT_EXCEED:
             return LimitExceedValidation(cfg)
         elif type == Validation.__CFG_VALIDATOR_TYPE_DATE_OVERDUE:
@@ -84,7 +83,19 @@ class Validation:
     def what_if(self, obj_to_validate):
         return NotImplemented
 
-    def __calc(self, cfg, group_param_values):
+    @staticmethod
+    def __get_default_value(cfg):
+        res = cfg[Validation.__CFG_KEY_DEFAULT] if Validation.__CFG_KEY_DEFAULT in cfg else None
+        if res and (Validation.__CFG_KEY_FIELD_TYPE in cfg):
+            res = Converter.convert(res, cfg[Validation.__CFG_KEY_FIELD_TYPE])
+        return res
+
+    @staticmethod
+    def __get_casted_value(input, cfg):
+        return Converter.convert(input, cfg[Validation.__CFG_KEY_FIELD_TYPE]) if Validation.__CFG_KEY_FIELD_TYPE in cfg else input
+
+    @staticmethod
+    def __calc(cfg, group_param_values):
         filter = {}
         group_params = cfg[Validation.__CFG_KEY_CALC_AGG_GROUP]
         for param in group_params:
@@ -92,17 +103,16 @@ class Validation:
         agg_collection = cfg[Validation.__CFG_KEY_CALC_AGG_COLLECTION]
         agg_func = cfg[Validation.__CFG_KEY_CALC_FUNC]
         agg_field = cfg[Validation.__CFG_KEY_CALC_AGG_FIELD]
+        agg_field_type = cfg[Validation.__CFG_KEY_FIELD_TYPE]
         dataset = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_MATCH_PARAMS: filter,
              Accessor.PARAM_KEY_COLLECTION: agg_collection,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI})
-        res = Aggregator.aggregate(dataset, agg_field, agg_func)
-        if not res and Validation.__CFG_KEY_DEFAULT in cfg:
-            return cfg[Validation.__CFG_KEY_DEFAULT]
-        else:
-            return res
+        res = Aggregator.aggregate(dataset, agg_field, agg_field_type, agg_func)
+        return res if res else Validation.__get_default_value(cfg)
 
-    def __extract(self, cfg, match_param_values):
+    @staticmethod
+    def __extract(cfg, match_param_values):
         id = {}
         match_params = cfg[Accessor.PARAM_KEY_MATCH_PARAMS]
         for param in match_params:
@@ -111,22 +121,24 @@ class Validation:
             {Accessor.PARAM_KEY_MATCH_PARAMS: id,
              Accessor.PARAM_KEY_COLLECTION: cfg[Accessor.PARAM_KEY_COLLECTION],
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})
-        if res:
-            field_value = res[cfg[Validation._CFG_KEY_EXTRACT_FIELD]]
-            if not field_value and Validation.__CFG_KEY_DEFAULT in cfg:
-                return cfg[Validation.__CFG_KEY_DEFAULT]
-            else:
-                return field_value
+        if not res:
+            return Validation.__get_default_value(cfg)
+        elif res[cfg[Validation.__CFG_KEY_EXTRACT_FIELD]] is None:
+            return Validation.__get_default_value(cfg)
         else:
-            return None
+            return Validation.__get_casted_value(res[cfg[Validation.__CFG_KEY_EXTRACT_FIELD]], cfg)
 
-    def _get(self, cfg, obj_to_validate):
+    @staticmethod
+    def _get(cfg, obj_to_validate):
+        if Validation.__CFG_KEY_OBJECT in cfg:
+            return Validation.__get_casted_value(
+                obj_to_validate[cfg[Validation.__CFG_KEY_OBJECT][Validation.__CFG_KEY_EXTRACT_FIELD]], cfg[Validation.__CFG_KEY_OBJECT])
         if Validation.__CFG_KEY_CONSTANT in cfg:
             return cfg[Validation.__CFG_KEY_CONSTANT][Validation.__CFG_KEY_CONSTANT_VALUE]
         if Validation._CFG_KEY_EXTRACT in cfg:
-            return self.__extract(cfg[Validation._CFG_KEY_EXTRACT], obj_to_validate)
+            return Validation.__extract(cfg[Validation._CFG_KEY_EXTRACT], obj_to_validate)
         if Validation.__CFG_KEY_CALC in cfg:
-            return self.__calc(cfg[Validation.__CFG_KEY_CALC], obj_to_validate)
+            return Validation.__calc(cfg[Validation.__CFG_KEY_CALC], obj_to_validate)
 
 
 class DependentValidation(Validation):
@@ -138,14 +150,11 @@ class LimitExceedValidation(DependentValidation):
         return NotImplemented
 
     def what_if(self, obj_to_validate):
-        constraint_value = int(self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate))
-        value_to_validate = int(obj_to_validate[
-            self._cfg[Validation._CFG_KEY_INPUT][Validation._CFG_KEY_VALIDATION_SUBJECT]])
-        dependent_value = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
-        dependent_value = 0 if not dependent_value else int(dependent_value)
+        constraint_value = self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate)
         current_value = self._get(self._cfg[Validation._CFG_KEY_TARGET], obj_to_validate)
-        current_value = 0 if not current_value else int(current_value)
-        if (dependent_value + value_to_validate - current_value) > constraint_value:
+        input_value = self._get(self._cfg[Validation._CFG_KEY_INPUT], obj_to_validate)
+        dependent_value = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
+        if (dependent_value + input_value - current_value) > constraint_value:
             return {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
                     Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(constraint_value)}
 
@@ -155,12 +164,9 @@ class DateOverdueValidation(Validation):
         return NotImplemented
 
     def what_if(self, obj_to_validate):
-        constraint_value = datetime.datetime.strptime(
-            self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate), '%Y-%m-%d').date()
-        value_to_validate = datetime.datetime.strptime(obj_to_validate[
-                                                           self._cfg[Validation._CFG_KEY_INPUT][
-                                                               Validation._CFG_KEY_VALIDATION_SUBJECT]], '%Y-%m-%d').date()
-        if value_to_validate > constraint_value:
+        constraint_value = self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate)
+        input_value = self._get(self._cfg[Validation._CFG_KEY_INPUT], obj_to_validate)
+        if input_value > constraint_value:
             return {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
                     Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(constraint_value)}
 
@@ -171,14 +177,10 @@ class ScheduleIntegrityValidation(DependentValidation):
 
     def what_if(self, obj_to_validate):
         res = []
-        input_value = datetime.datetime.strptime(obj_to_validate[
-                                                           self._cfg[Validation._CFG_KEY_INPUT][
-                                                               Validation._CFG_KEY_VALIDATION_SUBJECT]], '%Y-%m-%d').date()
+        input_value = self._get(self._cfg[Validation._CFG_KEY_INPUT], obj_to_validate)
         dependencies = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
         for dependency in dependencies:
-            constraint_value = datetime.datetime.strptime(
-                self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], {ParamConstants.PARAM_ITEM_KEY: dependency}),
-                '%Y-%m-%d').date()
+            constraint_value = self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], {ParamConstants.PARAM_ITEM_KEY: dependency})
             if constraint_value < input_value:
                 res.append(
                     {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],

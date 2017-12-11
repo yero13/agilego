@@ -132,7 +132,7 @@ class Assignment(Resource):
 
     def post(self):
         assignment_details = request.get_json()
-        assignment_details[ParamConstants.PARAM_WHRS] = int(
+        assignment_details[ParamConstants.PARAM_WHRS] = (
             assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
 
 #        with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:
@@ -154,6 +154,7 @@ class Assignment(Resource):
                      ParamConstants.PARAM_EMPLOYEE]}}), 201
 
     def delete(self, assignment_id):
+        # ToDo: delete assignment id (replace by combined id)
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).delete(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
@@ -164,7 +165,7 @@ class Assignment(Resource):
 class AssignmentValidation(Resource):
     def post(self):
         assignment_details = request.get_json()
-        assignment_details[ParamConstants.PARAM_WHRS] = int(
+        assignment_details[ParamConstants.PARAM_WHRS] = float(
             assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
 
         with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:

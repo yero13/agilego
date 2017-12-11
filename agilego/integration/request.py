@@ -31,6 +31,7 @@ class Field:
 
     @staticmethod
     def get_casted_value(type, value):
+        # ToDo: move to converter
         if not value:
             return value
         if type == Field.TYPE_STRING:

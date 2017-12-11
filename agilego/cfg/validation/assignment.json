@@ -5,24 +5,30 @@
 			"type": "limit.exceed",
 			"violation": {
 				"severity": "warning",
-				"message": "employee max capality ({} whrs per day) exceed"
+				"message": "employee max capality ({:g} whrs per day) exceed"
 			},
 			"input": {
-				"validation.subject": "whrs"
+				"object": {
+					"extract.field": "whrs"
+				}
 			},
 			"target": {
 				"extract": {
 					"extract.field": "whrs",
+					"field.type": "float",
 					"match": ["employee", "date", "key", "group"],
-					"collection": "sprint.assignments"
+					"collection": "sprint.assignments",
+					"default": 0
 				}			
 			},					
 			"dependent": {
 				"calculate": {
 					"calc.func": "sum",
 					"agg.field": "whrs",
+					"field.type": "float",					
 					"agg.collection": "sprint.assignments",
-					"agg.group": ["employee", "date"]
+					"agg.group": ["employee", "date"],
+					"default": 0
 				}				
 			},
 			"constraint": {
@@ -31,33 +37,80 @@
 				}
 			}
 		},
-		"task.originalestimate.exceed": {
+		"group.sprint-whrs-capacity.exceed": {
 			"type": "limit.exceed",
 			"violation": {
 				"severity": "warning",
-				"message": "Task original estimate ({} hrs) exceed"
+				"message": "Group max capality ({:g} whrs per sprint) exceed"
 			},
 			"input": {
-				"validation.subject": "whrs"
+				"object": {
+					"extract.field": "whrs"
+				}
 			},
 			"target": {
 				"extract": {
 					"extract.field": "whrs",
+					"field.type": "float",
 					"match": ["employee", "date", "key", "group"],
-					"collection": "sprint.assignments"
+					"collection": "sprint.assignments",
+					"default": 0
+				}			
+			},					
+			"dependent": {
+				"calculate": {
+					"calc.func": "sum",
+					"agg.field": "whrs",
+					"field.type": "float",					
+					"agg.collection": "sprint.assignments",
+					"agg.group": ["group"],
+					"default": 0
+				}				
+			},
+			"constraint": {
+				"extract": {
+					"extract.field": "capacity",
+					"field.type": "float",
+					"match": ["group"],
+					"collection": "project.team",
+					"default": 9999
+				}
+			}
+		},		
+		"task.originalestimate.exceed": {
+			"type": "limit.exceed",
+			"violation": {
+				"severity": "warning",
+				"message": "Task original estimate ({:g} hrs) exceed"
+			},
+			"input": {
+				"object": {
+					"extract.field": "whrs"
+				}
+			},
+			"target": {
+				"extract": {
+					"extract.field": "whrs",
+					"field.type": "float",
+					"match": ["employee", "date", "key", "group"],
+					"collection": "sprint.assignments",
+					"default": 0
 				}			
 			},
 			"dependent": {
 				"calculate": {
 					"calc.func": "sum",
 					"agg.field": "whrs",
+					"field.type": "float",					
 					"agg.collection": "sprint.assignments",
-					"agg.group": ["employee", "date"]
+					"agg.group": ["employee", "date"],
+					"default": 0
 				}				
 			},
 			"constraint": {
 				"extract": {
 					"extract.field": "estimate",
+					"field.type": "float",
 					"match": ["key"],
 					"collection": "sprint.backlog",
 					"default": 9999
@@ -68,14 +121,18 @@
 			"type": "date.overdue",
 			"violation": {
 				"severity": "warning",
-				"message": "task's due date {} is passed"
+				"message": "task's due date {:%Y-%m-%d} is passed"
 			},
 			"input": {
-				"validation.subject": "date"
+				"object": {
+					"extract.field": "date",
+					"field.type": "date"
+				}
 			},
 			"constraint": {
 				"extract": {
 					"extract.field": "duedate",
+					"field.type": "date",
 					"match": ["key"],
 					"collection": "sprint.backlog",
 					"default": "9999-12-31"
@@ -107,10 +164,13 @@
 			"type": "schedule.integrity",
 			"violation": {
 				"severity": "warning",
-				"message": "Conflict with blocked {} assignment {}"
+				"message": "Conflict with blocked {} assignment {:%Y-%m-%d}"
 			},
 			"input": {
-				"validation.subject": "date"
+				"object": {
+					"extract.field": "date",
+					"field.type": "date"
+				}
 			},
 			"dependent": {
 				"extract": {
@@ -123,6 +183,7 @@
 				"calculate": {
 					"calc.func": "min",
 					"agg.field": "date",
+					"field.type": "date",					
 					"agg.collection": "sprint.assignments",
 					"agg.group": ["key"],
 					"default": "9999-12-31"
