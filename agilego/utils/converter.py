@@ -7,6 +7,8 @@ class Types:
     TYPE_DATE = 'date'
     TYPE_DATETIME = 'datetime'
     TYPE_STRING = 'string'
+    TYPE_ARRAY = 'array'
+    TYPE_OBJECT = 'object'
 
 
 class Converter:

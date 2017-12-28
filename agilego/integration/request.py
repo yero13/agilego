@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 import json
 import jsonschema
 from jsonschema import validate
-from datetime import datetime
+from utils.converter import Types, Converter
 
 
 class Field:
@@ -17,33 +17,10 @@ class Field:
     FIELD_OPTIONAL = 'optional'
     FIELD_MATCH = 'match'
 
-    TYPE_ARRAY = 'array'
-    TYPE_OBJECT = 'object'
-    TYPE_STRING = 'string'
-    TYPE_DATE = 'date'
-    TYPE_DATETIME = 'datetime'
-    TYPE_INT = 'int'
-    TYPE_FLOAT = 'float'
 
     @staticmethod
     def is_complex_type(type):
-        return type in [Field.TYPE_ARRAY, Field.TYPE_OBJECT]
-
-    @staticmethod
-    def get_casted_value(type, value):
-        # ToDo: move to converter
-        if not value:
-            return value
-        if type == Field.TYPE_STRING:
-            return value
-        elif type == Field.TYPE_DATE: # ToDo: set template for date
-            return datetime.strptime(value, '%Y-%m-%d').date().isoformat()
-        elif type == Field.TYPE_DATETIME: # ToDo: set template for datetime
-            return datetime.strptime(value[0:10], '%Y-%m-%d').date().isoformat() # 2017-09-18T18:53:00.000Z
-        elif type == Field.TYPE_INT:
-            return int(value)
-        elif type == Field.TYPE_FLOAT:
-            return float(value)
+        return type in [Types.TYPE_ARRAY, Types.TYPE_OBJECT]
 
     @staticmethod
     def is_match(pattern, field):
@@ -61,7 +38,7 @@ class Field:
         field_type = field_cfg[Field.FIELD_TYPE]
         field_key = field_cfg[Field.FIELD_KEY] if Field.FIELD_KEY in field_cfg else None
         field_ext_id = field_cfg[Field.FIELD_EXT_ID] if Field.FIELD_EXT_ID in field_cfg else field_key
-        if field_type == Field.TYPE_ARRAY:
+        if field_type == Types.TYPE_ARRAY:
             if isinstance(target, dict):  # add to object
                 target.update({field_ext_id: []})
                 field_value = data[field_key]
@@ -77,7 +54,7 @@ class Field:
                         Field.parse_field(item, subfield, target[field_ext_id] if field_ext_id else target)
             else:
                 target[field_ext_id] = field_value
-        elif field_type == Field.TYPE_OBJECT:
+        elif field_type == Types.TYPE_OBJECT:
             is_explicit = bool(field_cfg[Field.FIELD_EXPLICIT]) if Field.FIELD_EXPLICIT in field_cfg else False
             is_optional = bool(field_cfg[Field.FIELD_OPTIONAL]) if Field.FIELD_OPTIONAL in field_cfg else False
             if field_key:
@@ -107,7 +84,7 @@ class Field:
                     field_value = None
                 else:
                     raise
-            casted_value = Field.get_casted_value(field_type, field_value)
+            casted_value = Converter.convert(field_value, field_type)
             if isinstance(target, dict):  # add to object
                 target.update({field_ext_id: casted_value})
             else:  # add to array
