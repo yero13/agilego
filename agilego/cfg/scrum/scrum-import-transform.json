@@ -31,7 +31,7 @@
 						"src.collection": "sprint",
 						"dest.collection": "sprint.timeline",
 						"transformation": {
-							"timeline": "obj['timeline'] = pd.date_range(obj['startDate'], obj['endDate']).strftime('%Y-%m-%d').tolist()"
+							"timeline": "obj['timeline'] = pd.date_range(obj['startDate'], obj['endDate']).tolist()"
 						},
 						"fields": ["timeline"]
 					}

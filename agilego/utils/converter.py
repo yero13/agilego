@@ -24,7 +24,7 @@ class Converter:
         elif type == Types.TYPE_INT:
             return int(input)
         elif type == Types.TYPE_DATE:
-            return datetime.strptime(input, '%Y-%m-%d')
+            return datetime.strptime(input, '%Y-%m-%d') # ToDo: do not convert if input is date already
         elif type == Types.TYPE_DATETIME: # ToDo: set template for datetime
             return datetime.strptime(input[0:10], '%Y-%m-%d') # 2017-09-18T18:53:00.000Z
         else:

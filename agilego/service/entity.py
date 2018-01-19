@@ -33,7 +33,7 @@ class SprintTimeline(Resource):
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_TIMELINE,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})
         return (
-        [] if (not found or not ParamConstants.PARAM_TIMELINE in found) else found[ParamConstants.PARAM_TIMELINE])
+        [] if (not found or not ParamConstants.PARAM_TIMELINE in found) else jsonify(found[ParamConstants.PARAM_TIMELINE]))
 
 
 class ComponentList(Resource):
@@ -148,7 +148,7 @@ class Assignment(Resource):
                  ParamConstants.PARAM_ITEM_KEY: assignment_details[
                      ParamConstants.PARAM_ITEM_KEY],
                  ParamConstants.PARAM_DATE: assignment_details[
-                     ParamConstants.PARAM_DATE],
+                     ParamConstants.PARAM_DATE], # ToDo: cast to date
                  ParamConstants.PARAM_GROUP: assignment_details[
                      ParamConstants.PARAM_GROUP],
                  ParamConstants.PARAM_EMPLOYEE: assignment_details[
@@ -165,6 +165,8 @@ class Assignment(Resource):
 
 class AssignmentValidation(Resource):
     def post(self):
+        logger = logging.getLogger(__class__.__name__)
+        logger.debug('>>>>>>>>>>>>>>>>>>>>>')
         assignment_details = request.get_json()
         assignment_details[ParamConstants.PARAM_WHRS] = float(
             assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
