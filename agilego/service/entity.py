@@ -1,4 +1,5 @@
 from flask_restful import Resource, request
+from flask import jsonify
 from service.constants import DbConstants, ParamConstants, MatchConstants
 from bson.objectid import ObjectId
 from service.validator import Validator
@@ -11,19 +12,19 @@ CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json'
 
 class Backlog(Resource):
     def get(self):
-        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
                  Accessor.OPERATOR_OR: [{ParamConstants.PARAM_TYPE: MatchConstants.TYPE_STORY},
-                                        {ParamConstants.PARAM_TYPE: MatchConstants.TYPE_BUG}]}})
+                                        {ParamConstants.PARAM_TYPE: MatchConstants.TYPE_BUG}]}}))
 
 
 class Sprint(Resource):
     def get(self):
-        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})
+             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE}))
 
 
 class SprintTimeline(Resource):
@@ -92,29 +93,29 @@ class AssignmentList(Resource):
 
 class SubtaskList(Resource):
     def get(self, task_key):
-        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
-                 ParamConstants.PARAM_ITEM_PARENT: task_key}})
+                 ParamConstants.PARAM_ITEM_PARENT: task_key}}))
 
 
 class TaskDetails(Resource):
     def get(self, task_key):
-        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
-                 ParamConstants.PARAM_ITEM_KEY: task_key}})
+                 ParamConstants.PARAM_ITEM_KEY: task_key}}))
 
 
 class SubtaskDetails(Resource):
     def get(self, subtask_key):
-        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
-                 ParamConstants.PARAM_ITEM_KEY: subtask_key}})
+                 ParamConstants.PARAM_ITEM_KEY: subtask_key}}))
 
 
 # ToDo: group/assignments services should be reviewed as they should trigger validations and KPIs (velocity, etc) review

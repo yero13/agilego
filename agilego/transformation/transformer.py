@@ -6,7 +6,7 @@ import re
 import pandas as pd
 
 from db.connect import MongoDb
-
+from utils.converter import Converter
 
 class Transformer():
     __CFG_KEY_TRANSFORMATION_SETS = 'transformation-sets'
@@ -159,7 +159,7 @@ class DatasetTransformation(Transformation):
             self.__transform_where()
         if DatasetTransformation.__CFG_KEY_TRANSFORM_ORDER in self._transformation:
             self.__transform_order()
-        self.__dataset = json.loads(self.__df_dataset.T.to_json()).values()
+        self.__dataset = Converter.df2list(self.__df_dataset)
 
     def __transform_values(self):
         value_transformations = self._transformation[DatasetTransformation.__CFG_KEY_TRANSFORM_VALUES]
@@ -254,7 +254,7 @@ class LeftJoinTransformation(Transformation):
             self.__left_df.set_index(join_on, drop=False), on=[join_on], rsuffix='_right')
 
     def _save(self):
-        res = json.loads(self.__result[self._fields].T.to_json()).values()
+        res = Converter.df2list(self.__result)
         if len(res) > 0:
             self._dest_db[self._dest_collection].insert_many(res)
 
@@ -275,6 +275,6 @@ class UpdateTransformation(Transformation):
                 self.__df_dataset[dest_field] = self.__update_data[src_field]
 
     def _save(self):
-        res = json.loads(self.__df_dataset.T.to_json()).values()
+        res = Converter.df2list(self.__df_dataset)
         if len(res) > 0:
             self._dest_db[self._dest_collection].insert_many(res)

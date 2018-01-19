@@ -6,10 +6,12 @@ from flask_cors import CORS
 from service.constants import RestConstants
 import json
 import logging.config
+from utils.encoder import ExtJSONEncoder
 
 CFG_LOG_API = './cfg/log/api-logging-config.json'
 
 app = Flask(__name__)
+app.json_encoder = ExtJSONEncoder
 with open(CFG_LOG_API) as log_cfg_file:
     logging.config.dictConfig(json.load(log_cfg_file, strict=False))
 
