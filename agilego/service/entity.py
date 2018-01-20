@@ -4,8 +4,8 @@ from service.constants import DbConstants, ParamConstants, MatchConstants
 from bson.objectid import ObjectId
 from service.validator import Validator
 from db.data import Accessor
+from utils.converter import Converter, Types
 import json
-import logging
 
 CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json'
 
@@ -86,9 +86,9 @@ class Group(Resource):
 
 class AssignmentList(Resource):
     def get(self):
-        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI})
+             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI}))
 
 
 class SubtaskList(Resource):
@@ -122,23 +122,19 @@ class SubtaskDetails(Resource):
 
 class Assignment(Resource):
     def get(self, key, date, group, employee):
-        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: key,
                  ParamConstants.PARAM_DATE: date,
                  ParamConstants.PARAM_GROUP: group,
-                 ParamConstants.PARAM_EMPLOYEE: employee}})
+                 ParamConstants.PARAM_EMPLOYEE: employee}}))
 
     def post(self):
         assignment_details = request.get_json()
-        assignment_details[ParamConstants.PARAM_WHRS] = (
-            assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
-
-#        with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:
-#            res = Validator(json.load(env_cfg_file, strict=False)).what_if(assignment_details) # ToDo: move cfg to constructor/cache
-#        logging.getLogger(__class__.__name__).debug(res)
+        assignment_details[ParamConstants.PARAM_DATE] = Converter.convert(assignment_details[ParamConstants.PARAM_DATE],
+                                                                          Types.TYPE_DATE)
 
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).upsert(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
@@ -148,7 +144,7 @@ class Assignment(Resource):
                  ParamConstants.PARAM_ITEM_KEY: assignment_details[
                      ParamConstants.PARAM_ITEM_KEY],
                  ParamConstants.PARAM_DATE: assignment_details[
-                     ParamConstants.PARAM_DATE], # ToDo: cast to date
+                     ParamConstants.PARAM_DATE],
                  ParamConstants.PARAM_GROUP: assignment_details[
                      ParamConstants.PARAM_GROUP],
                  ParamConstants.PARAM_EMPLOYEE: assignment_details[
@@ -165,12 +161,9 @@ class Assignment(Resource):
 
 class AssignmentValidation(Resource):
     def post(self):
-        logger = logging.getLogger(__class__.__name__)
-        logger.debug('>>>>>>>>>>>>>>>>>>>>>')
         assignment_details = request.get_json()
         assignment_details[ParamConstants.PARAM_WHRS] = float(
             assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
-
         with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:
             res = Validator(json.load(env_cfg_file, strict=False)).what_if(assignment_details)
         return res, 200 # ToDo: move cfg to constructor/cache

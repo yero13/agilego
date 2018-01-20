@@ -164,7 +164,7 @@
 							},
 							"transform_values": {
 								"parent": "row['parent'] = regex[1] if regex[1] != '' else None",
-								"date": "row['date'] = regex[2]",
+								"date": "row['date'] = datetime.datetime.strptime(regex[2], '%Y-%m-%d')", 
 								"group": "row['group'] = regex[3]",
 								"employee": "row['employee'] = regex[4]",
 								"whrs": "row['whrs'] = regex[5]",
