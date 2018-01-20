@@ -2,6 +2,7 @@ import argparse
 import json
 import logging.config
 from utils.cfg import CfgUtils
+from utils.env import get_env_params
 
 from integration.exporter import Exporter
 from transformation.transformer import Transformer
@@ -9,13 +10,11 @@ from transformation.transformer import Transformer
 CFG_LOG_EXPORT = './cfg/log/export-logging-config.json'
 CFG_TRANSFORM = './cfg/scrum/scrum-export-transform.json'
 CFG_EXPORT = './cfg/jira/jira-export.json'
-CFG_ENV = './cfg/env.json'
 
 if __name__ == '__main__':
     with open(CFG_LOG_EXPORT) as logging_cfg_file:
         logging.config.dictConfig(json.load(logging_cfg_file, strict=False))
-    with open(CFG_ENV) as env_cfg_file:
-        env_cfg = json.load(env_cfg_file, strict=False)
+    env_cfg = get_env_params()
     logger = logging.getLogger(__name__)
     parser = argparse.ArgumentParser()
     parser.add_argument('--login', required=True)

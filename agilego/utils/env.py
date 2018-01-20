@@ -6,6 +6,8 @@ is_test = False  # ToDo: replace by 'pydevd' in sys.modules
 CFG_TEST_ENV_DB = 'jira-test-data'
 CFG_TEST_ENV_PARAMS = 'env.params'
 CFG_ENV = './cfg/env.json'
+CFG_ENV_TEST = 'test'
+CFG_ENV_PROD = 'prod'
 
 
 def get_env_params():
@@ -16,5 +18,4 @@ def get_env_params():
  #   else:
     with open(CFG_ENV) as env_cfg_file:
         env_cfg = json.load(env_cfg_file, strict=False)
-    return env_cfg
-
+    return env_cfg[CFG_ENV_PROD]
