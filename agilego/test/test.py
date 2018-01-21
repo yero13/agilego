@@ -57,7 +57,7 @@ class ImportTestCase(unittest.TestCase):
         self.__test_env_cfg = get_env_params()
         self.__test_env_cfg[CFG_KEY_SCRUM_SPRINT] = Accessor.factory(CFG_TEST_DATA_DB).get(
             {Accessor.PARAM_KEY_COLLECTION: CFG_TEST_DATA_COL_SPRINT,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})#[CFG_TEST_DATA_SPRINT_ID]
+             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})[CFG_TEST_DATA_SPRINT_ID]
         try:
             logger.info('Init JIRA test data importer: {}'.format(ImportTestCase.__CFG_IMPORT))
             with open(ImportTestCase.__CFG_IMPORT) as cfg_file:
@@ -114,9 +114,6 @@ class TransformTestCase(unittest.TestCase):
 
     def test_transform_sprint_backlog(self):
         self.assertIn(DbConstants.SCRUM_SPRINT_BACKLOG, self.__collections)
-
-    def test_transform_sprint_backlog_details(self):
-        self.assertIn(DbConstants.SCRUM_BACKLOG_DETAILS, self.__collections)
 
 
 class ApiTestCase(unittest.TestCase):

@@ -1,7 +1,6 @@
 from flask_restful import Resource, request
 from flask import jsonify
 from service.constants import DbConstants, ParamConstants, MatchConstants
-from bson.objectid import ObjectId
 from service.validator import Validator
 from db.data import Accessor
 from utils.converter import Converter, Types
