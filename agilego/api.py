@@ -30,6 +30,5 @@ api.add_resource(EmployeeList, RestConstants.ROUTE_EMPLOYEES)
 api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group>'.format(RestConstants.ROUTE_GROUP))
 api.add_resource(AssignmentList, RestConstants.ROUTE_ASSIGNMENTS)
 api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT,
-                 '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT),
-                 '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT))
+                 '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT))
 api.add_resource(AssignmentValidation, RestConstants.ROUTE_ASSIGNMENT_VALIDATION)

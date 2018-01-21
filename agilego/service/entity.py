@@ -150,13 +150,15 @@ class Assignment(Resource):
                  ParamConstants.PARAM_EMPLOYEE: assignment_details[
                      ParamConstants.PARAM_EMPLOYEE]}}), 201
 
-    def delete(self, assignment_id):
-        # ToDo: delete assignment id (replace by combined id)
+    def delete(self, key, date, group, employee):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).delete(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
              Accessor.PARAM_KEY_MATCH_PARAMS: {
-                 '_id': ObjectId(assignment_id)}}), 204
+                 ParamConstants.PARAM_ITEM_KEY: key,
+                 ParamConstants.PARAM_DATE: Converter.convert(date, Types.TYPE_DATE),
+                 ParamConstants.PARAM_GROUP: group,
+                 ParamConstants.PARAM_EMPLOYEE: employee}}), 204
 
 
 class AssignmentValidation(Resource):

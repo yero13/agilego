@@ -6,6 +6,7 @@ from flask_restful import Api
 from integration.importer import Importer
 from transformation.transformer import Transformer
 from data.generator import Generator
+from db.data import Accessor
 from db.connect import MongoDb
 from utils.cfg import CfgUtils
 from service.constants import DbConstants, RestConstants
@@ -19,7 +20,10 @@ CFG_DATA_GENERATION  = './cfg/data/jira-data-generation.json'
 CFG_DATA_CLEANUP  = './cfg/data/jira-data-cleanup.json'
 CFG_KEY_JIRA_LOGIN = 'jira_login'
 CFG_KEY_JIRA_PSWD = 'jira_pswd'
-
+CFG_KEY_SCRUM_SPRINT = 'scrum_sprint'
+CFG_TEST_DATA_DB = 'db_src_data'
+CFG_TEST_DATA_COL_SPRINT = 'data.sprint'
+CFG_TEST_DATA_SPRINT_ID = 'id'
 
 utils.env.is_test = True
 with open(CFG_LOG_TEST) as logging_cfg_file:
@@ -51,6 +55,9 @@ class ImportTestCase(unittest.TestCase):
     def setUp(self):
         logger = logging.getLogger(__name__)
         self.__test_env_cfg = get_env_params()
+        self.__test_env_cfg[CFG_KEY_SCRUM_SPRINT] = Accessor.factory(CFG_TEST_DATA_DB).get(
+            {Accessor.PARAM_KEY_COLLECTION: CFG_TEST_DATA_COL_SPRINT,
+             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})#[CFG_TEST_DATA_SPRINT_ID]
         try:
             logger.info('Init JIRA test data importer: {}'.format(ImportTestCase.__CFG_IMPORT))
             with open(ImportTestCase.__CFG_IMPORT) as cfg_file:
@@ -134,8 +141,7 @@ class ApiTestCase(unittest.TestCase):
         api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group>'.format(RestConstants.ROUTE_GROUP))
         api.add_resource(AssignmentList, RestConstants.ROUTE_ASSIGNMENTS)
         api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT,
-                         '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT),
-                         '{}/<assignment_id>'.format(RestConstants.ROUTE_ASSIGNMENT))
+                         '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT))
         api.add_resource(AssignmentValidation, RestConstants.ROUTE_ASSIGNMENT_VALIDATION)
 
     def test_api_sprint(self):
