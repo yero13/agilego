@@ -1,0 +1,5 @@
+{
+	"project.team": {
+		"before-delete" : "ext.triggers.OnDeleteGroupTrigger"
+	}
+}

@@ -5,6 +5,8 @@ from service.validator import Validator
 from db.data import Accessor
 from utils.converter import Converter, Types
 import json
+import logging
+from jsondiff import diff
 
 CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json'
 
@@ -74,8 +76,18 @@ class Group(Resource):
     # ToDo: implement diff -u group_to_update vs existing group and trigger corresponding changes
     # ToDo: remove assignments if delete employee
     def post(self):
+        logger = logging.getLogger(__class__.__name__)
         group = request.get_json()
-        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).upsert(
+        logger.debug('-new-> {}'.format(group))
+        accessor = Accessor.factory(DbConstants.CFG_DB_SCRUM_API)
+        exist_group = accessor.get({Accessor.PARAM_KEY_COLLECTION: DbConstants.PROJECT_TEAM,
+             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
+             Accessor.PARAM_KEY_MATCH_PARAMS: {
+                 ParamConstants.PARAM_GROUP: group[ParamConstants.PARAM_GROUP]}})
+        logger.debug('-exist-> {}'.format(exist_group))
+        group_diff = diff(exist_group, group)
+        logger.debug('-diff-> {}'.format(group_diff))
+        return accessor.upsert(
             {Accessor.PARAM_KEY_COLLECTION: DbConstants.PROJECT_TEAM,
              Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
              Accessor.PARAM_KEY_OBJECT: group,
@@ -165,6 +177,6 @@ class AssignmentValidation(Resource):
         assignment_details = request.get_json()
         assignment_details[ParamConstants.PARAM_WHRS] = float(
             assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
-        with open(CFG_ASSIGN_VALIDATION) as env_cfg_file:
-            res = Validator(json.load(env_cfg_file, strict=False)).what_if(assignment_details)
+        with open(CFG_ASSIGN_VALIDATION) as validation_cfg_file:
+            res = Validator(json.load(validation_cfg_file, strict=False)).what_if(assignment_details) # ToDo: load once on start-up api
         return res, 200 # ToDo: move cfg to constructor/cache
