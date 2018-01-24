@@ -60,16 +60,9 @@ class EmployeeList(Resource):
 
 class Group(Resource):
     def delete(self, group):
-        # ToDo: move dependencies cleanup to separated class
-        accessor = Accessor.factory(DbConstants.CFG_DB_SCRUM_API)
-        accessor.delete({AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
-                         AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-                         AccessParams.KEY_MATCH_PARAMS: {
-                             ParamConstants.PARAM_GROUP: group}})
-        return accessor.delete({AccessParams.KEY_COLLECTION: DbConstants.PROJECT_TEAM,
-                                AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
-                                AccessParams.KEY_MATCH_PARAMS: {
-                                    ParamConstants.PARAM_GROUP: group}}), 204
+        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).delete(
+            {AccessParams.KEY_COLLECTION: DbConstants.PROJECT_TEAM, AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_MATCH_PARAMS: {ParamConstants.PARAM_GROUP: group}}), 204
 
     def post(self):
         group = request.get_json()
