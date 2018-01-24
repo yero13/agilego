@@ -10,7 +10,6 @@ class OnDeleteGroupTrigger(Trigger):
 
 class OnUpsertGroupTrigger(Trigger):
     def execute(self, input_object, match_params):
-        self._logger.info('Trigger is executing {} with params {} {}'.format(__class__.__name__, input_object, match_params))
         exist_group = CRUD.read_single(self._db, self._collection, match_params)
         diff = JSONUtils.diff(exist_group, input_object)
         if ParamConstants.PARAM_EMPLOYEES in diff and JSONUtils.DIFF_DELETE in diff[ParamConstants.PARAM_EMPLOYEES]:

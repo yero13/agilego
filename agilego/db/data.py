@@ -19,12 +19,10 @@ class CRUD:
 
     @staticmethod
     def delete_single(db, collection, match_params=None):
-        logging.debug('...match {}'.format(match_params))
         return db[collection].delete_one(match_params).deleted_count
 
     @staticmethod
     def delete_multi(db, collection, match_params=None):
-        logging.debug('...match {}'.format(match_params))
         return db[collection].delete_many(match_params).deleted_count
 
     @staticmethod

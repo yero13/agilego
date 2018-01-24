@@ -23,6 +23,8 @@ class JSONUtils():
 
     def diff(a, b):
         delta = diff(a, b)
+        if not a:
+            return delta
         for item in delta:
             if isinstance(a[item], list):
                 if delta[item] == []:
