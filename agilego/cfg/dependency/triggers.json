@@ -1,5 +1,6 @@
 {
 	"project.team": {
-		"before-delete" : "ext.triggers.OnDeleteGroupTrigger"
+		"before-delete" : "ext.triggers.OnDeleteGroupTrigger",
+		"before-upsert" : "ext.triggers.OnUpsertGroupTrigger"		
 	}
 }

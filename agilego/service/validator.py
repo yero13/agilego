@@ -1,5 +1,5 @@
 from service.aggregator import Aggregator
-from db.data import Accessor
+from db.data import Accessor, AccessParams
 from service.constants import DbConstants, ParamConstants
 import logging
 import abc
@@ -104,22 +104,22 @@ class Validation:
         agg_field = cfg[Validation.__CFG_KEY_CALC_AGG_FIELD]
         agg_field_type = cfg[Validation.__CFG_KEY_FIELD_TYPE]
         dataset = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_MATCH_PARAMS: filter,
-             Accessor.PARAM_KEY_COLLECTION: agg_collection,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI})
+            {AccessParams.KEY_MATCH_PARAMS: filter,
+             AccessParams.KEY_COLLECTION: agg_collection,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
         res = Aggregator.aggregate(dataset, agg_field, agg_field_type, agg_func)
         return res if res else Validation.__get_default_value(cfg)
 
     @staticmethod
     def __extract(cfg, match_param_values):
         id = {}
-        match_params = cfg[Accessor.PARAM_KEY_MATCH_PARAMS]
+        match_params = cfg[AccessParams.KEY_MATCH_PARAMS]
         for param in match_params:
             id[param] = match_param_values[param]
         res = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_MATCH_PARAMS: id,
-             Accessor.PARAM_KEY_COLLECTION: cfg[Accessor.PARAM_KEY_COLLECTION],
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})
+            {AccessParams.KEY_MATCH_PARAMS: id,
+             AccessParams.KEY_COLLECTION: cfg[AccessParams.KEY_COLLECTION],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
         if not res:
             return Validation.__get_default_value(cfg)
         elif res[cfg[Validation.__CFG_KEY_EXTRACT_FIELD]] is None:

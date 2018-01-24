@@ -31,6 +31,8 @@ class ParamConstants:
     PARAM_DATE = 'date'
     PARAM_GROUP = 'group'
     PARAM_EMPLOYEE = 'employee'
+    PARAM_EMPLOYEES = 'employees'
+    PARAM_EMPLOYEE_NAME = 'name'
     PARAM_COMPONENT = 'component'
     PARAM_TIMELINE = 'timeline'
     PARAM_WHRS = 'whrs'

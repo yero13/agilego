@@ -56,8 +56,8 @@ class ImportTestCase(unittest.TestCase):
         logger = logging.getLogger(__name__)
         self.__test_env_cfg = get_env_params()
         self.__test_env_cfg[CFG_KEY_SCRUM_SPRINT] = Accessor.factory(CFG_TEST_DATA_DB).get(
-            {Accessor.PARAM_KEY_COLLECTION: CFG_TEST_DATA_COL_SPRINT,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})[CFG_TEST_DATA_SPRINT_ID]
+            {Accessor.KEY_COLLECTION: CFG_TEST_DATA_COL_SPRINT,
+             Accessor.KEY_TYPE: Accessor.TYPE_SINGLE})[CFG_TEST_DATA_SPRINT_ID]
         try:
             logger.info('Init JIRA test data importer: {}'.format(ImportTestCase.__CFG_IMPORT))
             with open(ImportTestCase.__CFG_IMPORT) as cfg_file:

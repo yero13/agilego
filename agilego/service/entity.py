@@ -2,37 +2,35 @@ from flask_restful import Resource, request
 from flask import jsonify
 from service.constants import DbConstants, ParamConstants, MatchConstants
 from service.validator import Validator
-from db.data import Accessor
+from db.data import Accessor, AccessParams
 from utils.converter import Converter, Types
 import json
-import logging
-from jsondiff import diff
 
-CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json'
+CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json' # ToDo: load on start up
 
 
 class Backlog(Resource):
     def get(self):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
-                 Accessor.OPERATOR_OR: [{ParamConstants.PARAM_TYPE: MatchConstants.TYPE_STORY},
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_MATCH_PARAMS: {
+                 AccessParams.OPERATOR_OR: [{ParamConstants.PARAM_TYPE: MatchConstants.TYPE_STORY},
                                         {ParamConstants.PARAM_TYPE: MatchConstants.TYPE_BUG}]}}))
 
 
 class Sprint(Resource):
     def get(self):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE}))
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE}))
 
 
 class SprintTimeline(Resource):
     def get(self):
         found = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_TIMELINE,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_TIMELINE,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
         return (
         [] if (not found or not ParamConstants.PARAM_TIMELINE in found) else jsonify(found[ParamConstants.PARAM_TIMELINE]))
 
@@ -40,8 +38,8 @@ class SprintTimeline(Resource):
 class ComponentList(Resource):
     def get(self):
         found = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.PROJECT_COMPONENTS,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE})
+            {AccessParams.KEY_COLLECTION: DbConstants.PROJECT_COMPONENTS,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
         return (
         [] if (not found or not ParamConstants.PARAM_COMPONENT in found) else found[ParamConstants.PARAM_COMPONENT])
 
@@ -49,83 +47,71 @@ class ComponentList(Resource):
 class GroupList(Resource):
     def get(self):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.PROJECT_TEAM,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI})
+            {AccessParams.KEY_COLLECTION: DbConstants.PROJECT_TEAM,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
 
 
 class EmployeeList(Resource):
     def get(self):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.PROJECT_EMPLOYEES,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI})
+            {AccessParams.KEY_COLLECTION: DbConstants.PROJECT_EMPLOYEES,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
 
 
 class Group(Resource):
     def delete(self, group):
         # ToDo: move dependencies cleanup to separated class
         accessor = Accessor.factory(DbConstants.CFG_DB_SCRUM_API)
-        accessor.delete({Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
-                         Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI,
-                         Accessor.PARAM_KEY_MATCH_PARAMS: {
+        accessor.delete({AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+                         AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+                         AccessParams.KEY_MATCH_PARAMS: {
                              ParamConstants.PARAM_GROUP: group}})
-        return accessor.delete({Accessor.PARAM_KEY_COLLECTION: DbConstants.PROJECT_TEAM,
-                                Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
-                                Accessor.PARAM_KEY_MATCH_PARAMS: {
+        return accessor.delete({AccessParams.KEY_COLLECTION: DbConstants.PROJECT_TEAM,
+                                AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+                                AccessParams.KEY_MATCH_PARAMS: {
                                     ParamConstants.PARAM_GROUP: group}}), 204
 
-    # ToDo: implement diff -u group_to_update vs existing group and trigger corresponding changes
-    # ToDo: remove assignments if delete employee
     def post(self):
-        logger = logging.getLogger(__class__.__name__)
         group = request.get_json()
-        logger.debug('-new-> {}'.format(group))
-        accessor = Accessor.factory(DbConstants.CFG_DB_SCRUM_API)
-        exist_group = accessor.get({Accessor.PARAM_KEY_COLLECTION: DbConstants.PROJECT_TEAM,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
-                 ParamConstants.PARAM_GROUP: group[ParamConstants.PARAM_GROUP]}})
-        logger.debug('-exist-> {}'.format(exist_group))
-        group_diff = diff(exist_group, group)
-        logger.debug('-diff-> {}'.format(group_diff))
-        return accessor.upsert(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.PROJECT_TEAM,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
-             Accessor.PARAM_KEY_OBJECT: group,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
+        return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).upsert(
+            {AccessParams.KEY_COLLECTION: DbConstants.PROJECT_TEAM,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_OBJECT: group,
+             AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_GROUP: group[ParamConstants.PARAM_GROUP]}}), 201
 
 
 class AssignmentList(Resource):
     def get(self):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI}))
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI}))
 
 
 class SubtaskList(Resource):
     def get(self, task_key):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_MULTI,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_PARENT: task_key}}))
 
 
 class TaskDetails(Resource):
     def get(self, task_key):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: task_key}}))
 
 
 class SubtaskDetails(Resource):
     def get(self, subtask_key):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: subtask_key}}))
 
 
@@ -134,9 +120,9 @@ class SubtaskDetails(Resource):
 class Assignment(Resource):
     def get(self, key, date, group, employee):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: key,
                  ParamConstants.PARAM_DATE: date,
                  ParamConstants.PARAM_GROUP: group,
@@ -148,10 +134,10 @@ class Assignment(Resource):
                                                                           Types.TYPE_DATE)
 
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).upsert(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
-             Accessor.PARAM_KEY_OBJECT: assignment_details,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_OBJECT: assignment_details,
+             AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: assignment_details[
                      ParamConstants.PARAM_ITEM_KEY],
                  ParamConstants.PARAM_DATE: assignment_details[
@@ -163,9 +149,9 @@ class Assignment(Resource):
 
     def delete(self, key, date, group, employee):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).delete(
-            {Accessor.PARAM_KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
-             Accessor.PARAM_KEY_TYPE: Accessor.PARAM_TYPE_SINGLE,
-             Accessor.PARAM_KEY_MATCH_PARAMS: {
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: key,
                  ParamConstants.PARAM_DATE: Converter.convert(date, Types.TYPE_DATE),
                  ParamConstants.PARAM_GROUP: group,
