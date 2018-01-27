@@ -60,7 +60,7 @@ class Transformation:
     __TYPE_UPDATE_COLLECTION = 'update_collection'
 
     @staticmethod
-    def factory(cfg, src_db, dest_db):
+    def factory(cfg, src_db, dest_db): # ToDo: instanciate based on class name
         tranform_type = cfg[Transformation.__CFG_KEY_TRANSFORMATION_TYPE]
         if tranform_type == Transformation.__TYPE_SINGLE_OBJECT:
             return SingleObjectTransformation(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)

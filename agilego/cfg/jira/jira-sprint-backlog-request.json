@@ -111,6 +111,16 @@
 										}
 									}
 								},
+								"subtasks": {
+									"key": "subtasks",
+									"type": "array",
+									"fields": {
+										"name": {
+											"key": "key",
+											"type": "string"
+										}
+									}
+								},
 								"labels": {
 									"key": "labels",
 									"type": "array"
@@ -128,6 +138,43 @@
 									"key": "$field_agilego_tech",
 									"type": "array",
 									"ext_id": "assignments"
+								},
+								"blocks": {
+									"key": "issuelinks",
+									"type": "array",
+									"ext_id": "blocks",
+									"match":{
+										"type": "object",
+										"properties": {
+											"type": {
+												"type": "object",
+												"properties": {
+													"outward": {"type": "string", "pattern": "blocks"}
+												},
+												"required": ["outward"]
+											},
+											"outwardIssue": {
+												"type": "object",
+												"properties": {
+													"key": {"type": "string"}
+												},
+												"required": ["key"]
+											}
+										},
+										"required": ["type", "outwardIssue"]
+									},									
+									"fields": {
+										"outwardIssue": {
+											"key": "outwardIssue",
+											"type": "object",
+											"fields": {
+												"key": {
+													"key": "key",
+													"type": "string"
+												}
+											}
+										}
+									}
 								},
 								"blocks": {
 									"key": "issuelinks",

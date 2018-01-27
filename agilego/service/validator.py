@@ -56,7 +56,7 @@ class Validation:
     __CFG_KEY_CALC_AGG_GROUP = 'agg.group'
 
     @staticmethod
-    def factory(cfg):
+    def factory(cfg): # ToDo: instanciate based on filename, move validators to separate file
         type = cfg[Validation.__CFG_KEY_VALIDATOR_TYPE]
         if type == Validation.__CFG_VALIDATOR_TYPE_LIMIT_EXCEED:
             return LimitExceedValidation(cfg)

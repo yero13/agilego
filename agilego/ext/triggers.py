@@ -1,4 +1,4 @@
-from db.data import Trigger, CRUD, AccessParams
+from db.data import Trigger, CRUD
 from utils.json import JSONUtils
 from service.constants import ParamConstants, DbConstants
 
