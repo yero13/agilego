@@ -24,9 +24,9 @@
 					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "sprint.backlog",
-						"dest.collection": "sprint.idx_all_items"
-					},
-					"fields": ["key"]	
+						"dest.collection": "sprint.idx_all_items",
+						"fields": ["key"]
+					}						
 				}				
 			}
 		},
