@@ -8,7 +8,7 @@
 			},
 			"transformations": {
 				"components": {
-					"type": "transpose_to_array",
+					"class": "ext.transformations.TransposeToArrayTransformation",
 					"cfg": {
 						"src.collection": "components",
 						"dest.collection": "project.components",
@@ -19,14 +19,14 @@
 					}
 				},
 				"employees": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "employees",
 						"dest.collection": "project.employees"
 					}
 				},				
 				"sprint-timeline": {
-					"type": "single_object",
+					"class": "ext.transformations.SingleObjectTransformation",
 					"cfg": {
 						"src.collection": "sprint",
 						"dest.collection": "sprint.timeline",
@@ -37,14 +37,14 @@
 					}
 				},
 				"sprint-definition": {
-					"type": "single_object",
+					"class": "ext.transformations.SingleObjectTransformation",
 					"cfg": {
 						"src.collection": "sprint",
 						"dest.collection": "sprint.definition"					
 					}
 				},
 				"sprint-all_items": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "backlog",
 						"dest.collection": "sprint.all_items",
@@ -64,7 +64,7 @@
 			},
 			"transformations": {
 				"components": {
-					"type": "single_object",
+					"class": "ext.transformations.SingleObjectTransformation",
 					"cfg": {
 						"src.collection": "project.components",
 						"dest.collection": "project.components",
@@ -72,7 +72,7 @@
 					}
 				},			
 				"blocked_by": {
-					"type": "transpose_from_array",
+					"class": "ext.transformations.TransposeFromArrayTransformation",
 					"cfg": {
 						"src.collection": "sprint.all_items",
 						"dest.collection": "sprint.idx_blocked_by",
@@ -83,7 +83,7 @@
 					}
 				},
 				"assignments": {
-					"type": "transpose_from_array",
+					"class": "ext.transformations.TransposeFromArrayTransformation",
 					"cfg": {
 						"src.collection": "sprint.all_items",
 						"dest.collection": "sprint.idx_assignments",
@@ -102,35 +102,35 @@
 			},
 			"transformations": {
 				"components": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "project.components",
 						"dest.collection": "project.components"
 					}
 				},
 				"employees": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "project.employees",
 						"dest.collection": "project.employees"
 					}
 				},
 				"sprint.definition": {
-					"type": "single_object",
+					"class": "ext.transformations.SingleObjectTransformation",
 					"cfg": {
 						"src.collection": "sprint.definition",
 						"dest.collection": "sprint.definition"						
 					}
 				},
 				"sprint.timeline": {
-					"type": "single_object",
+					"class": "ext.transformations.SingleObjectTransformation",
 					"cfg": {
 						"src.collection": "sprint.timeline",
 						"dest.collection": "sprint.timeline"						
 					}
 				},
 				"idx_all_items": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "sprint.all_items",
 						"dest.collection": "sprint.idx_all_items",
@@ -138,7 +138,7 @@
 					}				
 				},
 				"backlog": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "sprint.all_items",
 						"dest.collection": "sprint.backlog",
@@ -153,7 +153,7 @@
 					}
 				},
 				"assignments": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "sprint.idx_assignments",
 						"dest.collection": "sprint.assignments",

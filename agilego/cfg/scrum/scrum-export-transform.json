@@ -7,7 +7,7 @@
 			},
 			"transformations": {
 				"sprint-assignments": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "sprint.assignments",
 						"dest.collection": "sprint.assignments_raw",
@@ -21,7 +21,7 @@
 					}
 				},
 				"sprint-all-items": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "sprint.idx_all_items",
 						"dest.collection": "sprint.idx_all_items"
@@ -36,7 +36,7 @@
 			},
 			"transformations": {
 				"sprint-assignment-search-transpose": {
-					"type": "transpose_to_array",
+					"class": "ext.transformations.TransposeToArrayTransformation",
 					"cfg": {
 						"src.collection": "sprint.assignments_raw",
 						"dest.collection": "sprint.assignments_search_labels",
@@ -47,7 +47,7 @@
 					}
 				},
 				"sprint-assignment-tech-transpose": {
-					"type": "transpose_to_array",
+					"class": "ext.transformations.TransposeToArrayTransformation",
 					"cfg": {
 						"src.collection": "sprint.assignments_raw",
 						"dest.collection": "sprint.assignments_tech",
@@ -58,7 +58,7 @@
 					}
 				},
 				"sprint-assignment-label-join": {
-					"type": "left_join",
+					"class": "ext.transformations.LeftJoinTransformation",
 					"cfg": {
 						"src.collection": "sprint.idx_all_items",
 						"dest.collection": "sprint.assignments_search_labels",
@@ -70,7 +70,7 @@
 					}
 				},
 				"sprint-assignment-tech-join": {
-					"type": "left_join",
+					"class": "ext.transformations.LeftJoinTransformation",
 					"cfg": {
 						"src.collection": "sprint.idx_all_items",
 						"dest.collection": "sprint.assignments_tech",
@@ -82,7 +82,7 @@
 					}
 				},
 				"sprint-assignment-label-notnull": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "sprint.assignments_search_labels",
 						"dest.collection": "sprint.assignments_search_labels",
@@ -94,7 +94,7 @@
 					}
 				},
 				"sprint-assignment-tech-notnull": {
-					"type": "dataset",
+					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
 						"src.collection": "sprint.assignments_tech",
 						"dest.collection": "sprint.assignments_tech",
