@@ -129,14 +129,6 @@
 						"dest.collection": "sprint.timeline"						
 					}
 				},
-				"idx_all_items": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "sprint.all_items",
-						"dest.collection": "sprint.idx_all_items",
-						"fields": ["key"]
-					}				
-				},
 				"backlog": {
 					"class": "ext.transformations.DatasetTransformation",
 					"cfg": {
