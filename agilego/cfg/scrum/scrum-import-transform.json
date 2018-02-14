@@ -71,7 +71,7 @@
 						"fields": ["component"]
 					}
 				},			
-				"blocked_by": {
+				"idx_blocked_by": {
 					"class": "ext.transformations.TransposeFromArrayTransformation",
 					"cfg": {
 						"src.collection": "sprint.all_items",
@@ -80,6 +80,73 @@
 							"key": "key",
 							"values": "blocked_by"
 						}
+					}
+				},
+				"link_blocked_by": {
+					"class": "ext.transformations.DatasetTransformation",
+					"cfg": {
+						"src.collection": "sprint.idx_blocked_by",
+						"dest.collection": "sprint.link_blocked_by",
+						"transformation": {
+							"transform_values": {
+								"A": "row['A'] = row['key']",
+								"B": "row['B'] = row['blocked_by']",
+								"link": "row['link'] = 'blocked_by'"
+							}
+						},
+						"fields": ["A", "B", "link"]
+					}
+				},
+				"idx_blocks": {
+					"class": "ext.transformations.TransposeFromArrayTransformation",
+					"cfg": {
+						"src.collection": "sprint.all_items",
+						"dest.collection": "sprint.idx_blocks",
+						"transformation": {
+							"key": "key",
+							"values": "blocks"
+						}
+					}
+				},
+				"link_blocks": {
+					"class": "ext.transformations.DatasetTransformation",
+					"cfg": {
+						"src.collection": "sprint.idx_blocks",
+						"dest.collection": "sprint.link_blocks",
+						"transformation": {
+							"transform_values": {
+								"A": "row['A'] = row['key']",
+								"B": "row['B'] = row['blocks']",
+								"link": "row['link'] = 'blocks'"
+							}
+						},
+						"fields": ["A", "B", "link"]
+					}
+				},				
+				"idx_subtasks": {
+					"class": "ext.transformations.TransposeFromArrayTransformation",
+					"cfg": {
+						"src.collection": "sprint.all_items",
+						"dest.collection": "sprint.idx_subtasks",
+						"transformation": {
+							"key": "key",
+							"values": "subtasks"
+						}
+					}
+				},
+				"link_subtasks": {
+					"class": "ext.transformations.DatasetTransformation",
+					"cfg": {
+						"src.collection": "sprint.idx_subtasks",
+						"dest.collection": "sprint.link_subtasks",
+						"transformation": {
+							"transform_values": {
+								"A": "row['A'] = row['key']",
+								"B": "row['B'] = row['subtasks']",
+								"link": "row['link'] = 'subtask'"
+							}
+						},
+						"fields": ["A", "B", "link"]
 					}
 				},
 				"assignments": {
