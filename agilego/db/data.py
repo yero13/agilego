@@ -3,7 +3,7 @@ import logging
 import abc
 import json
 from utils.env import get_env_params
-from utils.object import class_for_name
+from utils.object import obj_for_name
 
 CFG_TRIGGERS = './cfg/dependency/triggers.json'
 
@@ -45,7 +45,7 @@ class Trigger:
         with open(CFG_TRIGGERS) as triggers_cfg_file:
             triggers_cfg = json.load(triggers_cfg_file, strict=False) # ToDo: load once on startup
         if (collection in triggers_cfg) and (action in triggers_cfg[collection]):
-            return class_for_name(triggers_cfg[collection][action])(db, collection)
+            return obj_for_name(triggers_cfg[collection][action])(db, collection)
         else:
             return None
 

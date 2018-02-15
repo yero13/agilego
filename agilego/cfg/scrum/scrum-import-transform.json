@@ -3,236 +3,30 @@
 	"transformation-sets": {
 		"src-transform": {
 			"db": {
-				"src.db": "$db_jira_import",
-				"dest.db": "$db_scrum_transform"
+				"src.db": "db_jira_import",
+				"dest.db": "db_scrum_transform"
 			},
 			"transformations": {
 				"components": {
-					"class": "ext.transformations.TransposeToArrayTransformation",
+					"class": "transformation.transformer.ManyToOneTransformation",
 					"cfg": {
-						"src.collection": "components",
-						"dest.collection": "project.components",
-						"transformation": {
-								"key": "project",
-								"values": "component"
-						}								
-					}
-				},
-				"employees": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "employees",
-						"dest.collection": "project.employees"
-					}
-				},				
-				"sprint-timeline": {
-					"class": "ext.transformations.SingleObjectTransformation",
-					"cfg": {
-						"src.collection": "sprint",
-						"dest.collection": "sprint.timeline",
-						"transformation": {
-							"timeline": "obj['timeline'] = pd.date_range(obj['startDate'], obj['endDate']).tolist()"
+						"src.db.load": {
+							"src": "components"
 						},
-						"fields": ["timeline"]
-					}
-				},
-				"sprint-definition": {
-					"class": "ext.transformations.SingleObjectTransformation",
-					"cfg": {
-						"src.collection": "sprint",
-						"dest.collection": "sprint.definition"					
-					}
-				},
-				"sprint-all_items": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "backlog",
-						"dest.collection": "sprint.all_items",
-						"transformation": {
-							"transform_values": {
-								"sec2hrs": "row['estimate'] = row['estimate']/3600 if row['estimate'] else 0"
-							}
-						}						
+						"transform": {
+							"func": "transformation.transformer.singles2array",
+							"args": {
+								"field": "component"
+							}							
+						},
+						"dest.db.cleanup": {
+							"target": "project.components"
+						},
+						"dest.db.save": {
+							"dest": "project.components"
+						}
 					}
 				}
-			}
-		},
-		"int-transform": {
-			"db": {
-				"src.db": "$db_scrum_transform",
-				"dest.db": "$db_scrum_transform"
-			},
-			"transformations": {
-				"components": {
-					"class": "ext.transformations.SingleObjectTransformation",
-					"cfg": {
-						"src.collection": "project.components",
-						"dest.collection": "project.components",
-						"fields": ["component"]
-					}
-				},			
-				"idx_blocked_by": {
-					"class": "ext.transformations.TransposeFromArrayTransformation",
-					"cfg": {
-						"src.collection": "sprint.all_items",
-						"dest.collection": "sprint.idx_blocked_by",
-						"transformation": {
-							"key": "key",
-							"values": "blocked_by"
-						}
-					}
-				},
-				"link_blocked_by": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "sprint.idx_blocked_by",
-						"dest.collection": "sprint.link_blocked_by",
-						"transformation": {
-							"transform_values": {
-								"A": "row['A'] = row['key']",
-								"B": "row['B'] = row['blocked_by']",
-								"link": "row['link'] = 'blocked_by'"
-							}
-						},
-						"fields": ["A", "B", "link"]
-					}
-				},
-				"idx_blocks": {
-					"class": "ext.transformations.TransposeFromArrayTransformation",
-					"cfg": {
-						"src.collection": "sprint.all_items",
-						"dest.collection": "sprint.idx_blocks",
-						"transformation": {
-							"key": "key",
-							"values": "blocks"
-						}
-					}
-				},
-				"link_blocks": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "sprint.idx_blocks",
-						"dest.collection": "sprint.link_blocks",
-						"transformation": {
-							"transform_values": {
-								"A": "row['A'] = row['key']",
-								"B": "row['B'] = row['blocks']",
-								"link": "row['link'] = 'blocks'"
-							}
-						},
-						"fields": ["A", "B", "link"]
-					}
-				},				
-				"idx_subtasks": {
-					"class": "ext.transformations.TransposeFromArrayTransformation",
-					"cfg": {
-						"src.collection": "sprint.all_items",
-						"dest.collection": "sprint.idx_subtasks",
-						"transformation": {
-							"key": "key",
-							"values": "subtasks"
-						}
-					}
-				},
-				"link_subtasks": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "sprint.idx_subtasks",
-						"dest.collection": "sprint.link_subtasks",
-						"transformation": {
-							"transform_values": {
-								"A": "row['A'] = row['key']",
-								"B": "row['B'] = row['subtasks']",
-								"link": "row['link'] = 'subtask'"
-							}
-						},
-						"fields": ["A", "B", "link"]
-					}
-				},
-				"assignments": {
-					"class": "ext.transformations.TransposeFromArrayTransformation",
-					"cfg": {
-						"src.collection": "sprint.all_items",
-						"dest.collection": "sprint.idx_assignments",
-						"transformation": {
-							"key": "key",
-							"values": "assignments"
-						}
-					}
-				}				
-			}
-		},
-		"dest-transform": {
-			"db": {
-				"src.db": "$db_scrum_transform",
-				"dest.db": "$db_scrum_api"
-			},
-			"transformations": {
-				"components": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "project.components",
-						"dest.collection": "project.components"
-					}
-				},
-				"employees": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "project.employees",
-						"dest.collection": "project.employees"
-					}
-				},
-				"sprint.definition": {
-					"class": "ext.transformations.SingleObjectTransformation",
-					"cfg": {
-						"src.collection": "sprint.definition",
-						"dest.collection": "sprint.definition"						
-					}
-				},
-				"sprint.timeline": {
-					"class": "ext.transformations.SingleObjectTransformation",
-					"cfg": {
-						"src.collection": "sprint.timeline",
-						"dest.collection": "sprint.timeline"						
-					}
-				},
-				"backlog": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "sprint.all_items",
-						"dest.collection": "sprint.backlog",
-						"transformation": {
-							"where": "type == 'Story' or type == 'Bug' or type == 'Sub-task'",
-							"order": {
-								"by_column": "priority",
-								"sort_order": ["Highest", "High", "Medium", "Low", "Lowest"]
-							}
-						},
-						"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks"]
-					}
-				},
-				"assignments": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "sprint.idx_assignments",
-						"dest.collection": "sprint.assignments",
-						"transformation": {
-							"regex": {
-								"pattern": "^(\\S+-\\d+){1}_(\\S+-\\d+){0,1}_(\\d{4}-\\d{2}-\\d{2})_(\\S+)_(\\S+)_(\\d+(\\.\\d{1,2})*)_(\\S*)$",
-								"input": "assignments"
-							},
-							"transform_values": {
-								"parent": "row['parent'] = regex[1] if regex[1] != '' else None",
-								"date": "row['date'] = datetime.datetime.strptime(regex[2], '%Y-%m-%d')", 
-								"group": "row['group'] = regex[3]",
-								"employee": "row['employee'] = regex[4]",
-								"whrs": "row['whrs'] = regex[5]",
-								"comment": "row['comment'] = regex[7]"
-							}
-						},	
-						"fields": ["key", "parent", "date", "group", "employee", "whrs", "comment"]
-					}
-				}				
 			}
 		}
 	}
