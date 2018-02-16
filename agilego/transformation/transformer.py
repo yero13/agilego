@@ -45,8 +45,6 @@ class Transformation:
     # ToDo: should be replaced by load/cleanup/save/transform
     __CFG_KEY_TRANSFORMATION = 'transformation'
     #__CFG_KEY_FIELDS = 'fields'
-    #__CFG_KEY_SRC_COLLECTION = 'src.collection'
-    #__CFG_KEY_DEST_COLLECTION = 'dest.collection'
     __CFG_KEY_TRANSFORMATION_CLASS = 'class'
     CFG_KEY_TRANSFORMATION_CFG = 'cfg'
     __CFG_KEY_LOAD = 'src.db.load'
@@ -56,6 +54,8 @@ class Transformation:
     _CFG_KEY_CLEANUP_TARGET = 'target'
     __CFG_KEY_SAVE = 'dest.db.save'
     _CFG_KEY_SAVE_DEST = 'dest'
+    _CFG_KEY_FUNC = 'func'
+    _CFG_KEY_FUNC_ARGS = 'args'
 
     @staticmethod
     def factory(cfg, src_db, dest_db):
@@ -101,17 +101,16 @@ class Transformation:
 '''
 
 
-class ManyToOneTransformation(Transformation):
-    _CFG_KEY_FUNC = 'func'
-    _CFG_KEY_ARGS = 'args'
-
+class Col2DocTransformation(Transformation):
     def _load(self, cfg):
         self._src = Accessor.factory(self._src_db).get(
             {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_LOAD_SRC],
              AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
 
     def _transform(self, cfg):
-        self._res = obj_for_name(cfg[ManyToOneTransformation._CFG_KEY_FUNC])(self._src, cfg[ManyToOneTransformation._CFG_KEY_ARGS])
+        func = cfg[Transformation._CFG_KEY_FUNC]
+        args = cfg[Transformation._CFG_KEY_FUNC_ARGS] if Transformation._CFG_KEY_FUNC_ARGS in cfg else {}
+        self._res = obj_for_name(func)(self._src, args)
 
     def _cleanup(self, cfg):
         Accessor.factory(self._dest_db).delete(
@@ -126,21 +125,49 @@ class ManyToOneTransformation(Transformation):
              AccessParams.KEY_OBJECT: self._res})
 
 
+class Col2ColTransformation(Transformation):
+    def _load(self, cfg):
+        self._src = Accessor.factory(self._src_db).get(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_LOAD_SRC],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
+
+    def _transform(self, cfg):
+        func = cfg[Transformation._CFG_KEY_FUNC]
+        args = cfg[Transformation._CFG_KEY_FUNC_ARGS] if Transformation._CFG_KEY_FUNC_ARGS in cfg else {}
+        self._res = obj_for_name(func)(self._src, args)
+
+    def _cleanup(self, cfg):
+        Accessor.factory(self._dest_db).delete(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_MATCH_PARAMS: {}})
+
+    def _save(self, cfg):
+        Accessor.factory(self._dest_db).upsert(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_OBJECT: self._res})
+
+
 def transformer(func):
-    def transformer_wrapper(input, cfg):
+    def transformer_wrapper(input, args):
         #logger = logging.getLogger(transformer_wrapper.__name__)
         #logger.debug('Performing {} with params {}'.format(func.__name__, cfg))
-        return func(input, **cfg)
+        return func(input, **args)
     return transformer_wrapper
+
 
 @transformer
 def singles2array(input, **kwargs):
     PARAM_FIELD = 'field'
 
-    #logger = logging.getLogger(singles2array.__name__)
     res = []
     field = kwargs.get(PARAM_FIELD)
     for item in input:
         res.append(item[field])
-    #logger.debug('{}'.format(res))
     return {field: res}
+
+
+@transformer
+def copy(input, **kwargs):
+    return input

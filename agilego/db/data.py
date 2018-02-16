@@ -30,8 +30,8 @@ class CRUD:
         return str(db[collection].update_one(match_params, {"$set": object}, upsert=True).upserted_id)
 
     @staticmethod
-    def upsert_multi(db, collection, object, match_params=None):
-        raise NotImplementedError
+    def insert_multi(db, collection, object, match_params=None):
+        return db[collection].insert_many(object).inserted_ids
 
 
 class Trigger:
@@ -116,6 +116,6 @@ class Accessor:
         if cfg[AccessParams.KEY_TYPE] == AccessParams.TYPE_SINGLE:
             result =  CRUD.upsert_single(self.__db, collection, input_object, match_params)
         elif cfg[AccessParams.KEY_TYPE] == AccessParams.TYPE_MULTI:
-            result =  CRUD.upsert_multi(self.__db, collection, input_object, match_params)
+            result =  CRUD.insert_multi(self.__db, collection, input_object, match_params)
         self.__exec_trigger(Trigger.ACTION_AFTER_UPSERT, collection, input_object, match_params)
         return result

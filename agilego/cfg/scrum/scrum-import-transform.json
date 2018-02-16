@@ -8,7 +8,7 @@
 			},
 			"transformations": {
 				"components": {
-					"class": "transformation.transformer.ManyToOneTransformation",
+					"class": "transformation.transformer.Col2DocTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "components"
@@ -26,7 +26,24 @@
 							"dest": "project.components"
 						}
 					}
-				}
+				},
+				"employees": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "employees"
+						},
+						"transform": {
+							"func": "transformation.transformer.copy"						
+						},
+						"dest.db.cleanup": {
+							"target": "project.employees"
+						},
+						"dest.db.save": {
+							"dest": "project.employees"
+						}
+					}
+				}				
 			}
 		}
 	}
