@@ -23,8 +23,6 @@ class TransformationSet:
     __CFG_KEY_DEST_DB = 'dest.db'
     __CFG_KEY_TRANSFORMATIONS = 'transformations'
 
-    # ToDo: define cached objects on this level(?)
-
     def __init__(self, cfg):
         self.__cfg = cfg
         self.__logger = logging.getLogger(__class__.__name__)
@@ -41,8 +39,6 @@ class TransformationSet:
 
 
 class Transformation:
-    # ToDo: class should be refactored  - no logic should be in cfg - it should be in class, params are allowed in cfg
-    # ToDo: should be replaced by load/cleanup/save/transform
     __CFG_KEY_TRANSFORMATION = 'transformation'
     #__CFG_KEY_FIELDS = 'fields'
     __CFG_KEY_TRANSFORMATION_CLASS = 'class'
@@ -55,12 +51,12 @@ class Transformation:
     __CFG_KEY_SAVE = 'dest.db.save'
     _CFG_KEY_SAVE_DEST = 'dest'
     _CFG_KEY_FUNC = 'func'
-    _CFG_KEY_FUNC_ARGS = 'args'
+    _CFG_KEY_FUNC_PARAMS = 'params'
 
     @staticmethod
     def factory(cfg, src_db, dest_db):
         return obj_for_name(cfg[Transformation.__CFG_KEY_TRANSFORMATION_CLASS])(
-            cfg[Transformation.CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)  # ToDo: wrap into try/catch
+            cfg[Transformation.CFG_KEY_TRANSFORMATION_CFG], src_db, dest_db)
 
     def __init__(self, cfg, src_db, dest_db):
         self.__cfg = cfg
@@ -88,7 +84,6 @@ class Transformation:
         return NotImplemented
 
     def perform(self, cfg):
-        # ToDo: put into try/catch
         self._load(cfg[Transformation.__CFG_KEY_LOAD])
         self._transform(cfg[Transformation.__CFG_KEY_TRANSFORM])
         self._cleanup(cfg[Transformation.__CFG_KEY_CLEANUP])
@@ -101,6 +96,24 @@ class Transformation:
 '''
 
 
+class Doc2XTransformation(Transformation):
+    def _load(self, cfg):
+        self._src = Accessor.factory(self._src_db).get(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_LOAD_SRC],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
+
+    def _transform(self, cfg):
+        func = cfg[Transformation._CFG_KEY_FUNC]
+        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
+        self._res = obj_for_name(func)(self._src, args)
+
+    def _cleanup(self, cfg):
+        Accessor.factory(self._dest_db).delete(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_MATCH_PARAMS: {}})
+
+
 class Col2XTransformation(Transformation):
     def _load(self, cfg):
         self._src = Accessor.factory(self._src_db).get(
@@ -109,7 +122,7 @@ class Col2XTransformation(Transformation):
 
     def _transform(self, cfg):
         func = cfg[Transformation._CFG_KEY_FUNC]
-        args = cfg[Transformation._CFG_KEY_FUNC_ARGS] if Transformation._CFG_KEY_FUNC_ARGS in cfg else {}
+        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
         self._res = obj_for_name(func)(self._src, args)
 
     def _cleanup(self, cfg):
@@ -135,25 +148,33 @@ class Col2ColTransformation(Col2XTransformation):
              AccessParams.KEY_OBJECT: self._res})
 
 
+class Doc2DocTransformation(Doc2XTransformation):
+    def _save(self, cfg):
+        Accessor.factory(self._dest_db).upsert(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_OBJECT: self._res})
+
+
 def transformer(func):
-    def transformer_wrapper(input, args):
+    def transformer_wrapper(input, params):
         #logger = logging.getLogger(transformer_wrapper.__name__)
         #logger.debug('Performing {} with params {}'.format(func.__name__, cfg))
-        return func(input, **args)
+        return func(input, **params)
     return transformer_wrapper
 
 
 @transformer
-def singles2array(input, **kwargs):
+def singles2array(input, **params):
     PARAM_FIELD = 'field'
 
     res = []
-    field = kwargs.get(PARAM_FIELD)
+    field = params.get(PARAM_FIELD)
     for item in input:
         res.append(item[field])
     return {field: res}
 
 
 @transformer
-def copy(input, **kwargs):
+def copy(input, **params):
     return input

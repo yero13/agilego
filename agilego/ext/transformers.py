@@ -1,3 +1,16 @@
+from transformation.transformer import transformer
+import pandas as pd
+
+@transformer
+def dates2range(input, **params):
+    PARAM_FIELD_STARTDATE = 'field.startDate'
+    PARAM_FIELD_ENDDATE = 'field.endDate'
+    PARAM_FIELD_RANGE = 'field.range'
+
+    return {params.get(PARAM_FIELD_RANGE): pd.date_range(input[params.get(PARAM_FIELD_STARTDATE)],
+                                                         input[params.get(PARAM_FIELD_ENDDATE)]).tolist()}
+
+'''
 from transformation.transformer import Transformation
 import re
 
@@ -170,3 +183,4 @@ class UpdateTransformation(Transformation):
         res = Converter.df2list(self.__df_dataset)
         if len(res) > 0:
             self._dest_db[self._dest_collection].insert_many(res)
+'''

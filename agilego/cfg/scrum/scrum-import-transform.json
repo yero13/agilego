@@ -15,7 +15,7 @@
 						},
 						"transform": {
 							"func": "transformation.transformer.singles2array",
-							"args": {
+							"params": {
 								"field": "component"
 							}							
 						},
@@ -43,7 +43,29 @@
 							"dest": "project.employees"
 						}
 					}
-				}				
+				},
+				"sprint-timeline": {
+					"class": "transformation.transformer.Doc2DocTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint"
+						},
+						"transform": {
+							"func": "ext.transformers.dates2range",
+							"params": {
+								"field.startDate": "startDate",
+								"field.endDate": "endDate",
+								"field.range": "timeline"								
+							}							
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.timeline"
+						},
+						"dest.db.save": {
+							"dest": "sprint.timeline"
+						}
+					}
+				}			
 			}
 		}
 	}
