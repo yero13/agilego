@@ -31,7 +31,8 @@ class CRUD:
 
     @staticmethod
     def insert_multi(db, collection, object, match_params=None):
-        return db[collection].insert_many(object).inserted_ids
+        if len(object) > 0:
+            return db[collection].insert_many(object).inserted_ids
 
 
 class Trigger:

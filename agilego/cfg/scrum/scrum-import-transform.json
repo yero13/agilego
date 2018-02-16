@@ -130,8 +130,29 @@
 							"dest": "sprint.all_items_filtered"
 						}
 					}
-				},			
-				"idx_assignments": {
+				},
+				"all_items_sorted": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items_filtered"
+						},
+						"transform": {
+							"func": "transformation.transformer.sort_set",
+							"params": {
+								"sort.field": "priority",
+								"sort.order": ["Highest", "High", "Medium", "Low", "Lowest"]							
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.all_items_sorted"
+						},
+						"dest.db.save": {
+							"dest": "sprint.all_items_sorted"
+						}
+					}
+				},				
+				"raw_assignments": {
 					"class": "transformation.transformer.Col2ColTransformation",
 					"cfg": {
 						"src.db.load": {
@@ -145,13 +166,71 @@
 							}
 						},
 						"dest.db.cleanup": {
-							"target": "sprint.idx_assignments"
+							"target": "sprint.raw_assignments"
 						},
 						"dest.db.save": {
-							"dest": "sprint.idx_assignments"
+							"dest": "sprint.raw_assignments"
 						}					
 					}
 				},
+				"assignments": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.raw_assignments"
+						},
+						"transform": {
+							"func": "transformation.transformer.regexp",
+							"params": {
+								"input.field": "assignment",
+								"pattern": "^(\\S+-\\d+){1}_(\\S+-\\d+){0,1}_(\\d{4}-\\d{2}-\\d{2})_(\\S+)_(\\S+)_(\\d+(\\.\\d{1,2})*)_(\\S*)$",
+								"output": [
+									{
+										"field": "key",
+										"idx": 0,
+										"type": "string"
+									},								
+									{
+										"field": "parent",
+										"idx": 1,
+										"type": "string"
+									},
+									{
+										"field": "date",
+										"idx": 2,
+										"type": "date"
+									},
+									{
+										"field": "group",
+										"idx": 3,
+										"type": "string"
+									},
+									{
+										"field": "employee",
+										"idx": 4,
+										"type": "string"
+									},
+									{
+										"field": "whrs",
+										"idx": 5,
+										"type": "float"
+									},
+									{
+										"field": "comment",
+										"idx": 7,
+										"type": "string"
+									}									
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.assignments"
+						},
+						"dest.db.save": {
+							"dest": "sprint.assignments"
+						}
+					}
+				},				
 				"idx_blocked_by": {
 					"class": "transformation.transformer.Col2ColTransformation",
 					"cfg": {
@@ -226,11 +305,11 @@
 				"dest.db": "db_scrum_api"
 			},
 			"transformations": {
-				"all_items_filtered": {
+				"backlog": {
 					"class": "transformation.transformer.Col2ColTransformation",
 					"cfg": {
 						"src.db.load": {
-							"src": "sprint.all_items_filtered"
+							"src": "sprint.all_items_sorted"
 						},
 						"transform": {
 							"func": "transformation.transformer.copy",
@@ -245,7 +324,92 @@
 							"dest": "sprint.backlog"
 						}
 					}
-				}			
+				},
+				"assignements": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.assignments"
+						},
+						"transform": {
+							"func": "transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.assignments"
+						},
+						"dest.db.save": {
+							"dest": "sprint.assignments"
+						}
+					}
+				},
+				"employees": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "project.employees"
+						},
+						"transform": {
+							"func": "transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "project.employees"
+						},
+						"dest.db.save": {
+							"dest": "project.employees"
+						}
+					}
+				},
+				"components": {
+					"class": "transformation.transformer.Doc2DocTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "project.components"
+						},
+						"transform": {
+							"func": "transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "project.components"
+						},
+						"dest.db.save": {
+							"dest": "project.components"
+						}
+					}
+				},
+				"sprint.definition": {
+					"class": "transformation.transformer.Doc2DocTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.definition"
+						},
+						"transform": {
+							"func": "transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.definition"
+						},
+						"dest.db.save": {
+							"dest": "sprint.definition"
+						}
+					}
+				},
+				"sprint.timeline": {
+					"class": "transformation.transformer.Doc2DocTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.timeline"
+						},
+						"transform": {
+							"func": "transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.timeline"
+						},
+						"dest.db.save": {
+							"dest": "sprint.timeline"
+						}
+					}
+				}				
 			}
 		}
 	}

@@ -189,8 +189,7 @@ class UpdateTransformation(Transformation):
         if len(self.__update_data) > 0 and len(self.__dataset) > 0:
             for item in self._transformation[UpdateTransformation.__CFG_KEY_UPD_FIELDS]:
                 (src_field, dest_field), = item.items()
-                self.__df_dataset[dest_field] = self.__update_data[src_field]
-
+                self.__df_dataset[dest_field] = self.__update_data[src_field]m
     def _save(self):
         res = Converter.df2list(self.__df_dataset)
         if len(res) > 0:

@@ -4,6 +4,7 @@ from db.data import Accessor, AccessParams
 from utils.object import obj_for_name
 import pandas as pd
 from utils.converter import Converter
+import re
 
 
 class Transformer():
@@ -193,7 +194,18 @@ def filter_set(input, **params):
 
 @transformer
 def sort_set(input, **params):
-    return
+    PARAM_SORT_FIELD = 'sort.field'
+    PARAM_SORT_ORDER = 'sort.order'
+
+    df = pd.DataFrame.from_records(input)
+    sort_field = params.get(PARAM_SORT_FIELD)
+    sort_order = params.get(PARAM_SORT_ORDER) if PARAM_SORT_ORDER in params else None
+    if sort_order:
+        df[sort_field] = df[sort_field].astype('category')
+        df[sort_field].cat.set_categories(sort_order, inplace=True)
+    df.sort_values(by=sort_field, inplace=True)
+    return Converter.df2list(df)
+
 
 @transformer
 def copy(input, **params):
@@ -215,3 +227,26 @@ def copy(input, **params):
             raise NotImplementedError('{} is not supported'.format(type(input)))
     else:
         return input
+
+
+@transformer
+def regexp(input, **params):
+    PARAM_FIELD_TO_PARSE = 'input.field'
+    PARAM_PATTERN = 'pattern'
+    PARAM_OUTPUT = 'output'
+    OUT_DESC_FIELD = 'field'
+    OUT_DESC_IDX = 'idx'
+    OUT_DESC_TYPE = 'type'
+
+    res = []
+    regex = re.compile(params.get(PARAM_PATTERN))
+    field2parse = params.get(PARAM_FIELD_TO_PARSE)
+    out_desc = params.get(PARAM_OUTPUT)
+    for row in input:
+        matches = regex.findall(row[field2parse])[0]
+        obj = {}
+        for desc in out_desc:
+            obj[desc[OUT_DESC_FIELD]] = Converter.convert(matches[desc[OUT_DESC_IDX]], desc[OUT_DESC_TYPE])
+        res.append(obj)
+    return res
+
