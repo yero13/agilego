@@ -65,7 +65,44 @@
 							"dest": "sprint.timeline"
 						}
 					}
-				}			
+				},
+				"sprint-definition": {
+					"class": "transformation.transformer.Doc2DocTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint"
+						},
+						"transform": {
+							"func": "transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.definition"
+						},
+						"dest.db.save": {
+							"dest": "sprint.definition"
+						}
+					}
+				},				
+				"sprint-all_items": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "backlog"
+						},
+						"transform": {
+							"func": "ext.transformers.sec2hrs",
+							"params": {
+								"fields": ["estimate"]  
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.all_items"
+						},
+						"dest.db.save": {
+							"dest": "sprint.all_items"
+						}
+					}
+				}				
 			}
 		}
 	}
