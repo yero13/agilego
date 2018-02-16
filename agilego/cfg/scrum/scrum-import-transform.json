@@ -104,6 +104,149 @@
 					}
 				}				
 			}
+		},
+		"int-transform": {
+			"db": {
+				"src.db": "db_scrum_transform",
+				"dest.db": "db_scrum_transform"
+			},
+			"transformations": {
+				"all_items_filtered": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items"
+						},
+						"transform": {
+							"func": "transformation.transformer.filter_set",
+							"params": {
+								"where": "type == 'Story' or type == 'Bug' or type == 'Sub-task'"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.all_items_filtered"
+						},
+						"dest.db.save": {
+							"dest": "sprint.all_items_filtered"
+						}
+					}
+				},			
+				"idx_assignments": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items"
+						},
+						"transform": {
+							"func": "transformation.transformer.array2singles",
+							"params": {
+								"field.array": "assignments",
+								"field.single": "assignment"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.idx_assignments"
+						},
+						"dest.db.save": {
+							"dest": "sprint.idx_assignments"
+						}					
+					}
+				},
+				"idx_blocked_by": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items"
+						},
+						"transform": {
+							"func": "transformation.transformer.array2singles",
+							"params": {
+								"field.key": "key",
+								"field.array": "blocked_by",
+								"field.single": "blocked_by"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.idx_blocked_by"
+						},
+						"dest.db.save": {
+							"dest": "sprint.idx_blocked_by"
+						}					
+					}
+				},
+				"idx_blocks": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items"
+						},
+						"transform": {
+							"func": "transformation.transformer.array2singles",
+							"params": {
+								"field.key": "key",
+								"field.array": "blocks",
+								"field.single": "blocks"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.idx_blocks"
+						},
+						"dest.db.save": {
+							"dest": "sprint.idx_blocks"
+						}					
+					}
+				},
+				"idx_subtasks": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items"
+						},
+						"transform": {
+							"func": "transformation.transformer.array2singles",
+							"params": {
+								"field.key": "key",
+								"field.array": "subtasks",
+								"field.single": "subtask"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.idx_subtasks"
+						},
+						"dest.db.save": {
+							"dest": "sprint.idx_subtasks"
+						}					
+					}
+				}				
+			}
+		},
+		"dest-transform": {
+			"db": {
+				"src.db": "db_scrum_transform",
+				"dest.db": "db_scrum_api"
+			},
+			"transformations": {
+				"all_items_filtered": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items_filtered"
+						},
+						"transform": {
+							"func": "transformation.transformer.copy",
+							"params": {
+								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks"]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.backlog"
+						},
+						"dest.db.save": {
+							"dest": "sprint.backlog"
+						}
+					}
+				}			
+			}
 		}
 	}
 }

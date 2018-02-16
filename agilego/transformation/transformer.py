@@ -2,6 +2,8 @@ import abc
 import logging
 from db.data import Accessor, AccessParams
 from utils.object import obj_for_name
+import pandas as pd
+from utils.converter import Converter
 
 
 class Transformer():
@@ -40,7 +42,6 @@ class TransformationSet:
 
 class Transformation:
     __CFG_KEY_TRANSFORMATION = 'transformation'
-    #__CFG_KEY_FIELDS = 'fields'
     __CFG_KEY_TRANSFORMATION_CLASS = 'class'
     CFG_KEY_TRANSFORMATION_CFG = 'cfg'
     __CFG_KEY_LOAD = 'src.db.load'
@@ -65,7 +66,6 @@ class Transformation:
         self._dest_db = dest_db
         self._transformation = self.__cfg[
             Transformation.__CFG_KEY_TRANSFORMATION] if Transformation.__CFG_KEY_TRANSFORMATION in self.__cfg else None
-        #self._fields = self.__cfg[Transformation.__CFG_KEY_FIELDS] if Transformation.__CFG_KEY_FIELDS in self.__cfg else None
 
     @abc.abstractmethod
     def _cleanup(self, cfg):
@@ -88,12 +88,6 @@ class Transformation:
         self._transform(cfg[Transformation.__CFG_KEY_TRANSFORM])
         self._cleanup(cfg[Transformation.__CFG_KEY_CLEANUP])
         self._save(cfg[Transformation.__CFG_KEY_SAVE])
-
-'''
-    @staticmethod
-    def _filter_fields(obj, fields):
-        return {k:v for k,v in obj.items() if k in fields}
-'''
 
 
 class Doc2XTransformation(Transformation):
@@ -158,8 +152,6 @@ class Doc2DocTransformation(Doc2XTransformation):
 
 def transformer(func):
     def transformer_wrapper(input, params):
-        #logger = logging.getLogger(transformer_wrapper.__name__)
-        #logger.debug('Performing {} with params {}'.format(func.__name__, cfg))
         return func(input, **params)
     return transformer_wrapper
 
@@ -176,5 +168,50 @@ def singles2array(input, **params):
 
 
 @transformer
+def array2singles(input, **params):
+    PARAM_FIELD_KEY = 'field.key'
+    PARAM_FIELD_ARRAY = 'field.array'
+    PARAM_FIELD_SINGLE = 'field.single'
+
+    res = []
+    field_key = params.get(PARAM_FIELD_KEY) if PARAM_FIELD_KEY in params else None
+    field_array = params.get(PARAM_FIELD_ARRAY)
+    field_single = params.get(PARAM_FIELD_SINGLE)
+    for row in input:
+        if row[field_array] and len(row[field_array]) > 0:
+            for value in row[field_array]:
+                res.append({field_single: value} if not field_key else {field_key: row[field_key], field_single: value})
+    return res
+
+
+@transformer
+def filter_set(input, **params):
+    PARAM_WHERE = 'where'
+
+    return Converter.df2list(pd.DataFrame.from_records(input).query(params.get(PARAM_WHERE)))
+
+
+@transformer
+def sort_set(input, **params):
+    return
+
+@transformer
 def copy(input, **params):
-    return input
+    PARAM_FIELDS = 'fields'
+
+    def filter_fields(obj, fields):
+        return {k:v for k,v in obj.items() if k in fields}
+
+    if PARAM_FIELDS in params:
+        fields = params.get(PARAM_FIELDS)
+        if isinstance(input, list):
+            res = []
+            for row in input:
+                res.append(filter_fields(row, fields))
+            return res
+        elif isinstance(input, dict):
+            return filter_fields(input, fields)
+        else:
+            raise NotImplementedError('{} is not supported'.format(type(input)))
+    else:
+        return input
