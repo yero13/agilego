@@ -3,30 +3,37 @@
 	"transformation-sets": {
 		"src-transform": {
 			"db": {
-				"src.db": "$db_src_data",
-				"dest.db": "$db_src_data"
+				"src.db": "db_src_data",
+				"dest.db": "db_src_data"
 			},
 			"transformations": {
 				"set_issue_sprint": {
-					"type": "update_collection",
+					"class": "transformation.transformer.ComplexColUpdateTransformation",
 					"cfg": {
-						"src.collection": "data.issues",
-						"dest.collection": "data.issues",
-						"transformation": {
-								"upd.collection": "data.sprint",
-								"upd.fields": [{"id": "sprint_id"}]
-						}								
-					}
-				},
-				"set_env_sprint": {
-					"type": "update_collection",
-					"cfg": {
-						"src.collection": "env.params",
-						"dest.collection": "env.params",
-						"transformation": {
-								"upd.collection": "data.sprint",
-								"upd.fields": [{"id": "scrum_sprint"}]
-						}
+						"src.db.load": {
+							"src.cols": ["data.issues"],
+							"src.docs": ["data.sprint"]							
+						},
+						"transform": {
+							"func": "transformation.transformer.update_col",
+							"params": {
+								"target": "data.issues", 
+								"update": [
+									{
+										"src.type": "doc",
+										"src.col": "data.sprint",
+										"src.field": "id",
+										"dest.field": "sprint_id"
+									}
+								]
+							}						
+						},
+						"dest.db.cleanup": {
+							"target": "data.issues"
+						},
+						"dest.db.save": {
+							"dest": "data.issues"
+						}						
 					}
 				}
 			}

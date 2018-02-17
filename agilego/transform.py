@@ -12,7 +12,6 @@ if __name__ == '__main__':
     try:
         logger.info('Init transformer: {}'.format(CFG_TRANSFORM))
         with open(CFG_TRANSFORM) as cfg_file:
-            cfg = json.loads(cfg_file.read())
-        Transformer(cfg).transform_data()
+            Transformer(json.load(cfg_file, strict=False)).transform_data()
     except Exception as e:
         logging.error(e, exc_info=True)

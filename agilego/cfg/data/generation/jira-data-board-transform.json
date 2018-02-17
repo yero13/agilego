@@ -3,20 +3,35 @@
 	"transformation-sets": {
 		"src-transform": {
 			"db": {
-				"src.db": "$db_src_data",
-				"dest.db": "$db_src_data"
+				"src.db": "db_src_data",
+				"dest.db": "db_src_data"
 			},
 			"transformations": {
 				"set_sprint_board": {
-					"type": "update_collection",
+					"class": "transformation.transformer.MultiDoc2DocTransformation",
 					"cfg": {
-						"src.collection": "data.sprint",
-						"dest.collection": "data.sprint",
-						"transformation": {
-								"upd.collection": "data.board",
-								"upd.fields": [{"board_id": "board_id"}]
-						}								
-					}
+						"src.db.load": {
+							"src": ["data.sprint", "data.board"]
+						},
+						"transform": {
+							"func": "transformation.transformer.update_doc",
+							"params": {
+								"source": [ 
+									{
+										"src.col": "data.board",
+										"src.field": "board_id"
+									}
+								],
+								"result": "data.sprint"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "data.sprint"
+						},
+						"dest.db.save": {
+							"dest": "data.sprint"
+						}
+					}				
 				}
 			}
 		}

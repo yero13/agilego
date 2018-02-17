@@ -86,9 +86,9 @@ class Transformation:
 
     def perform(self, cfg):
         self._load(cfg[Transformation.__CFG_KEY_LOAD])
-        self._transform(cfg[Transformation.__CFG_KEY_TRANSFORM])
-        self._cleanup(cfg[Transformation.__CFG_KEY_CLEANUP])
-        self._save(cfg[Transformation.__CFG_KEY_SAVE])
+        self._transform(cfg[Transformation.__CFG_KEY_TRANSFORM]) # ToDo: self._res =
+        self._cleanup(cfg[Transformation.__CFG_KEY_CLEANUP]) # ToDo: make private
+        self._save(cfg[Transformation.__CFG_KEY_SAVE]) # ToDo: make private
 
 
 class Doc2XTransformation(Transformation):
@@ -172,6 +172,65 @@ class MultiCol2XTransformation(Transformation):
 
 
 class MultiCol2ColTransformation(MultiCol2XTransformation):
+    def _save(self, cfg):
+        Accessor.factory(self._dest_db).upsert(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_OBJECT: self._res})
+
+
+class MultiDoc2XTransformation(Transformation):
+    def _load(self, cfg):
+        sources = cfg[Transformation._CFG_KEY_LOAD_SRC]
+        self._src = {}
+        for collection in sources:
+            self._src[collection] = Accessor.factory(self._src_db).get(
+                {AccessParams.KEY_COLLECTION: collection, AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
+
+    def _transform(self, cfg):
+        func = cfg[Transformation._CFG_KEY_FUNC]
+        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
+        self._res = obj_for_name(func)(self._src, args)
+
+    def _cleanup(self, cfg):
+        Accessor.factory(self._dest_db).delete(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_MATCH_PARAMS: {}})
+
+
+class MultiDoc2DocTransformation(MultiDoc2XTransformation):
+    def _save(self, cfg):
+        Accessor.factory(self._dest_db).upsert(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
+             AccessParams.KEY_OBJECT: self._res})
+
+
+class ComplexColUpdateTransformation(Transformation):
+    _CFG_KEY_LOAD_SRC_COLS = 'src.cols'
+    _CFG_KEY_LOAD_SRC_DOCS = 'src.docs'
+
+    def _load(self, cfg):
+        self._src = {}
+        for collection in cfg[ComplexColUpdateTransformation._CFG_KEY_LOAD_SRC_COLS]:
+            self._src[collection] = Accessor.factory(self._src_db).get(
+                {AccessParams.KEY_COLLECTION: collection, AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
+        for collection in cfg[ComplexColUpdateTransformation._CFG_KEY_LOAD_SRC_DOCS]:
+            self._src[collection] = Accessor.factory(self._src_db).get(
+                {AccessParams.KEY_COLLECTION: collection, AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
+
+    def _transform(self, cfg):
+        func = cfg[Transformation._CFG_KEY_FUNC]
+        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
+        self._res = obj_for_name(func)(self._src, args)
+
+    def _cleanup(self, cfg):
+        Accessor.factory(self._dest_db).delete(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_MATCH_PARAMS: {}})
+
     def _save(self, cfg):
         Accessor.factory(self._dest_db).upsert(
             {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
@@ -334,8 +393,35 @@ def union(input, **params):
 
 
 @transformer
-def update(input, **params):
-    return NotImplementedError
+def update_doc(input, **params):
+    PARAM_SOURCE = 'source'
+    SOURCE_COL = 'src.col'
+    SOURCE_FIELD = 'src.field'
+    PARAM_RESULT = 'result'
+
+    result = input[params.get(PARAM_RESULT)]
+    for src in params.get(PARAM_SOURCE):
+        result[src[SOURCE_FIELD]] = input[src[SOURCE_COL]][src[SOURCE_FIELD]]
+    return result
+
+
+@transformer
+def update_col(input, **params):
+    PARAM_TARGET = 'target'
+    PARAM_UPDATE = 'update'
+    SOURCE_TYPE = 'src.type'
+    SOURCE_COL = 'src.col'
+    SOURCE_FIELD = 'src.field'
+    DEST_FIELD = 'dest.field'
+    SOURCE_TYPE_DOC = 'doc'
+
+    update_list = params.get(PARAM_UPDATE)
+    res = input[params.get(PARAM_TARGET)]
+    for row in res:
+        for update_desc in update_list:
+            if update_desc[SOURCE_TYPE] == SOURCE_TYPE_DOC:
+                row[update_desc[DEST_FIELD]] = input[update_desc[SOURCE_COL]][update_desc[SOURCE_FIELD]]
+    return res
 
 
 @transformer

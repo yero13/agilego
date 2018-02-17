@@ -6,7 +6,7 @@ from flask_restful import Api
 from integration.importer import Importer
 from transformation.transformer import Transformer
 from data.generator import Generator
-from db.data import Accessor
+from db.data import Accessor, AccessParams
 from db.connect import MongoDb
 from utils.cfg import CfgUtils
 from service.constants import DbConstants, RestConstants
@@ -56,8 +56,8 @@ class ImportTestCase(unittest.TestCase):
         logger = logging.getLogger(__name__)
         self.__test_env_cfg = get_env_params()
         self.__test_env_cfg[CFG_KEY_SCRUM_SPRINT] = Accessor.factory(CFG_TEST_DATA_DB).get(
-            {Accessor.KEY_COLLECTION: CFG_TEST_DATA_COL_SPRINT,
-             Accessor.KEY_TYPE: Accessor.TYPE_SINGLE})[CFG_TEST_DATA_SPRINT_ID]
+            {AccessParams.KEY_COLLECTION: CFG_TEST_DATA_COL_SPRINT,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})[CFG_TEST_DATA_SPRINT_ID]
         try:
             logger.info('Init JIRA test data importer: {}'.format(ImportTestCase.__CFG_IMPORT))
             with open(ImportTestCase.__CFG_IMPORT) as cfg_file:
@@ -91,8 +91,7 @@ class TransformTestCase(unittest.TestCase):
         try:
             logger.info('Init transformer: {}'.format(TransformTestCase.__CFG_TRANSFORM))
             with open(TransformTestCase.__CFG_TRANSFORM) as cfg_file:
-                cfg = json.loads(CfgUtils.substitute_params(cfg_file.read(), self.__test_env_cfg))
-            Transformer(cfg).transform_data()
+                Transformer(json.load(cfg_file, strict=False)).transform_data()
         except Exception as e:
             logging.error(e, exc_info=True)
         self.__collections = MongoDb(self.__test_env_cfg[TransformTestCase.__CFG_TRANSFORM_DB]).connection.collection_names()
