@@ -158,18 +158,35 @@ def transformer(func):
 
 
 @transformer
-def singles2array(input, **params):
-    PARAM_FIELD = 'field'
+def group_singles2array(input, **params):
+    PARAM_FIELD_KEY = 'field.key'
+    PARAM_FIELD_ARRAY = 'field.array'
+    PARAM_FIELD_SINGLE = 'field.single'
 
-    res = []
-    field = params.get(PARAM_FIELD)
-    for item in input:
-        res.append(item[field])
-    return {field: res}
+    field_key = params.get(PARAM_FIELD_KEY) if PARAM_FIELD_KEY in params else None
+    field_array = params.get(PARAM_FIELD_ARRAY)
+    field_single = params.get(PARAM_FIELD_SINGLE)
+
+    if not field_key:
+        res = []
+        for item in input:
+            res.append(item[field_single])
+        return {field_array: res}
+    else:
+        tdict = {}
+        for row in input:
+            if not row[field_key] in tdict:
+                tdict.update({row[field_key]: [row[field_single]]})
+            else:
+                tdict[row[field_key]].append(row[field_single])
+        res = []
+        for key, value in tdict.items():
+            res.append({field_key: key, field_array: value})
+        return res
 
 
 @transformer
-def array2singles(input, **params):
+def ungroup_array2singles(input, **params):
     PARAM_FIELD_KEY = 'field.key'
     PARAM_FIELD_ARRAY = 'field.array'
     PARAM_FIELD_SINGLE = 'field.single'
@@ -250,3 +267,21 @@ def regexp(input, **params):
         res.append(obj)
     return res
 
+
+@transformer
+def format(input, **params):
+    PARAM_FORMAT_STRING = 'format.string'
+    PARAM_FORMAT_INPUT = 'format.input'
+    PARAM_RESULT_FIELD = 'result.field'
+    IN_DESC_FIELD = 'field'
+    IN_DESC_TYPE = 'type'
+
+    format_string = params.get(PARAM_FORMAT_STRING)
+    format_inputs = params.get(PARAM_FORMAT_INPUT)
+    result_field = params.get(PARAM_RESULT_FIELD)
+    for row in input:
+        row_input = []
+        for desc in format_inputs:
+            row_input.append(Converter.convert(row[desc[IN_DESC_FIELD]], desc[IN_DESC_TYPE]))
+        row[result_field] = format_string.format(*row_input)
+    return input

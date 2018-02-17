@@ -17,9 +17,15 @@ class Converter:
     def convert(input, type):
         try:
             if not input:
-                return None
+                if type == Types.TYPE_STRING:
+                    return ''
+                else:
+                    return None
             if type == Types.TYPE_STRING:
-                return input
+                if isinstance(input, datetime.date):
+                    return input.strftime('%Y-%m-%d')
+                else:
+                    return input
             if type == Types.TYPE_FLOAT:
                 return float(input)
             elif type == Types.TYPE_INT:

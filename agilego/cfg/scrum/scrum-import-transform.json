@@ -14,9 +14,10 @@
 							"src": "components"
 						},
 						"transform": {
-							"func": "transformation.transformer.singles2array",
+							"func": "transformation.transformer.group_singles2array",
 							"params": {
-								"field": "component"
+								"field.single": "component",
+								"field.array": "component"
 							}							
 						},
 						"dest.db.cleanup": {
@@ -159,7 +160,7 @@
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.array2singles",
+							"func": "transformation.transformer.ungroup_array2singles",
 							"params": {
 								"field.array": "assignments",
 								"field.single": "assignment"
@@ -238,7 +239,7 @@
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.array2singles",
+							"func": "transformation.transformer.ungroup_array2singles",
 							"params": {
 								"field.key": "key",
 								"field.array": "blocked_by",
@@ -260,7 +261,7 @@
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.array2singles",
+							"func": "transformation.transformer.ungroup_array2singles",
 							"params": {
 								"field.key": "key",
 								"field.array": "blocks",
@@ -282,7 +283,7 @@
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.array2singles",
+							"func": "transformation.transformer.ungroup_array2singles",
 							"params": {
 								"field.key": "key",
 								"field.array": "subtasks",
