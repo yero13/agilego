@@ -296,7 +296,10 @@ def left_join(input, **params):
 
 @transformer
 def union(input, **params):
-    return NotImplementedError
+    res = []
+    for col in input:
+        res.extend(input[col])
+    return res
 
 
 @transformer
@@ -306,10 +309,10 @@ def update_doc(input, **params):
     SOURCE_FIELD = 'src.field'
     PARAM_RESULT = 'result'
 
-    result = input[params.get(PARAM_RESULT)]
+    res = input[params.get(PARAM_RESULT)]
     for src in params.get(PARAM_SOURCE):
-        result[src[SOURCE_FIELD]] = input[src[SOURCE_COL]][src[SOURCE_FIELD]]
-    return result
+        res[src[SOURCE_FIELD]] = input[src[SOURCE_COL]][src[SOURCE_FIELD]]
+    return res
 
 
 @transformer
@@ -321,13 +324,17 @@ def update_col(input, **params):
     SOURCE_FIELD = 'src.field'
     DEST_FIELD = 'dest.field'
     SOURCE_TYPE_DOC = 'doc'
+    SOURCE_TYPE_CONST = 'const'
+    CONST_VALUE = 'const.value'
 
     update_list = params.get(PARAM_UPDATE)
-    res = input[params.get(PARAM_TARGET)]
+    res = input[params.get(PARAM_TARGET)] if PARAM_TARGET in params else input
     for row in res:
         for update_desc in update_list:
             if update_desc[SOURCE_TYPE] == SOURCE_TYPE_DOC:
                 row[update_desc[DEST_FIELD]] = input[update_desc[SOURCE_COL]][update_desc[SOURCE_FIELD]]
+            elif update_desc[SOURCE_TYPE] == SOURCE_TYPE_CONST:
+                row[update_desc[DEST_FIELD]] = update_desc[CONST_VALUE]
     return res
 
 
@@ -344,3 +351,18 @@ def replace(input, **params):
             if row[replace[REPLACE_FIELD]] == replace[REPLACE_FIND_VALUE]:
                 row[replace[REPLACE_FIELD]] = replace[REPLACE_WITH_VALUE]
     return input
+
+
+@transformer
+def rename_fields(input, **params):
+    PARAM_RENAME_LIST = 'rename'
+    RENAME_SRC_FIELD = 'src.field'
+    RENAME_DEST_FIELD = 'dest.field'
+
+    rename_list = params.get(PARAM_RENAME_LIST)
+    for row in input:
+        for rename in rename_list:
+            row[rename[RENAME_DEST_FIELD]] = row[rename[RENAME_SRC_FIELD]]
+            row.pop(rename[RENAME_SRC_FIELD])
+    return input
+

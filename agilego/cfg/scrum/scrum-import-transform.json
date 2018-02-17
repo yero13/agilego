@@ -254,6 +254,61 @@
 						}					
 					}
 				},
+				"idx_blocked_by_2_links": {
+					"class": "transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.idx_blocked_by"
+						},
+						"transform": {
+							"func": "transformation.transformer.update_col",
+							"params": {
+								"update": [
+									{
+										"src.type": "const",
+										"const.value": "blocked",
+										"dest.field": "link"
+									}
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_blocked"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_blocked"
+						}					
+					}
+				},
+				"link_blocked": {
+					"class": "transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.link_blocked"
+						},
+						"transform": {
+							"func": "transformation.transformer.rename_fields",
+							"params": {
+								"rename": [
+									{
+										"src.field": "key",
+										"dest.field": "A"
+									},
+									{
+										"src.field": "blocked_by",
+										"dest.field": "B"
+									}									
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_blocked"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_blocked"
+						}					
+					}
+				},						
 				"idx_blocks": {
 					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
@@ -276,6 +331,61 @@
 						}					
 					}
 				},
+				"idx_blocks_2_links": {
+					"class": "transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.idx_blocks"
+						},
+						"transform": {
+							"func": "transformation.transformer.update_col",
+							"params": {
+								"update": [
+									{
+										"src.type": "const",
+										"const.value": "blocks",
+										"dest.field": "link"
+									}
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_blocks"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_blocks"
+						}					
+					}
+				},
+				"link_blocks": {
+					"class": "transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.link_blocks"
+						},
+						"transform": {
+							"func": "transformation.transformer.rename_fields",
+							"params": {
+								"rename": [
+									{
+										"src.field": "key",
+										"dest.field": "A"
+									},
+									{
+										"src.field": "blocks",
+										"dest.field": "B"
+									}									
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_subtasks"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_subtasks"
+						}					
+					}
+				},				
 				"idx_subtasks": {
 					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
@@ -295,6 +405,61 @@
 						},
 						"dest.db.save": {
 							"dest": "sprint.idx_subtasks"
+						}					
+					}
+				},
+				"idx_subtasks_2_links": {
+					"class": "transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.idx_subtasks"
+						},
+						"transform": {
+							"func": "transformation.transformer.update_col",
+							"params": {
+								"update": [
+									{
+										"src.type": "const",
+										"const.value": "subtask",
+										"dest.field": "link"
+									}
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_subtasks"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_subtasks"
+						}					
+					}
+				},
+				"link_subtask": {
+					"class": "transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.link_subtasks"
+						},
+						"transform": {
+							"func": "transformation.transformer.rename_fields",
+							"params": {
+								"rename": [
+									{
+										"src.field": "key",
+										"dest.field": "A"
+									},
+									{
+										"src.field": "subtask",
+										"dest.field": "B"
+									}									
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_subtasks"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_subtasks"
 						}					
 					}
 				}				
@@ -343,6 +508,23 @@
 						}
 					}
 				},
+				"issue-links": {
+					"class": "transformation.transformer.MultiCol2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": ["sprint.link_subtasks", "sprint.link_blocks", "sprint.link_blocked"]
+						},
+						"transform": {
+							"func": "transformation.transformer.union"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.issue_links"
+						},
+						"dest.db.save": {
+							"dest": "sprint.issue_links"
+						}						
+					}
+				},				
 				"employees": {
 					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
