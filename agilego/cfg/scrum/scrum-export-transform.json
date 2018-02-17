@@ -220,37 +220,57 @@
 							"dest": "sprint.assignments_tech"
 						}						
 					}
-				}				
-			}
-		},
-		"integration-transform": {
-			"db": {
-				"src.db": "$db_jira_export",
-				"dest.db": "$db_jira_export"
-			},
-			"transformations": {
-				"sprint-assignment-label-notnull": {
-					"class": "ext.transformations.DatasetTransformation",
-					"cfg": {
-						"src.collection": "sprint.assignments_search_labels",
-						"dest.collection": "sprint.assignments_search_labels",
-						"transformation": {
-							"transform_values": {
-								"label_notnull": "row.update({'label': [] if not row['label'] else row['label']})"
-							}
-						}
-					}
 				},
 				"sprint-assignment-tech-notnull": {
-					"class": "ext.transformations.DatasetTransformation",
+					"class": "transformation.transformer.Col2ColTransformation",
 					"cfg": {
-						"src.collection": "sprint.assignments_tech",
-						"dest.collection": "sprint.assignments_tech",
-						"transformation": {
-							"transform_values": {
-								"tech_notnull": "row.update({'tech': [] if not row['tech'] else row['tech']})"
-							}
-						}
+						"src.db.load": {
+							"src": "sprint.assignments_tech"
+						},
+						"transform": {
+							"func": "transformation.transformer.replace",
+							"params": {
+								"replace": [
+									{
+										"field": "tech",
+										"value.to_find": null,
+										"value.replace_with": []
+									}
+								]
+							}						
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.assignments_tech"
+						},
+						"dest.db.save": {
+							"dest": "sprint.assignments_tech"
+						}						
+					}
+				},
+				"sprint-assignment-label-notnull": {
+					"class": "transformation.transformer.Col2ColTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.assignments_label"
+						},
+						"transform": {
+							"func": "transformation.transformer.replace",
+							"params": {
+								"replace": [
+									{
+										"field": "label",
+										"value.to_find": null,
+										"value.replace_with": []
+									}
+								]
+							}						
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.assignments_label"
+						},
+						"dest.db.save": {
+							"dest": "sprint.assignments_label"
+						}						
 					}
 				}				
 			}

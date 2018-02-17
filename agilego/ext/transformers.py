@@ -23,26 +23,6 @@ def sec2hrs(input, **params):
 
 
 '''
-class LeftJoinTransformation(Transformation):
-    __CFG_KEY_LEFT = 'left'
-    __CFG_KEY_JOIN_ON = 'join_on'
-
-    def _load(self):
-        self.__right_df = pd.DataFrame.from_records(list(self._src_db[self._src_collection].find({}, {'_id': False})))
-        self.__left_df = pd.DataFrame.from_records(
-            list(self._src_db[self._transformation[LeftJoinTransformation.__CFG_KEY_LEFT]].find({}, {'_id': False})))
-
-    def _transform(self):
-        join_on = self._transformation[LeftJoinTransformation.__CFG_KEY_JOIN_ON]
-        self.__result = self.__right_df.set_index(join_on, drop=False).join(
-            self.__left_df.set_index(join_on, drop=False), on=[join_on], rsuffix='_right')
-
-    def _save(self):
-        res = Converter.df2list(self.__result)
-        if len(res) > 0:
-            self._dest_db[self._dest_collection].insert_many(res)
-
-
 class UpdateTransformation(Transformation):
     __CFG_KEY_UPD_COLLECTION = 'upd.collection'
     __CFG_KEY_UPD_FIELDS = 'upd.fields'

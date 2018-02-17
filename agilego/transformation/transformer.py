@@ -331,3 +331,23 @@ def left_join(input, **params):
 @transformer
 def union(input, **params):
     return NotImplementedError
+
+
+@transformer
+def update(input, **params):
+    return NotImplementedError
+
+
+@transformer
+def replace(input, **params):
+    PARAM_REPLACE_LIST = 'replace'
+    REPLACE_FIELD = 'field'
+    REPLACE_FIND_VALUE = 'value.to_find'
+    REPLACE_WITH_VALUE = 'value.replace_with'
+
+    replace_list = params.get(PARAM_REPLACE_LIST)
+    for row in input:
+        for replace in replace_list:
+            if row[replace[REPLACE_FIELD]] == replace[REPLACE_FIND_VALUE]:
+                row[replace[REPLACE_FIELD]] = replace[REPLACE_WITH_VALUE]
+    return input
