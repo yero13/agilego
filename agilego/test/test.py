@@ -87,7 +87,7 @@ class TransformTestCase(unittest.TestCase):
     def setUp(self):
         logger = logging.getLogger(__name__)
         self.__test_env_cfg = get_env_params()
-        # ToDo: cleanup tables?
+        # ToDo: cleanup tables
         try:
             logger.info('Init transformer: {}'.format(TransformTestCase.__CFG_TRANSFORM))
             with open(TransformTestCase.__CFG_TRANSFORM) as cfg_file:

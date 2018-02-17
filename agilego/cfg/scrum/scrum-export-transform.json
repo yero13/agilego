@@ -7,7 +7,7 @@
 			},
 			"transformations": {
 				"assignements": {
-					"class": "transformation.transformer.Col2ColTransformation",
+					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments"
@@ -24,7 +24,7 @@
 					}
 				},
 				"sprint-all-items": {
-					"class": "transformation.transformer.Col2ColTransformation",
+					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.backlog"
@@ -52,7 +52,7 @@
 			},
 			"transformations": {
 				"assignments-tech": {
-					"class": "transformation.transformer.Col2ColTransformation",
+					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments"
@@ -103,7 +103,7 @@
 					}
 				},
 				"assignments-label": {
-					"class": "transformation.transformer.Col2ColTransformation",
+					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_tech"
@@ -134,7 +134,7 @@
 					}
 				},				
 				"sprint-assignment-search-transpose": {
-					"class": "transformation.transformer.Col2ColTransformation",
+					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_raw"
@@ -156,7 +156,7 @@
 					}
 				},
 				"sprint-assignment-tech-transpose": {
-					"class": "transformation.transformer.Col2ColTransformation",
+					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_raw"
@@ -178,7 +178,7 @@
 					}
 				},
 				"sprint-assignment-label-join": {
-					"class": "transformation.transformer.MultiCol2ColTransformation",
+					"class": "transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": ["sprint.idx_all_items", "sprint.assignments_search_labels"]
@@ -200,7 +200,7 @@
 					}
 				},
 				"sprint-assignment-tech-join": {
-					"class": "transformation.transformer.MultiCol2ColTransformation",
+					"class": "transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": ["sprint.idx_all_items", "sprint.assignments_tech"]
@@ -222,7 +222,7 @@
 					}
 				},
 				"sprint-assignment-tech-notnull": {
-					"class": "transformation.transformer.Col2ColTransformation",
+					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_tech"
@@ -248,7 +248,7 @@
 					}
 				},
 				"sprint-assignment-label-notnull": {
-					"class": "transformation.transformer.Col2ColTransformation",
+					"class": "transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_label"

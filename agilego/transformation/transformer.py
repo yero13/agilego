@@ -68,174 +68,81 @@ class Transformation:
         self._transformation = self.__cfg[
             Transformation.__CFG_KEY_TRANSFORMATION] if Transformation.__CFG_KEY_TRANSFORMATION in self.__cfg else None
 
-    @abc.abstractmethod
-    def _cleanup(self, cfg):
-        return NotImplemented
+    def __cleanup(self, cfg):
+        Accessor.factory(self._dest_db).delete(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_MATCH_PARAMS: {}})
 
     @abc.abstractmethod
     def _load(self, cfg):
         return NotImplemented
 
-    @abc.abstractmethod
-    def _save(self, cfg):
-        return NotImplemented
+    def __save(self, cfg):
+        Accessor.factory(self._dest_db).upsert(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE if isinstance(self.__res, dict) else AccessParams.TYPE_MULTI,
+             AccessParams.KEY_OBJECT: self.__res})
 
-    @abc.abstractmethod
-    def _transform(self, cfg):
-        return NotImplemented
+    def __transform(self, cfg):
+        func = cfg[Transformation._CFG_KEY_FUNC]
+        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
+        self.__res = obj_for_name(func)(self.__src, args)
 
     def perform(self, cfg):
-        self._load(cfg[Transformation.__CFG_KEY_LOAD])
-        self._transform(cfg[Transformation.__CFG_KEY_TRANSFORM]) # ToDo: self._res =
-        self._cleanup(cfg[Transformation.__CFG_KEY_CLEANUP]) # ToDo: make private
-        self._save(cfg[Transformation.__CFG_KEY_SAVE]) # ToDo: make private
+        self.__src = self._load(cfg[Transformation.__CFG_KEY_LOAD])
+        self.__transform(cfg[Transformation.__CFG_KEY_TRANSFORM])
+        self.__cleanup(cfg[Transformation.__CFG_KEY_CLEANUP])
+        self.__save(cfg[Transformation.__CFG_KEY_SAVE])
 
 
 class Doc2XTransformation(Transformation):
     def _load(self, cfg):
-        self._src = Accessor.factory(self._src_db).get(
+        return Accessor.factory(self._src_db).get(
             {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_LOAD_SRC],
              AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
-
-    def _transform(self, cfg):
-        func = cfg[Transformation._CFG_KEY_FUNC]
-        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
-        self._res = obj_for_name(func)(self._src, args)
-
-    def _cleanup(self, cfg):
-        Accessor.factory(self._dest_db).delete(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
-             AccessParams.KEY_MATCH_PARAMS: {}})
 
 
 class Col2XTransformation(Transformation):
     def _load(self, cfg):
-        self._src = Accessor.factory(self._src_db).get(
+        return Accessor.factory(self._src_db).get(
             {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_LOAD_SRC],
              AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
-
-    def _transform(self, cfg):
-        func = cfg[Transformation._CFG_KEY_FUNC]
-        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
-        self._res = obj_for_name(func)(self._src, args)
-
-    def _cleanup(self, cfg):
-        Accessor.factory(self._dest_db).delete(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_MATCH_PARAMS: {}})
-
-
-class Col2DocTransformation(Col2XTransformation):
-    def _save(self, cfg):
-        Accessor.factory(self._dest_db).upsert(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
-             AccessParams.KEY_OBJECT: self._res})
-
-
-class Col2ColTransformation(Col2XTransformation):
-    def _save(self, cfg):
-        Accessor.factory(self._dest_db).upsert(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_OBJECT: self._res})
-
-
-class Doc2DocTransformation(Doc2XTransformation):
-    def _save(self, cfg):
-        Accessor.factory(self._dest_db).upsert(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
-             AccessParams.KEY_OBJECT: self._res})
 
 
 class MultiCol2XTransformation(Transformation):
     def _load(self, cfg):
         sources = cfg[Transformation._CFG_KEY_LOAD_SRC]
-        self._src = {}
+        src_data = {}
         for collection in sources:
-            self._src[collection] = Accessor.factory(self._src_db).get(
+            src_data[collection] = Accessor.factory(self._src_db).get(
                 {AccessParams.KEY_COLLECTION: collection, AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
-
-    def _transform(self, cfg):
-        func = cfg[Transformation._CFG_KEY_FUNC]
-        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
-        self._res = obj_for_name(func)(self._src, args)
-
-    def _cleanup(self, cfg):
-        Accessor.factory(self._dest_db).delete(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_MATCH_PARAMS: {}})
-
-
-class MultiCol2ColTransformation(MultiCol2XTransformation):
-    def _save(self, cfg):
-        Accessor.factory(self._dest_db).upsert(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_OBJECT: self._res})
+        return src_data
 
 
 class MultiDoc2XTransformation(Transformation):
     def _load(self, cfg):
         sources = cfg[Transformation._CFG_KEY_LOAD_SRC]
-        self._src = {}
+        src_data = {}
         for collection in sources:
-            self._src[collection] = Accessor.factory(self._src_db).get(
+            src_data[collection] = Accessor.factory(self._src_db).get(
                 {AccessParams.KEY_COLLECTION: collection, AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
-
-    def _transform(self, cfg):
-        func = cfg[Transformation._CFG_KEY_FUNC]
-        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
-        self._res = obj_for_name(func)(self._src, args)
-
-    def _cleanup(self, cfg):
-        Accessor.factory(self._dest_db).delete(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_MATCH_PARAMS: {}})
+        return src_data
 
 
-class MultiDoc2DocTransformation(MultiDoc2XTransformation):
-    def _save(self, cfg):
-        Accessor.factory(self._dest_db).upsert(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
-             AccessParams.KEY_OBJECT: self._res})
-
-
-class ComplexColUpdateTransformation(Transformation):
+class MultiColDoc2XTransformation(Transformation):
     _CFG_KEY_LOAD_SRC_COLS = 'src.cols'
     _CFG_KEY_LOAD_SRC_DOCS = 'src.docs'
 
     def _load(self, cfg):
-        self._src = {}
-        for collection in cfg[ComplexColUpdateTransformation._CFG_KEY_LOAD_SRC_COLS]:
-            self._src[collection] = Accessor.factory(self._src_db).get(
+        src_data = {}
+        for collection in cfg[MultiColDoc2XTransformation._CFG_KEY_LOAD_SRC_COLS]:
+            src_data[collection] = Accessor.factory(self._src_db).get(
                 {AccessParams.KEY_COLLECTION: collection, AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
-        for collection in cfg[ComplexColUpdateTransformation._CFG_KEY_LOAD_SRC_DOCS]:
-            self._src[collection] = Accessor.factory(self._src_db).get(
+        for collection in cfg[MultiColDoc2XTransformation._CFG_KEY_LOAD_SRC_DOCS]:
+            src_data[collection] = Accessor.factory(self._src_db).get(
                 {AccessParams.KEY_COLLECTION: collection, AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
-
-    def _transform(self, cfg):
-        func = cfg[Transformation._CFG_KEY_FUNC]
-        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
-        self._res = obj_for_name(func)(self._src, args)
-
-    def _cleanup(self, cfg):
-        Accessor.factory(self._dest_db).delete(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_MATCH_PARAMS: {}})
-
-    def _save(self, cfg):
-        Accessor.factory(self._dest_db).upsert(
-            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_OBJECT: self._res})
+        return src_data
 
 
 def transformer(func):

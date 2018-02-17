@@ -8,7 +8,7 @@
 			},
 			"transformations": {
 				"set_issue_sprint": {
-					"class": "transformation.transformer.ComplexColUpdateTransformation",
+					"class": "transformation.transformer.MultiColDoc2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src.cols": ["data.issues"],
