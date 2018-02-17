@@ -151,6 +151,34 @@ class Doc2DocTransformation(Doc2XTransformation):
              AccessParams.KEY_OBJECT: self._res})
 
 
+class MultiCol2XTransformation(Transformation):
+    def _load(self, cfg):
+        sources = cfg[Transformation._CFG_KEY_LOAD_SRC]
+        self._src = {}
+        for collection in sources:
+            self._src[collection] = Accessor.factory(self._src_db).get(
+                {AccessParams.KEY_COLLECTION: collection, AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
+
+    def _transform(self, cfg):
+        func = cfg[Transformation._CFG_KEY_FUNC]
+        args = cfg[Transformation._CFG_KEY_FUNC_PARAMS] if Transformation._CFG_KEY_FUNC_PARAMS in cfg else {}
+        self._res = obj_for_name(func)(self._src, args)
+
+    def _cleanup(self, cfg):
+        Accessor.factory(self._dest_db).delete(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_MATCH_PARAMS: {}})
+
+
+class MultiCol2ColTransformation(MultiCol2XTransformation):
+    def _save(self, cfg):
+        Accessor.factory(self._dest_db).upsert(
+            {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
+             AccessParams.KEY_OBJECT: self._res})
+
+
 def transformer(func):
     def transformer_wrapper(input, params):
         return func(input, **params)
@@ -285,3 +313,21 @@ def format(input, **params):
             row_input.append(Converter.convert(row[desc[IN_DESC_FIELD]], desc[IN_DESC_TYPE]))
         row[result_field] = format_string.format(*row_input)
     return input
+
+
+@transformer
+def left_join(input, **params):
+    PARAM_COL_RIGHT = 'col.right'
+    PARAM_COL_LEFT = 'col.left'
+    PARAM_FIELD_JOIN = 'field.join'
+
+    right_df = pd.DataFrame.from_records(input[params.get(PARAM_COL_RIGHT)])
+    left_df = pd.DataFrame.from_records(input[params.get(PARAM_COL_LEFT)])
+    join_on = params.get(PARAM_FIELD_JOIN)
+    res = right_df.set_index(join_on, drop=False).join(left_df.set_index(join_on, drop=False), on=[join_on], rsuffix='_right')
+    return Converter.df2list(res)
+
+
+@transformer
+def union(input, **params):
+    return NotImplementedError
