@@ -3,6 +3,7 @@ class DbConstants:
     SCRUM_SPRINT = 'sprint.definition'
     SCRUM_SPRINT_TIMELINE = 'sprint.timeline'
     SCRUM_SPRINT_BACKLOG = 'sprint.backlog'
+    SCRUM_BACKLOG_LINKS = 'sprint.backlog_links'
     SCRUM_ASSIGNMENTS = 'sprint.assignments'
     PROJECT_TEAM = 'project.team'
     PROJECT_EMPLOYEES = 'project.employees'
@@ -37,6 +38,7 @@ class ParamConstants:
     PARAM_TIMELINE = 'timeline'
     PARAM_WHRS = 'whrs'
     PARAM_TYPE = 'type'
+    PARAM_LINK = 'link'
 
 
 class MatchConstants:

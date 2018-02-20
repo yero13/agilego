@@ -1,9 +1,10 @@
-from service.aggregator import Aggregator
-from db.data import Accessor, AccessParams
-from service.constants import DbConstants, ParamConstants
 import logging
-import abc
+
+from db.data import Accessor, AccessParams
+from service.constants import DbConstants
+from utils.aggregator import Aggregator
 from utils.converter import Converter
+from utils.object import obj_for_name
 
 
 class Validator:
@@ -13,188 +14,168 @@ class Validator:
         self.__cfg = cfg
         self.__logger = logging.getLogger(__class__.__name__)
 
-    def validate(self, obj_to_validate):
-        return NotImplementedError
-
-    def what_if(self, obj_to_validate):
-        result = []
+    def validate(self, obj_to_validate, is_substitute=True):
+        res = []
         for check in self.__cfg[Validator.__CFG_KEY_CHECKS]:
-            self.__logger.info('Performing {} what-if validation against {}'.format(check, obj_to_validate))
-            check_res = Validation.factory(self.__cfg[Validator.__CFG_KEY_CHECKS][check]).what_if(obj_to_validate)
+            self.__logger.info('Performing {} validation against {}'.format(check, obj_to_validate))
+            check_res = Check(self.__cfg[Validator.__CFG_KEY_CHECKS][check]).validate(obj_to_validate, is_substitute)
             if check_res:
                 if type(check_res) == dict:
-                    result.append(check_res)
+                    res.append(check_res)
                 else:
-                    result.extend(check_res)
-        return None if len(result) == 0 else result
+                    res.extend(check_res)
+        return None if len(res) == 0 else res
 
 
-class Validation:
-    __CFG_KEY_VALIDATOR_TYPE = 'type'
-    __CFG_VALIDATOR_TYPE_LIMIT_EXCEED = 'limit.exceed'
-    __CFG_VALIDATOR_TYPE_DATE_OVERDUE = 'date.overdue'
-    __CFG_VALIDATOR_TYPE_SCHEDULE_INTEGRITY = 'schedule.integrity'
-    __CFG_VALIDATOR_TYPE_SETS_INTERSECTION = 'sets.intersection'
-    _CFG_KEY_VIOLATION = 'violation'
-    _CFG_KEY_VIOLATION_SEVERITY = 'severity'
-    _CFG_KEY_VIOLATION_MSG = 'message'
-    _CFG_KEY_INPUT = 'input'
-    _CFG_KEY_TARGET = 'target'
-    _CFG_KEY_CONSTRAINT = 'constraint'
-    _CFG_KEY_EXTRACT = 'extract'
-    __CFG_KEY_OBJECT = 'object'
-    __CFG_KEY_EXTRACT_FIELD = 'extract.field'
-    __CFG_KEY_FIELD_TYPE = 'field.type'
+class Check:
+    CFG_KEY_VIOLATION_SEVERITY = 'severity'
+    CFG_KEY_VIOLATION_MSG = 'message'
+    __CFG_KEY_TO_VALIDATE = 'to_validate'
+    __CFG_KEY_CONSTRAINT = 'constraint'
+    __CFG_KEY_COMPARE = 'compare'
+    __CFG_KEY_VIOLATION = 'violation'
+    __CFG_KEY_FUNC = 'func'
+    __CFG_KEY_FUNC_PARAMS = 'params'
     __CFG_KEY_DEFAULT = 'default'
-    __CFG_KEY_CONSTANT = 'constant'
-    __CFG_KEY_CONSTANT_VALUE = 'value'
-    __CFG_KEY_CALC = 'calculate'
-    __CFG_KEY_CALC_FUNC = 'calc.func'
-    __CFG_CALC_AGG_SUM = 'agg.sum'
-    __CFG_KEY_CALC_AGG_FIELD = 'agg.field'
-    __CFG_KEY_CALC_AGG_COLLECTION = 'agg.collection'
-    __CFG_KEY_CALC_AGG_GROUP = 'agg.group'
+    __CFG_KEY_DEFAULT_VALUE = 'value'
+    __CFG_KEY_DEFAULT_TYPE = 'type'
 
-    @staticmethod
-    def factory(cfg): # ToDo: instanciate based on filename, move validators to separate file
-        type = cfg[Validation.__CFG_KEY_VALIDATOR_TYPE]
-        if type == Validation.__CFG_VALIDATOR_TYPE_LIMIT_EXCEED:
-            return LimitExceedValidation(cfg)
-        elif type == Validation.__CFG_VALIDATOR_TYPE_DATE_OVERDUE:
-            return DateOverdueValidation(cfg)
-        elif type == Validation.__CFG_VALIDATOR_TYPE_SCHEDULE_INTEGRITY:
-            return ScheduleIntegrityValidation(cfg)
-        elif type == Validation.__CFG_VALIDATOR_TYPE_SETS_INTERSECTION:
-            return SetsIntersectionValidation(cfg)
-        else:
-            raise NotImplementedError('Not supported request type - {}'.format(type))
 
     def __init__(self, cfg):
-        self._cfg = cfg
-        self._logger = logging.getLogger(__class__.__name__)
-        self._err_cfg = self._cfg[Validation._CFG_KEY_VIOLATION]
+        self.__cfg = cfg
+        self.__logger = logging.getLogger(__class__.__name__)
 
-    @abc.abstractmethod
-    def validate(self, obj_to_validate):
-        return NotImplemented
+    def __compare(self, to_validate, constraint):
+        cfg = self.__cfg[Check.__CFG_KEY_COMPARE]
+        func = cfg[Check.__CFG_KEY_FUNC]
+        return obj_for_name(func)(to_validate, constraint, cfg[Check.__CFG_KEY_VIOLATION])
 
-    @abc.abstractmethod
-    def what_if(self, obj_to_validate):
-        return NotImplemented
-
-    @staticmethod
-    def __get_default_value(cfg):
-        res = cfg[Validation.__CFG_KEY_DEFAULT] if Validation.__CFG_KEY_DEFAULT in cfg else None
-        if res and (Validation.__CFG_KEY_FIELD_TYPE in cfg):
-            res = Converter.convert(res, cfg[Validation.__CFG_KEY_FIELD_TYPE])
-        return res
-
-    @staticmethod
-    def __get_casted_value(input, cfg):
-        return Converter.convert(input, cfg[Validation.__CFG_KEY_FIELD_TYPE]) if Validation.__CFG_KEY_FIELD_TYPE in cfg else input
-
-    @staticmethod
-    def __calc(cfg, group_param_values):
-        filter = {}
-        group_params = cfg[Validation.__CFG_KEY_CALC_AGG_GROUP]
-        for param in group_params:
-            filter[param] = group_param_values[param]
-        agg_collection = cfg[Validation.__CFG_KEY_CALC_AGG_COLLECTION]
-        agg_func = cfg[Validation.__CFG_KEY_CALC_FUNC]
-        agg_field = cfg[Validation.__CFG_KEY_CALC_AGG_FIELD]
-        agg_field_type = cfg[Validation.__CFG_KEY_FIELD_TYPE]
-        dataset = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {AccessParams.KEY_MATCH_PARAMS: filter,
-             AccessParams.KEY_COLLECTION: agg_collection,
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
-        res = Aggregator.aggregate(dataset, agg_field, agg_field_type, agg_func)
-        return res if res else Validation.__get_default_value(cfg)
-
-    @staticmethod
-    def __extract(cfg, match_param_values):
-        id = {}
-        match_params = cfg[AccessParams.KEY_MATCH_PARAMS]
-        for param in match_params:
-            id[param] = match_param_values[param]
-        res = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {AccessParams.KEY_MATCH_PARAMS: id,
-             AccessParams.KEY_COLLECTION: cfg[AccessParams.KEY_COLLECTION],
-             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
+    def __get_constraint(self, obj_to_validate):
+        cfg = self.__cfg[Check.__CFG_KEY_CONSTRAINT]
+        func = cfg[Check.__CFG_KEY_FUNC]
+        args = cfg[Check.__CFG_KEY_FUNC_PARAMS] if Check.__CFG_KEY_FUNC_PARAMS in cfg else {}
+        res = obj_for_name(func)(obj_to_validate, args)
         if not res:
-            return Validation.__get_default_value(cfg)
-        elif res[cfg[Validation.__CFG_KEY_EXTRACT_FIELD]] is None:
-            return Validation.__get_default_value(cfg)
+            return self.__get_default_value(cfg)
         else:
-            return Validation.__get_casted_value(res[cfg[Validation.__CFG_KEY_EXTRACT_FIELD]], cfg)
+            return res
 
-    @staticmethod
-    def _get(cfg, obj_to_validate):
-        if Validation.__CFG_KEY_OBJECT in cfg:
-            return Validation.__get_casted_value(
-                obj_to_validate[cfg[Validation.__CFG_KEY_OBJECT][Validation.__CFG_KEY_EXTRACT_FIELD]], cfg[Validation.__CFG_KEY_OBJECT])
-        if Validation.__CFG_KEY_CONSTANT in cfg:
-            return cfg[Validation.__CFG_KEY_CONSTANT][Validation.__CFG_KEY_CONSTANT_VALUE]
-        if Validation._CFG_KEY_EXTRACT in cfg:
-            return Validation.__extract(cfg[Validation._CFG_KEY_EXTRACT], obj_to_validate)
-        if Validation.__CFG_KEY_CALC in cfg:
-            return Validation.__calc(cfg[Validation.__CFG_KEY_CALC], obj_to_validate)
+    def __get_to_validate(self, obj_to_validate):
+        cfg = self.__cfg[Check.__CFG_KEY_TO_VALIDATE]
+        func = cfg[Check.__CFG_KEY_FUNC]
+        params = cfg[Check.__CFG_KEY_FUNC_PARAMS] if Check.__CFG_KEY_FUNC_PARAMS in cfg else {}
+        res = obj_for_name(func)(obj_to_validate, params)
+        if not res:
+            return self.__get_default_value(cfg)
+        else:
+            return res
 
+    def __get_default_value(self, cfg):
+        if isinstance(cfg[Check.__CFG_KEY_DEFAULT], dict):
+            return Converter.convert(cfg[Check.__CFG_KEY_DEFAULT][Check.__CFG_KEY_DEFAULT_VALUE],
+                                     cfg[Check.__CFG_KEY_DEFAULT][Check.__CFG_KEY_DEFAULT_TYPE])
+        else:
+            return cfg[Check.__CFG_KEY_DEFAULT]
 
-class DependentValidation(Validation):
-    _CFG_KEY_DEPENDENT = 'dependent'
-
-
-class LimitExceedValidation(DependentValidation):
-    def validate(self, obj_to_validate):
-        return NotImplemented
-
-    def what_if(self, obj_to_validate):
-        constraint_value = self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate)
-        current_value = self._get(self._cfg[Validation._CFG_KEY_TARGET], obj_to_validate)
-        input_value = self._get(self._cfg[Validation._CFG_KEY_INPUT], obj_to_validate)
-        dependent_value = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
-        if (dependent_value + input_value - current_value) > constraint_value:
-            return {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
-                    Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(constraint_value)}
+    def validate(self, input, is_substitute):
+        constraint = self.__get_constraint(input)
+        to_validate = self.__get_to_validate(input)
+        return self.__compare(to_validate, constraint)
 
 
-class DateOverdueValidation(Validation):
-    def validate(self, obj_to_validate):
-        return NotImplemented
-
-    def what_if(self, obj_to_validate):
-        constraint_value = self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate)
-        input_value = self._get(self._cfg[Validation._CFG_KEY_INPUT], obj_to_validate)
-        if input_value > constraint_value:
-            return {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
-                    Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(constraint_value)}
+def getter(func):
+    def getter_wrapper(input, params):
+        return func(input, **params)
+    return getter_wrapper
 
 
-class ScheduleIntegrityValidation(DependentValidation):
-    def validate(self, obj_to_validate):
-        return NotImplemented
-
-    def what_if(self, obj_to_validate):
-        res = []
-        input_value = self._get(self._cfg[Validation._CFG_KEY_INPUT], obj_to_validate)
-        dependencies = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
-        for dependency in dependencies:
-            constraint_value = self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], {ParamConstants.PARAM_ITEM_KEY: dependency})
-            if constraint_value < input_value:
-                res.append(
-                    {Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
-                     Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(
-                         dependency, constraint_value)})
-        return res if len(res) > 0 else None
+def comparator(func):
+    def comparator_wrapper(to_validate, constraint, violation_cfg):
+        return func(to_validate, constraint, violation_cfg)
+    return comparator_wrapper
 
 
-class SetsIntersectionValidation(DependentValidation):
-    def validate(self, obj_to_validate):
-        return NotImplemented
+def __extract(input, cfg):
+    filter = {}
+    filter_params = cfg[AccessParams.KEY_MATCH_PARAMS]
+    for param in filter_params:
+        filter.update({param: input[param]})
+    return  Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        {AccessParams.KEY_MATCH_PARAMS: filter,
+         AccessParams.KEY_COLLECTION: cfg[AccessParams.KEY_COLLECTION],
+         AccessParams.KEY_TYPE: cfg[AccessParams.KEY_TYPE]})
 
-    def what_if(self, obj_to_validate):
-        constraint_set = self._get(self._cfg[Validation._CFG_KEY_CONSTRAINT], obj_to_validate)
-        dependent_set = self._get(self._cfg[DependentValidation._CFG_KEY_DEPENDENT], obj_to_validate)
-        return None if len(dependent_set) == 0 or len(set(constraint_set).intersection(dependent_set)) > 0 else {
-            Validation._CFG_KEY_VIOLATION_SEVERITY: self._err_cfg[Validation._CFG_KEY_VIOLATION_SEVERITY],
-            Validation._CFG_KEY_VIOLATION_MSG: self._err_cfg[Validation._CFG_KEY_VIOLATION_MSG].format(dependent_set)}
+
+def __substitute(input, dataset, cfg):
+    CFG_KEY_FIELD = 'field'
+
+    filter_params = cfg[AccessParams.KEY_MATCH_PARAMS]
+    for row in dataset:
+        is_substitute_target = True
+        for param in filter_params:
+            if row[param] != input[param]:
+                is_substitute_target = False
+                break
+        if is_substitute_target:
+            row[cfg[CFG_KEY_FIELD]] = input[cfg[CFG_KEY_FIELD]]
+            return dataset
+    dataset.append(input)
+    return dataset
+
+
+@getter
+def const(input, **params):
+    PARAM_CONSTANT_VALUE = 'value'
+
+    return params.get(PARAM_CONSTANT_VALUE)
+
+
+@getter
+def return_input(input, **params):
+    PARAM_FIELD = 'field'
+
+    return input[params.get(PARAM_FIELD)]
+
+@getter
+def extract(input, **params):
+    EXTRACT_FIELD = 'field'
+
+    extract_params = params
+    extract_params.update({AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
+    return __extract(input, params)[params.get(EXTRACT_FIELD)]
+
+
+@getter
+def aggregate(input, **params):
+    PARAM_CFG_EXTRACT = 'extract'
+    PARAM_CFG_SUBSTITUTE = 'substitute'
+    PARAM_CFG_AGGREGATE = 'aggregate'
+    AGGR_FIELD = 'field'
+    AGGR_FUNC = 'func'
+
+    extract_params = params.get(PARAM_CFG_EXTRACT)
+    extract_params.update({AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
+    dataset = __extract(input, extract_params)
+    if PARAM_CFG_SUBSTITUTE in params:
+        dataset = __substitute(input, dataset, params.get(PARAM_CFG_SUBSTITUTE))
+    cfg = params.get(PARAM_CFG_AGGREGATE)
+    res = Aggregator.aggregate(dataset, cfg[AGGR_FIELD], cfg[AGGR_FUNC])
+    return res
+
+
+@comparator
+def limit_exceed(to_validate, constraint, violation_cfg):
+    if to_validate > constraint:
+        violation_cfg[Check.CFG_KEY_VIOLATION_MSG] = violation_cfg[Check.CFG_KEY_VIOLATION_MSG].format(constraint)
+        return violation_cfg
+    else:
+        return None
+
+
+@comparator
+def no_intersection(to_validate, constraint, violation_cfg):
+    if len(constraint) == 0 or len(set(constraint).intersection(to_validate)) > 0:
+        return None
+    else:
+        violation_cfg[Check.CFG_KEY_VIOLATION_MSG] = violation_cfg[Check.CFG_KEY_VIOLATION_MSG].format(constraint)
+        return violation_cfg

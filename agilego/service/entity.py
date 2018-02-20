@@ -123,6 +123,8 @@ class Assignment(Resource):
 
     def post(self):
         assignment_details = request.get_json()
+        assignment_details[ParamConstants.PARAM_WHRS] = Converter.convert(assignment_details[ParamConstants.PARAM_WHRS],
+                                                                          Types.TYPE_FLOAT)
         assignment_details[ParamConstants.PARAM_DATE] = Converter.convert(assignment_details[ParamConstants.PARAM_DATE],
                                                                           Types.TYPE_DATE)
 
@@ -154,8 +156,10 @@ class Assignment(Resource):
 class AssignmentValidation(Resource):
     def post(self):
         assignment_details = request.get_json()
-        assignment_details[ParamConstants.PARAM_WHRS] = float(
-            assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
+        assignment_details[ParamConstants.PARAM_WHRS] = float(assignment_details[ParamConstants.PARAM_WHRS])  # ToDo: move typecast into configuration ?
+        assignment_details[ParamConstants.PARAM_DATE] = Converter.convert(assignment_details[ParamConstants.PARAM_DATE],
+                                                                          Types.TYPE_DATE)
         with open(CFG_ASSIGN_VALIDATION) as validation_cfg_file:
-            res = Validator(json.load(validation_cfg_file, strict=False)).what_if(assignment_details) # ToDo: load once on start-up api
+            res = Validator(json.load(validation_cfg_file, strict=False)).validate(assignment_details) # ToDo: load once on start-up api
+
         return res, 200 # ToDo: move cfg to constructor/cache

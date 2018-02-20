@@ -11,13 +11,13 @@
 	"response": {
 		"content-root": "issues",
 		"issues": {
-			"noname": "True",
+			"noname": true,
 			"type": "array",
 			"fields": {
 				"root": {
 					"type": "object",
-					"explicit": "True",
-					"noname": "True",
+					"explicit": true,
+					"noname": true,
 					"fields": {
 						"key": {
 							"key": "key",
@@ -52,7 +52,7 @@
 								"parent": {
 									"key": "parent",
 									"type": "object",
-									"optional": "True",
+									"optional": true,
 									"fields": {
 										"name": {
 											"key": "key",
@@ -64,7 +64,7 @@
 								"assignee": {
 									"key": "assignee",
 									"type": "object",
-									"optional": "True",
+									"optional": true,
 									"fields": {
 										"displayName": {
 											"key": "displayName",
@@ -92,7 +92,7 @@
 								"priority": {
 									"key": "priority",
 									"type": "object",
-									"optional": "True",
+									"optional": true,
 									"fields": {
 										"name": {
 											"key": "name",

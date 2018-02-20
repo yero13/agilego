@@ -379,10 +379,10 @@
 							}
 						},
 						"dest.db.cleanup": {
-							"target": "sprint.link_subtasks"
+							"target": "sprint.link_blocks"
 						},
 						"dest.db.save": {
-							"dest": "sprint.link_subtasks"
+							"dest": "sprint.link_blocks"
 						}					
 					}
 				},				
@@ -518,10 +518,10 @@
 							"func": "transformation.transformer.union"
 						},
 						"dest.db.cleanup": {
-							"target": "sprint.issue_links"
+							"target": "sprint.backlog_links"
 						},
 						"dest.db.save": {
-							"dest": "sprint.issue_links"
+							"dest": "sprint.backlog_links"
 						}						
 					}
 				},				
