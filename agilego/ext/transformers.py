@@ -1,6 +1,7 @@
 from transformation.transformer import transformer
 import pandas as pd
 
+
 @transformer
 def dates2range(input, **params):
     PARAM_FIELD_STARTDATE = 'field.startDate'

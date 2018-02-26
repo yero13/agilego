@@ -2,7 +2,7 @@ from copy import deepcopy
 
 from db.data import Accessor, AccessParams
 from logic.constants import DbConstants, ParamConstants
-from service.validator import getter, comparator, Check
+from validation.validator import getter, comparator, Check
 from utils.aggregator import Aggregator
 
 
