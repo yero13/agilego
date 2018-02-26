@@ -1,7 +1,7 @@
 import logging
 
 from db.data import Accessor, AccessParams
-from service.constants import DbConstants
+from logic.constants import DbConstants
 from utils.aggregator import Aggregator
 from utils.converter import Converter
 from utils.object import obj_for_name
@@ -39,7 +39,6 @@ class Check:
     __CFG_KEY_DEFAULT = 'default'
     __CFG_KEY_DEFAULT_VALUE = 'value'
     __CFG_KEY_DEFAULT_TYPE = 'type'
-
 
     def __init__(self, cfg):
         self.__cfg = cfg

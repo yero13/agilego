@@ -1,8 +1,9 @@
+from copy import deepcopy
+
 from db.data import Accessor, AccessParams
-from service.constants import DbConstants, ParamConstants
+from logic.constants import DbConstants, ParamConstants
 from service.validator import getter, comparator, Check
 from utils.aggregator import Aggregator
-from copy import deepcopy
 
 
 def get_linked_issues(key, link_type):

@@ -267,7 +267,7 @@
 									{
 										"src.type": "const",
 										"const.value": "blocked",
-										"dest.field": "link"
+										"dest.field": "type"
 									}
 								]
 							}
@@ -344,7 +344,7 @@
 									{
 										"src.type": "const",
 										"const.value": "blocks",
-										"dest.field": "link"
+										"dest.field": "type"
 									}
 								]
 							}
@@ -421,7 +421,7 @@
 									{
 										"src.type": "const",
 										"const.value": "subtask",
-										"dest.field": "link"
+										"dest.field": "type"
 									}
 								]
 							}

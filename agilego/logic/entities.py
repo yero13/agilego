@@ -1,10 +1,12 @@
-from flask_restful import Resource, request
-from flask import jsonify
-from service.constants import DbConstants, ParamConstants, MatchConstants
-from service.validator import Validator
-from db.data import Accessor, AccessParams
-from utils.converter import Converter, Types
 import json
+
+from flask import jsonify
+from flask_restful import Resource, request
+
+from db.data import Accessor, AccessParams
+from logic.constants import DbConstants, ParamConstants, MatchConstants
+from validation.validator import Validator
+from utils.converter import Converter, Types
 
 CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json' # ToDo: load on start up
 

@@ -1,19 +1,21 @@
 import json
-import unittest
 import logging.config
+import unittest
+
 import flask
 from flask_restful import Api
-from integration.importer import Importer
-from transformation.transformer import Transformer
-from data.generator import Generator
-from db.data import Accessor, AccessParams
-from db.connect import MongoDb
-from utils.cfg import CfgUtils
-from service.constants import DbConstants, RestConstants
-from service.entity import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation
-from utils.env import get_env_params
+
 import utils.env
+from data.generator import Generator
+from db.connect import MongoDb
+from db.data import Accessor, AccessParams
+from integration.importer import Importer
+from logic.constants import DbConstants, RestConstants
+from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
+    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation
+from transformation.transformer import Transformer
+from utils.cfg import CfgUtils
+from utils.env import get_env_params
 
 CFG_LOG_TEST = './cfg/log/test-logging-config.json'
 CFG_DATA_GENERATION  = './cfg/data/jira-data-generation.json'
