@@ -1,4 +1,4 @@
-from logic.graph import SprintGraph
+from logic.gannt import GanntGraph
 import logging.config
 import json
 
@@ -10,7 +10,7 @@ if __name__ == '__main__':
         logger = logging.getLogger(__name__)
     try:
         logger.info('Init graph builder')
-        g = SprintGraph()
+        g = GanntGraph()
         logger.debug('----> {}'.format(g.toString()))
     except Exception as e:
         logging.error(e, exc_info=True)
