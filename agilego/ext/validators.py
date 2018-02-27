@@ -30,7 +30,7 @@ def get_linked_assignments(input, **params):
             AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
         agg_func = params.get(PARAM_FUNC)
-        return Aggregator.aggregate(linked_assignments, ParamConstants.PARAM_DATE, agg_func, [ParamConstants.PARAM_ITEM_KEY])
+        return Aggregator.agg_single_func(linked_assignments, ParamConstants.PARAM_DATE, agg_func, [ParamConstants.PARAM_ITEM_KEY])
     else:
         return None
 

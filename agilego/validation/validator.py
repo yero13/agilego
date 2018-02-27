@@ -158,7 +158,7 @@ def aggregate(input, **params):
     if PARAM_CFG_SUBSTITUTE in params:
         dataset = __substitute(input, dataset, params.get(PARAM_CFG_SUBSTITUTE))
     cfg = params.get(PARAM_CFG_AGGREGATE)
-    res = Aggregator.aggregate(dataset, cfg[AGGR_FIELD], cfg[AGGR_FUNC])
+    res = Aggregator.agg_single_func(dataset, cfg[AGGR_FIELD], cfg[AGGR_FUNC])
     return res
 
 
