@@ -1,6 +1,5 @@
 import json
 import logging
-
 from framework.integration.exporter import Exporter
 from framework.integration.importer import Importer
 from framework.transformation.transformer import Transformer
@@ -8,8 +7,6 @@ from framework.utils.cfg import CfgUtils
 
 
 class Generator():
-    # ToDo: transfromation + test.* -> data.*
-
     __CFG_KEY_STEPS = 'steps'
     __CFG_KEY_STEP_TYPE = 'type'
     __CFG_STEP_TYPE_EXPORT = 'jira.export'

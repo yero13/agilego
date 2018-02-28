@@ -1,13 +1,11 @@
 import json
 import logging.config
 import unittest
-
 import flask
-from framework.db.connect import MongoDb
 from flask_restful import Api
-
-from data.generator import Generator
 from framework import utils
+from framework.data.generator import Generator
+from framework.db.connect import MongoDb
 from framework.db.data import Accessor, AccessParams
 from framework.integration.importer import Importer
 from framework.transformation.transformer import Transformer
