@@ -1,14 +1,12 @@
 import json
 import logging.config
-
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
-
+from framework.utils.json import ExtJSONEncoder
 from logic.constants import RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
     AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation
-from utils.json import ExtJSONEncoder
 
 CFG_LOG_API = './cfg/log/api-logging-config.json'
 

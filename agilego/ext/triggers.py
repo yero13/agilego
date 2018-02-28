@@ -1,6 +1,6 @@
-from db.data import Trigger, CRUD
+from framework.db.data import Trigger, CRUD
+from framework.utils.json import JSONUtils
 from logic.constants import ParamConstants, DbConstants
-from utils.json import JSONUtils
 
 
 class OnDeleteGroupTrigger(Trigger):

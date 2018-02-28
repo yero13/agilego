@@ -1,9 +1,9 @@
 import argparse
 import json
 import logging.config
-from utils.cfg import CfgUtils
-from integration.importer import Importer
-from utils.env import get_env_params
+from framework.integration.importer import Importer
+from framework.utils.cfg import CfgUtils
+from framework.utils.env import get_env_params
 
 CFG_LOG_IMPORT = './cfg/log/import-logging-config.json'
 CFG_IMPORT = './cfg/jira/jira-import.json'

@@ -1,11 +1,10 @@
 import argparse
 import json
 import logging.config
-from utils.cfg import CfgUtils
-from utils.env import get_env_params
-
-from integration.exporter import Exporter
-from transformation.transformer import Transformer
+from framework.integration.exporter import Exporter
+from framework.transformation.transformer import Transformer
+from framework.utils.cfg import CfgUtils
+from framework.utils.env import get_env_params
 
 CFG_LOG_EXPORT = './cfg/log/export-logging-config.json'
 CFG_TRANSFORM = './cfg/scrum/scrum-export-transform.json'

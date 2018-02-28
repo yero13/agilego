@@ -1,10 +1,9 @@
 import logging
-
-from db.data import Accessor, AccessParams
-from logic.constants import DbConstants
-from utils.aggregator import Aggregator
-from utils.converter import Converter
-from utils.object import obj_for_name
+from framework.utils.aggregator import Aggregator
+from framework.utils.object import obj_for_name
+from framework.db.data import Accessor, AccessParams
+from framework.utils.converter import Converter
+from logic.constants import DbConstants # ToDo: move out framework
 
 
 class Validator:

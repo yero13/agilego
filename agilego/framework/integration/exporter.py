@@ -1,9 +1,8 @@
 import copy
 import json
-from utils.cfg import CfgUtils
-
-from integration.integrator import Integrator
-from integration.request import ExportRequest
+from framework.integration.integrator import Integrator
+from framework.integration.request import ExportRequest
+from framework.utils.cfg import CfgUtils
 
 
 class Exporter(Integrator):

@@ -1,11 +1,11 @@
-import logging
 import abc
-import requests
-from requests.auth import HTTPBasicAuth
 import json
+import logging
 import jsonschema
+import requests
 from jsonschema import validate
-from utils.converter import Types, Converter
+from requests.auth import HTTPBasicAuth
+from framework.utils.converter import Types, Converter
 
 
 class Field:

@@ -1,11 +1,11 @@
-from db.connect import MongoDb
-import logging
 import abc
 import json
-from utils.env import get_env_params
-from utils.object import obj_for_name
+import logging
+from framework.utils.env import get_env_params
+from framework.db.connect import MongoDb
+from framework.utils.object import obj_for_name
 
-CFG_TRIGGERS = './cfg/dependency/triggers.json'
+CFG_TRIGGERS = '././cfg/dependency/triggers.json' # ToDo: move outside framework
 
 
 class CRUD:

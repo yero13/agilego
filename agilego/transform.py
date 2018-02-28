@@ -1,6 +1,7 @@
 import json
 import logging.config
-from transformation.transformer import Transformer
+
+from framework.transformation.transformer import Transformer
 
 CFG_LOG_TRANSFORM = './cfg/log/transform-logging-config.json'
 CFG_TRANSFORM = './cfg/scrum/scrum-import-transform.json'

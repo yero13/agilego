@@ -7,13 +7,13 @@
 			},
 			"transformations": {
 				"assignements": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy"
+							"func": "framework.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "sprint.assignments"
@@ -24,13 +24,13 @@
 					}
 				},
 				"sprint-all-items": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.backlog"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy",
+							"func": "framework.transformation.transformer.copy",
 							"params": {
 								"fields": ["key"]
 							}
@@ -52,13 +52,13 @@
 			},
 			"transformations": {
 				"assignments-tech": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments"
 						},
 						"transform": {
-							"func": "transformation.transformer.format",
+							"func": "framework.transformation.transformer.format",
 							"params": {
 								"format.string": "{}_{}_{:%Y-%m-%d}_{}_{}_{:n}_{}",
 								"format.input": [
@@ -103,13 +103,13 @@
 					}
 				},
 				"assignments-label": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_tech"
 						},
 						"transform": {
-							"func": "transformation.transformer.format",
+							"func": "framework.transformation.transformer.format",
 							"params": {
 								"format.string": "{}_{:%Y-%m-%d}",
 								"format.input": [
@@ -134,13 +134,13 @@
 					}
 				},				
 				"sprint-assignment-search-transpose": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_raw"
 						},
 						"transform": {
-							"func": "transformation.transformer.group_singles2array",
+							"func": "framework.transformation.transformer.group_singles2array",
 							"params": {
 								"field.key": "key",
 								"field.array": "label",
@@ -156,13 +156,13 @@
 					}
 				},
 				"sprint-assignment-tech-transpose": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_raw"
 						},
 						"transform": {
-							"func": "transformation.transformer.group_singles2array",
+							"func": "framework.transformation.transformer.group_singles2array",
 							"params": {
 								"field.key": "key",
 								"field.array": "tech",
@@ -178,13 +178,13 @@
 					}
 				},
 				"sprint-assignment-label-join": {
-					"class": "transformation.transformer.MultiCol2XTransformation",
+					"class": "framework.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": ["sprint.idx_all_items", "sprint.assignments_search_labels"]
 						},
 						"transform": {
-							"func": "transformation.transformer.left_join",
+							"func": "framework.transformation.transformer.left_join",
 							"params": {
 								"col.right": "sprint.idx_all_items",
 								"col.left": "sprint.assignments_search_labels",
@@ -200,13 +200,13 @@
 					}
 				},
 				"sprint-assignment-tech-join": {
-					"class": "transformation.transformer.MultiCol2XTransformation",
+					"class": "framework.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": ["sprint.idx_all_items", "sprint.assignments_tech"]
 						},
 						"transform": {
-							"func": "transformation.transformer.left_join",
+							"func": "framework.transformation.transformer.left_join",
 							"params": {
 								"col.right": "sprint.idx_all_items",
 								"col.left": "sprint.assignments_tech",
@@ -222,13 +222,13 @@
 					}
 				},
 				"sprint-assignment-tech-notnull": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_tech"
 						},
 						"transform": {
-							"func": "transformation.transformer.replace",
+							"func": "framework.transformation.transformer.replace",
 							"params": {
 								"replace": [
 									{
@@ -248,13 +248,13 @@
 					}
 				},
 				"sprint-assignment-label-notnull": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_label"
 						},
 						"transform": {
-							"func": "transformation.transformer.replace",
+							"func": "framework.transformation.transformer.replace",
 							"params": {
 								"replace": [
 									{

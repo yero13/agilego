@@ -3,7 +3,7 @@
 	"checks": {
 		"employee.daily-whrs-capacity.exceed": {
 			"to_validate": {
-				"func": "validation.validator.aggregate",
+				"func": "framework.validation.validator.aggregate",
 				"params": {
 					"extract": {
 						"match": ["employee", "date"],
@@ -21,13 +21,13 @@
 				"default": 0
 			},
 			"constraint": {
-				"func": "validation.validator.const", 
+				"func": "framework.validation.validator.const",
 				"params": {
 					"value": 6
 				}
 			},
 			"compare": {
-				"func": "validation.validator.limit_exceed",
+				"func": "framework.validation.validator.limit_exceed",
 				"violation": {
 					"severity": "warning",
 					"message": "Employee max capality ({:g} whrs per day) exceed"
@@ -36,7 +36,7 @@
 		},
 		"group.sprint-whrs-capacity.exceed": {
 			"to_validate": {
-				"func": "validation.validator.aggregate",
+				"func": "framework.validation.validator.aggregate",
 				"params": {
 					"extract": {
 						"match": ["group"],
@@ -54,7 +54,7 @@
 				"default": 0
 			},		
 			"constraint": {
-				"func": "validation.validator.extract", 
+				"func": "framework.validation.validator.extract",
 				"params": {
 					"match": ["group"],
 					"collection": "project.team",			
@@ -63,7 +63,7 @@
 				"default": 9999
 			},
 			"compare": {
-				"func": "validation.validator.limit_exceed",
+				"func": "framework.validation.validator.limit_exceed",
 				"violation": {
 					"severity": "warning",
 					"message": "Group max capality ({:g} whrs per sprint) exceed"
@@ -72,7 +72,7 @@
 		},
 		"task.originalestimate.exceed": {
 			"to_validate": {
-				"func": "validation.validator.aggregate",
+				"func": "framework.validation.validator.aggregate",
 				"params": {
 					"extract": {
 						"match": ["key"],
@@ -90,7 +90,7 @@
 				"default": 0
 			},		
 			"constraint": {
-				"func": "validation.validator.extract", 
+				"func": "framework.validation.validator.extract",
 				"params": {
 					"match": ["key"],
 					"collection": "sprint.backlog",			
@@ -99,7 +99,7 @@
 				"default": 9999
 			},
 			"compare": {
-				"func": "validation.validator.limit_exceed",
+				"func": "framework.validation.validator.limit_exceed",
 				"violation": {
 					"severity": "warning",
 					"message": "Task original estimate ({:g} hrs) exceed"
@@ -108,13 +108,13 @@
 		},
 		"task.duedate.overdue": {
 			"to_validate": {
-				"func": "validation.validator.return_input",
+				"func": "framework.validation.validator.return_input",
 				"params": {
 					"field": "date"
 				}
 			},		
 			"constraint": {
-				"func": "validation.validator.extract", 
+				"func": "framework.validation.validator.extract",
 				"params": {
 					"match": ["key"],
 					"collection": "sprint.backlog",			
@@ -126,7 +126,7 @@
 				}
 			},
 			"compare": {
-				"func": "validation.validator.limit_exceed",
+				"func": "framework.validation.validator.limit_exceed",
 				"violation": {
 					"severity": "warning",
 					"message": "task's due date {:%Y-%m-%d} is passed"
@@ -135,7 +135,7 @@
 		},
 		"assignment.expertise.conflict": {
 			"constraint": {
-				"func": "validation.validator.extract", 
+				"func": "framework.validation.validator.extract",
 				"params": {
 					"match": ["key"],
 					"collection": "sprint.backlog",			
@@ -144,7 +144,7 @@
 				"default": []
 			},		
 			"to_validate": {
-				"func": "validation.validator.extract", 
+				"func": "framework.validation.validator.extract",
 				"params": {
 					"match": ["group"],
 					"collection": "project.team",			
@@ -153,7 +153,7 @@
 				"default": []
 			},
 			"compare": {
-				"func": "validation.validator.no_intersection",
+				"func": "framework.validation.validator.no_intersection",
 				"violation": {
 					"severity": "warning",
 					"message": "Task requires {} component(s) expertise"
@@ -162,7 +162,7 @@
 		},
 		"assignment.blocked.conflict": {
 			"to_validate": {
-				"func": "validation.validator.return_input",
+				"func": "framework.validation.validator.return_input",
 				"params": {
 					"field": "date"
 				}

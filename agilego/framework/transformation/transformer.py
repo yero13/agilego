@@ -1,10 +1,10 @@
 import abc
 import logging
-from db.data import Accessor, AccessParams
-from utils.object import obj_for_name
-import pandas as pd
-from utils.converter import Converter
 import re
+import pandas as pd
+from framework.utils.object import obj_for_name
+from framework.db.data import Accessor, AccessParams
+from framework.utils.converter import Converter
 
 
 class Transformer():

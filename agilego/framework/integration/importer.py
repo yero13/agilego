@@ -1,9 +1,7 @@
 import json
 from string import Template
-
-from integration.request import ImportRequest
-
-from integration.integrator import Integrator
+from framework.integration.integrator import Integrator
+from framework.integration.request import ImportRequest
 
 
 class Importer(Integrator):

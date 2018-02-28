@@ -1,9 +1,10 @@
-import logging
-from integration.exporter import Exporter
-from integration.importer import Importer
-from transformation.transformer import Transformer
 import json
-from utils.cfg import CfgUtils
+import logging
+
+from framework.integration.exporter import Exporter
+from framework.integration.importer import Importer
+from framework.transformation.transformer import Transformer
+from framework.utils.cfg import CfgUtils
 
 
 class Generator():

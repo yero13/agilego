@@ -8,13 +8,13 @@
 			},
 			"transformations": {
 				"components": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "components"
 						},
 						"transform": {
-							"func": "transformation.transformer.group_singles2array",
+							"func": "framework.transformation.transformer.group_singles2array",
 							"params": {
 								"field.single": "component",
 								"field.array": "component"
@@ -29,13 +29,13 @@
 					}
 				},
 				"employees": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "employees"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy"						
+							"func": "framework.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "project.employees"
@@ -46,7 +46,7 @@
 					}
 				},
 				"sprint-timeline": {
-					"class": "transformation.transformer.Doc2XTransformation",
+					"class": "framework.transformation.transformer.Doc2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint"
@@ -68,13 +68,13 @@
 					}
 				},
 				"sprint-definition": {
-					"class": "transformation.transformer.Doc2XTransformation",
+					"class": "framework.transformation.transformer.Doc2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy"
+							"func": "framework.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "sprint.definition"
@@ -85,7 +85,7 @@
 					}
 				},				
 				"sprint-all_items": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "backlog"
@@ -113,13 +113,13 @@
 			},
 			"transformations": {
 				"all_items_filtered": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.filter_set",
+							"func": "framework.transformation.transformer.filter_set",
 							"params": {
 								"where": "type == 'Story' or type == 'Bug' or type == 'Sub-task'"
 							}
@@ -133,13 +133,13 @@
 					}
 				},
 				"all_items_sorted": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.all_items_filtered"
 						},
 						"transform": {
-							"func": "transformation.transformer.sort_set",
+							"func": "framework.transformation.transformer.sort_set",
 							"params": {
 								"sort.field": "priority",
 								"sort.order": ["Highest", "High", "Medium", "Low", "Lowest"]							
@@ -154,13 +154,13 @@
 					}
 				},				
 				"raw_assignments": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.ungroup_array2singles",
+							"func": "framework.transformation.transformer.ungroup_array2singles",
 							"params": {
 								"field.array": "assignments",
 								"field.single": "assignment"
@@ -175,13 +175,13 @@
 					}
 				},
 				"assignments": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.raw_assignments"
 						},
 						"transform": {
-							"func": "transformation.transformer.regexp",
+							"func": "framework.transformation.transformer.regexp",
 							"params": {
 								"input.field": "assignment",
 								"pattern": "^(\\S+-\\d+){1}_(\\S+-\\d+){0,1}_(\\d{4}-\\d{2}-\\d{2})_(\\S+)_(\\S+)_(\\d+(\\.\\d{1,2})*)_(\\S*)$",
@@ -233,13 +233,13 @@
 					}
 				},				
 				"idx_blocked_by": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.ungroup_array2singles",
+							"func": "framework.transformation.transformer.ungroup_array2singles",
 							"params": {
 								"field.key": "key",
 								"field.array": "blocked_by",
@@ -255,13 +255,13 @@
 					}
 				},
 				"idx_blocked_by_2_links": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.idx_blocked_by"
 						},
 						"transform": {
-							"func": "transformation.transformer.update_col",
+							"func": "framework.transformation.transformer.update_col",
 							"params": {
 								"update": [
 									{
@@ -281,13 +281,13 @@
 					}
 				},
 				"link_blocked": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.link_blocked"
 						},
 						"transform": {
-							"func": "transformation.transformer.rename_fields",
+							"func": "framework.transformation.transformer.rename_fields",
 							"params": {
 								"rename": [
 									{
@@ -310,13 +310,13 @@
 					}
 				},						
 				"idx_blocks": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.ungroup_array2singles",
+							"func": "framework.transformation.transformer.ungroup_array2singles",
 							"params": {
 								"field.key": "key",
 								"field.array": "blocks",
@@ -332,13 +332,13 @@
 					}
 				},
 				"idx_blocks_2_links": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.idx_blocks"
 						},
 						"transform": {
-							"func": "transformation.transformer.update_col",
+							"func": "framework.transformation.transformer.update_col",
 							"params": {
 								"update": [
 									{
@@ -358,13 +358,13 @@
 					}
 				},
 				"link_blocks": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.link_blocks"
 						},
 						"transform": {
-							"func": "transformation.transformer.rename_fields",
+							"func": "framework.transformation.transformer.rename_fields",
 							"params": {
 								"rename": [
 									{
@@ -387,13 +387,13 @@
 					}
 				},				
 				"idx_subtasks": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.all_items"
 						},
 						"transform": {
-							"func": "transformation.transformer.ungroup_array2singles",
+							"func": "framework.transformation.transformer.ungroup_array2singles",
 							"params": {
 								"field.key": "key",
 								"field.array": "subtasks",
@@ -409,13 +409,13 @@
 					}
 				},
 				"idx_subtasks_2_links": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.idx_subtasks"
 						},
 						"transform": {
-							"func": "transformation.transformer.update_col",
+							"func": "framework.transformation.transformer.update_col",
 							"params": {
 								"update": [
 									{
@@ -435,13 +435,13 @@
 					}
 				},
 				"link_subtask": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.link_subtasks"
 						},
 						"transform": {
-							"func": "transformation.transformer.rename_fields",
+							"func": "framework.transformation.transformer.rename_fields",
 							"params": {
 								"rename": [
 									{
@@ -472,13 +472,13 @@
 			},
 			"transformations": {
 				"backlog": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.all_items_sorted"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy",
+							"func": "framework.transformation.transformer.copy",
 							"params": {
 								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks"]
 							}
@@ -492,13 +492,13 @@
 					}
 				},
 				"assignements": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy"
+							"func": "framework.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "sprint.assignments"
@@ -509,13 +509,13 @@
 					}
 				},
 				"issue-links": {
-					"class": "transformation.transformer.MultiCol2XTransformation",
+					"class": "framework.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": ["sprint.link_subtasks", "sprint.link_blocks", "sprint.link_blocked"]
 						},
 						"transform": {
-							"func": "transformation.transformer.union"
+							"func": "framework.transformation.transformer.union"
 						},
 						"dest.db.cleanup": {
 							"target": "sprint.backlog_links"
@@ -526,13 +526,13 @@
 					}
 				},				
 				"employees": {
-					"class": "transformation.transformer.Col2XTransformation",
+					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "project.employees"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy"
+							"func": "framework.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "project.employees"
@@ -543,13 +543,13 @@
 					}
 				},
 				"components": {
-					"class": "transformation.transformer.Doc2XTransformation",
+					"class": "framework.transformation.transformer.Doc2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "project.components"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy"
+							"func": "framework.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "project.components"
@@ -560,13 +560,13 @@
 					}
 				},
 				"sprint.definition": {
-					"class": "transformation.transformer.Doc2XTransformation",
+					"class": "framework.transformation.transformer.Doc2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.definition"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy"
+							"func": "framework.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "sprint.definition"
@@ -577,13 +577,13 @@
 					}
 				},
 				"sprint.timeline": {
-					"class": "transformation.transformer.Doc2XTransformation",
+					"class": "framework.transformation.transformer.Doc2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.timeline"
 						},
 						"transform": {
-							"func": "transformation.transformer.copy"
+							"func": "framework.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "sprint.timeline"

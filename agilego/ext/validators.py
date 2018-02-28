@@ -1,9 +1,9 @@
 from copy import deepcopy
 
-from db.data import Accessor, AccessParams
+from framework.db.data import Accessor, AccessParams
+from framework.utils.aggregator import Aggregator
+from framework.validation.validator import getter, comparator, Check
 from logic.constants import DbConstants, ParamConstants
-from validation.validator import getter, comparator, Check
-from utils.aggregator import Aggregator
 
 
 def get_linked_issues(key, link_type):
