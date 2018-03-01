@@ -292,11 +292,11 @@
 								"rename": [
 									{
 										"src.field": "key",
-										"dest.field": "A"
+										"dest.field": "source"
 									},
 									{
 										"src.field": "blocked_by",
-										"dest.field": "B"
+										"dest.field": "target"
 									}									
 								]
 							}
@@ -369,11 +369,11 @@
 								"rename": [
 									{
 										"src.field": "key",
-										"dest.field": "A"
+										"dest.field": "source"
 									},
 									{
 										"src.field": "blocks",
-										"dest.field": "B"
+										"dest.field": "target"
 									}									
 								]
 							}
@@ -446,11 +446,11 @@
 								"rename": [
 									{
 										"src.field": "key",
-										"dest.field": "A"
+										"dest.field": "source"
 									},
 									{
 										"src.field": "subtask",
-										"dest.field": "B"
+										"dest.field": "target"
 									}									
 								]
 							}

@@ -6,7 +6,7 @@ from flask_restful import Api
 from framework.utils.json import ExtJSONEncoder
 from logic.constants import RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation, GanttTasks
+    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation, GanttTasks, GanttLinks
 
 CFG_LOG_API = './cfg/log/api-logging-config.json'
 
@@ -33,3 +33,4 @@ api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT,
                  '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT))
 api.add_resource(AssignmentValidation, RestConstants.ROUTE_ASSIGNMENT_VALIDATION)
 api.add_resource(GanttTasks, RestConstants.ROUTE_GANTT_TASKS)
+api.add_resource(GanttLinks, RestConstants.ROUTE_GANTT_LINKS)

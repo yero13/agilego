@@ -1,5 +1,4 @@
 from copy import deepcopy
-
 from framework.db.data import Accessor, AccessParams
 from framework.utils.aggregator import Aggregator
 from framework.validation.validator import getter, comparator, Check
@@ -7,7 +6,7 @@ from logic.constants import DbConstants, ParamConstants
 
 
 def get_linked_issues(key, link_type):
-    filter = {'A': key, 'link': link_type}
+    filter = {'source': key, 'type': link_type}
 
     return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
         {AccessParams.KEY_MATCH_PARAMS: filter,
@@ -17,14 +16,14 @@ def get_linked_issues(key, link_type):
 
 @getter
 def get_linked_assignments(input, **params):
-    LINK_ISSUE_B = 'B'
+    LINK_TARGET = 'target'
     PARAM_FUNC = 'func'
 
-    linked_issues = get_linked_issues(input[ParamConstants.PARAM_ITEM_KEY], params.get(ParamConstants.PARAM_LINK))
+    linked_issues = get_linked_issues(input[ParamConstants.PARAM_ITEM_KEY], params.get(ParamConstants.PARAM_TYPE))
     filter = []
     if len(linked_issues) > 0:
         for issue in linked_issues:
-            filter.append({ParamConstants.PARAM_ITEM_KEY: issue[LINK_ISSUE_B]})
+            filter.append({ParamConstants.PARAM_ITEM_KEY: issue[LINK_TARGET]})
         linked_assignments = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {AccessParams.KEY_MATCH_PARAMS: {AccessParams.OPERATOR_OR: filter},
             AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
@@ -38,8 +37,9 @@ def get_linked_assignments(input, **params):
 @comparator
 def schedule_conflict_too_late(to_validate, constraint, violation_cfg):
     res = []
-    for item in constraint:
-        for k,v in item.items():
+
+    if constraint:
+        for k, v in constraint.items():
             if v < to_validate:
                 violation = deepcopy(violation_cfg)
                 violation[Check.CFG_KEY_VIOLATION_MSG] = violation[Check.CFG_KEY_VIOLATION_MSG].format(k, v)

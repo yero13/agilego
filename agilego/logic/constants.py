@@ -25,6 +25,7 @@ class RestConstants:
     ROUTE_ASSIGNMENTS = '/assignments'
     ROUTE_ASSIGNMENT_VALIDATION = '{}/validate'.format(ROUTE_ASSIGNMENT)
     ROUTE_GANTT_TASKS = '/gantt/tasks'
+    ROUTE_GANTT_LINKS = '/gantt/links'
 
 
 class ParamConstants:
@@ -39,7 +40,6 @@ class ParamConstants:
     PARAM_TIMELINE = 'timeline'
     PARAM_WHRS = 'whrs'
     PARAM_TYPE = 'type'
-    PARAM_LINK = 'link'
 
 
 class MatchConstants:

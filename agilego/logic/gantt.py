@@ -9,7 +9,7 @@ from logic.constants import DbConstants, ParamConstants
 class AbstractGantt:
     def __init__(self):
         self._logger = logging.getLogger(__class__.__name__)
-        self._graph = nx.Graph()
+        self._graph = nx.DiGraph()
 
 
 # ToDo: this class should be optimized to work with sevaral data sets (see AbsGantt)
@@ -18,8 +18,11 @@ class Gantt(AbstractGantt):
     __LINK_SUBTASK = 'subtask'
     __LINK_BLOCKS = 'blocks'
     __LINK_BLOCKED = 'blocked'
-    __LINK_A = 'A'
-    __LINK_B = 'B'
+    #__LINK_A = 'A' # ToDo: replace by source
+    #__LINK_B = 'B' # ToDo: replace by target
+    __LINK_SOURCE = 'source'
+    __LINK_TARGET = 'target'
+    __LINK_ID = 'id'
     __TASK_TYPE = 'type'
     __TASK_ID = 'id'
     __TASK_EXT = 'ext'
@@ -37,12 +40,8 @@ class Gantt(AbstractGantt):
         self.__add_links()
 
     def toString(self):
-        #for node in self._graph.nodes:
-            #self._logger.debug('node: {} {}'.format(node, self._graph.nodes[node]))
-        #for edge in self._graph.edges:
-        #    self._logger.debug('edge: {} {}'.format(edge, self._graph.edges[edge]))
         self._logger.debug(self.tasks)
-        #return '\n{}\n{}\n'.format(self._graph.nodes, self._graph.edges)
+        self._logger.debug(self.links)
 
     def __add_tasks(self):
         backlog = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
@@ -80,17 +79,20 @@ class Gantt(AbstractGantt):
              AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
         for link in links:
             link_type = link[Gantt.__LINK_TYPE]
-            link_a = link[Gantt.__LINK_A]
-            link_b = link[Gantt.__LINK_B]
-            self.__add_ext_task(link_a)
-            self.__add_ext_task(link_b)
-            if link_type in [Gantt.__LINK_SUBTASK, Gantt.__LINK_BLOCKS]:
-                self._graph.add_edge(link_a, link_b) #, attr_dict={Gantt.__LINK_TYPE: link_type})
-            elif link_type == Gantt.__LINK_BLOCKED and (link_b, link_a) not in self._graph.edges:
-                self._graph.add_edge(link_b, link_a) #, attr_dict={Gantt.__LINK_TYPE: Gantt.__LINK_BLOCKS})
-
-    def chart(self):
-        pass
+            link_source = link[Gantt.__LINK_SOURCE]
+            link_target = link[Gantt.__LINK_TARGET]
+            self.__add_ext_task(link_source)
+            self.__add_ext_task(link_target)
+            #link_attrs = {}
+            #self._logger.debug('{}: {}->{}'.format(link_type, link_source, link_target))
+            if link_type == Gantt.__LINK_BLOCKS: #in [Gantt.__LINK_SUBTASK, Gantt.__LINK_BLOCKS]:
+                self._graph.add_edge(link_source, link_target) #, attr_dict={Gantt.__LINK_TYPE: link_type})
+                self._logger.debug('{}: {}->{}'.format(link_type, link_source, link_target))
+            elif link_type == Gantt.__LINK_BLOCKED and (link_target, link_source) not in self._graph.edges:
+                #edge = (link_target, link_source)
+                self._graph.add_edge(link_target, link_source) #, attr_dict={Gantt.__LINK_TYPE: Gantt.__LINK_BLOCKS})
+                self._logger.debug('{}: {}->{}'.format(link_type, link_target, link_source))
+            self._logger.debug('edges: {}'.format(self._graph.edges))
 
     @property
     def tasks(self):
@@ -112,5 +114,11 @@ class Gantt(AbstractGantt):
             res.append(task)
         return res
 
+    @property
     def links(self):
-        return
+        res = []
+        for edge in self._graph.edges:
+            link = {Gantt.__LINK_ID: '{}->{}'.format(edge[0], edge[1]), Gantt.__LINK_SOURCE: edge[0],
+                    Gantt.__LINK_TARGET: edge[1], Gantt.__LINK_TYPE: 2}
+            res.append(link)
+        return res

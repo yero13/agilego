@@ -169,3 +169,8 @@ class AssignmentValidation(Resource):
 class GanttTasks(Resource):
     def get(self):
         return jsonify(Gantt().tasks)
+
+
+class GanttLinks(Resource):
+    def get(self):
+        return jsonify(Gantt().links)

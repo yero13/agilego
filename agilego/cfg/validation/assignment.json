@@ -170,7 +170,7 @@
 			"constraint": {
 				"func": "ext.validators.get_linked_assignments",
 				"params": {
-					"link": "blocks",
+					"type": "blocks",
 					"func": "min"
 				},
 				"default": []				
