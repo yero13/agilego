@@ -75,7 +75,7 @@ class Check:
         else:
             return cfg[Check.__CFG_KEY_DEFAULT]
 
-    def validate(self, input, is_substitute):
+    def validate(self, input, is_substitute): # ToDo: apply 'no substitute' for initial load validations
         constraint = self.__get_constraint(input)
         to_validate = self.__get_to_validate(input)
         return self.__compare(to_validate, constraint)
@@ -98,7 +98,7 @@ def __extract(input, cfg):
     filter_params = cfg[AccessParams.KEY_MATCH_PARAMS]
     for param in filter_params:
         filter.update({param: input[param]})
-    return  Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+    return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
         {AccessParams.KEY_MATCH_PARAMS: filter,
          AccessParams.KEY_COLLECTION: cfg[AccessParams.KEY_COLLECTION],
          AccessParams.KEY_TYPE: cfg[AccessParams.KEY_TYPE]})

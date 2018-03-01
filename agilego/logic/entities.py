@@ -5,6 +5,7 @@ from framework.db.data import Accessor, AccessParams
 from framework.utils.converter import Converter, Types
 from framework.validation.validator import Validator
 from logic.constants import DbConstants, ParamConstants, MatchConstants
+from logic.gantt import Gantt
 
 CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json' # ToDo: load on start up
 
@@ -163,3 +164,8 @@ class AssignmentValidation(Resource):
             res = Validator(json.load(validation_cfg_file, strict=False)).validate(assignment_details) # ToDo: load once on start-up api
 
         return res, 200 # ToDo: move cfg to constructor/cache
+
+
+class GanttTasks(Resource):
+    def get(self):
+        return jsonify(Gantt().tasks)

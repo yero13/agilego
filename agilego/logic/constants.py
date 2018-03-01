@@ -24,6 +24,7 @@ class RestConstants:
     ROUTE_GROUP = '/group'
     ROUTE_ASSIGNMENTS = '/assignments'
     ROUTE_ASSIGNMENT_VALIDATION = '{}/validate'.format(ROUTE_ASSIGNMENT)
+    ROUTE_GANTT_TASKS = '/gantt/tasks'
 
 
 class ParamConstants:
