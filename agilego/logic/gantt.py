@@ -17,6 +17,7 @@ class Gantt:
     _LINK_ID = 'id'
     _TASK_ID = 'id'
     _TASK_TYPE = 'type'
+    _TASK_TYPE_UNKNOWN = 'Unknown'
     _TASK_TEXT = 'text'
     _TASK_PARENT = 'parent'
     _TASK_STARTDATE = 'start_date'
@@ -62,12 +63,14 @@ class Gantt:
                     Gantt._EXT: {Gantt._TASK_ID: Gantt._EXT, Gantt._TASK_TEXT: 'External dependencies',
                                  Gantt._TASK_DURATION: self._get_default_task_duration({}),
                                  Gantt._TASK_ENDDATE: self._get_default_task_end_date({}),
+                                 Gantt._TASK_TYPE: Gantt._TASK_TYPE_UNKNOWN,
                                  Gantt._TASK_DUEDATE: '', Gantt._TASK_HRS_ESTIMATE: '', Gantt._TASK_HRS_ALLOC: ''}})
             self._graph.add_node(node)
             nx.set_node_attributes(self._graph, {
                 node: {Gantt._TASK_ID: node, Gantt._TASK_TEXT: node, Gantt._TASK_PARENT: Gantt._EXT,
                        Gantt._TASK_DURATION: self._get_default_task_duration({}),
                        Gantt._TASK_ENDDATE: self._get_default_task_end_date({}),
+                       Gantt._TASK_TYPE: Gantt._TASK_TYPE_UNKNOWN,
                        Gantt._TASK_DUEDATE: '', Gantt._TASK_HRS_ESTIMATE: '', Gantt._TASK_HRS_ALLOC: ''}})
 
     def _get_default_task_duration(self, task):
@@ -152,6 +155,7 @@ class BaselineGantt(Gantt):
         res.update({Gantt._TASK_HRS_ALLOC: Converter.convert(alloc_whrs, Types.TYPE_STRING)})
         res.update({Gantt._TASK_DUEDATE: Converter.convert(task[Gantt._TASK_DUEDATE], Types.TYPE_STRING)})
         res.update({Gantt._TASK_HRS_ESTIMATE: Converter.convert(task[Gantt._TASK_HRS_ESTIMATE], Types.TYPE_STRING)})
+        res.update({Gantt._TASK_TYPE: task[Gantt._TASK_TYPE]})
         return res
 
     def toString(self):
