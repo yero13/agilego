@@ -1,14 +1,17 @@
 from datetime import date
 from flask.json import JSONEncoder
 from jsondiff import diff
-from framework.utils.converter import Converter
+from framework.utils.converter import Converter, Types
 
 
 class ExtJSONEncoder(JSONEncoder):
     def default(self, obj):
         try:
             if isinstance(obj, date):
-                return Converter.datetime2str(obj)
+                if obj.hour != 0: # ToDo: fix this work around
+                    return Converter.datetime2str(obj)
+                else:
+                    return Converter.convert(obj, Types.TYPE_STRING)
             iterable = iter(obj)
         except TypeError:
             pass
@@ -19,7 +22,6 @@ class ExtJSONEncoder(JSONEncoder):
 
 class JSONUtils():
     DIFF_DELETE = '$delete'
-    # ToDo: implement support of other operations
 
     def diff(a, b):
         delta = diff(a, b)
