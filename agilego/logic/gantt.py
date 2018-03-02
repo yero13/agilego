@@ -21,10 +21,18 @@ class Gantt:
     _TASK_PARENT = 'parent'
     _TASK_STARTDATE = 'start_date'
     _TASK_ENDDATE = 'end_date'
-    _TASK_EXT = 'ext'
+    _TASK_DUEDATE = 'duedate'
+    _TASK_DURATION = 'duration'
+    _TASK_HRS_ALLOC = 'whrs'
+    _TASK_HRS_ESTIMATE = 'estimate'
+    _EXT = 'ext'
+    _WHRS_DAY = 6
+    _SPRINT_ENDDATE = 'endDate'
 
     def __init__(self):
         self._logger = logging.getLogger(__class__.__name__)
+        self._sprint = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT, AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})
         self._graph = nx.DiGraph()
         self._add_tasks()
         self._add_links()
@@ -48,8 +56,25 @@ class Gantt:
 
     def _add_ext_task(self, node):
         if node not in self._graph.nodes:
+            if not Gantt._EXT in self._graph.nodes:
+                self._graph.add_node(Gantt._EXT)
+                nx.set_node_attributes(self._graph, {
+                    Gantt._EXT: {Gantt._TASK_ID: Gantt._EXT, Gantt._TASK_TEXT: 'External dependencies',
+                                 Gantt._TASK_DURATION: self._get_default_task_duration({}),
+                                 Gantt._TASK_ENDDATE: self._get_default_task_end_date({}),
+                                 Gantt._TASK_DUEDATE: '', Gantt._TASK_HRS_ESTIMATE: '', Gantt._TASK_HRS_ALLOC: ''}})
             self._graph.add_node(node)
-            nx.set_node_attributes(self._graph, {node: {Gantt._TASK_EXT: True}})
+            nx.set_node_attributes(self._graph, {
+                node: {Gantt._TASK_ID: node, Gantt._TASK_TEXT: node, Gantt._TASK_PARENT: Gantt._EXT,
+                       Gantt._TASK_DURATION: self._get_default_task_duration({}),
+                       Gantt._TASK_ENDDATE: self._get_default_task_end_date({}),
+                       Gantt._TASK_DUEDATE: '', Gantt._TASK_HRS_ESTIMATE: '', Gantt._TASK_HRS_ALLOC: ''}})
+
+    def _get_default_task_duration(self, task):
+        return task[Gantt._TASK_HRS_ESTIMATE] if (Gantt._TASK_HRS_ESTIMATE in task and task[Gantt._TASK_HRS_ESTIMATE]) else 1
+
+    def _get_default_task_end_date(self, task):
+        return task[Gantt._TASK_DUEDATE] if (Gantt._TASK_DUEDATE in task and task[Gantt._TASK_DUEDATE]) else self._sprint[Gantt._SPRINT_ENDDATE]
 
     def _add_tasks(self):
         tasks = self._get_tasks_source()
@@ -87,9 +112,8 @@ class Gantt:
 
 
 class BaselineGantt(Gantt):
-    #_TASK_DUEDATE = 'duedate'
-    #_TASK_ESTIMATE = 'estimate'
-    #_TASK_WHRS = 'whrs'
+    def __init__(self):
+        super().__init__()
 
     def _get_links_source(self):
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
@@ -114,17 +138,20 @@ class BaselineGantt(Gantt):
              AccessParams.KEY_MATCH_PARAMS: {ParamConstants.PARAM_ITEM_KEY: id},
              AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
         date_aggs = Aggregator.agg_multi_func(assignments, ParamConstants.PARAM_DATE, ['min', 'max'])
+        alloc_whrs = Aggregator.agg_single_func(assignments, ParamConstants.PARAM_WHRS, 'sum')
         if date_aggs:
-            res.update({Gantt._TASK_STARTDATE: Converter.convert(date_aggs['min'], Types.TYPE_STRING)})
-            res.update({Gantt._TASK_ENDDATE: Converter.convert(date_aggs['max'], Types.TYPE_STRING)})
-
-            # whrs = time_aggs[issue[ParamConstants.PARAM_ITEM_KEY]] if issue[ParamConstants.PARAM_ITEM_KEY] in time_aggs else None
-            # type = issue[Gantt.__TASK_TYPE]
-            # Gantt.__TASK_DUEDATE: issue[Gantt.__TASK_DUEDATE],
-            # Gantt.__TASK_WHRS: whrs, Gantt.__TASK_EXT: False,
-            # Gantt.__TASK_TEXT: issue[ParamConstants.PARAM_ITEM_KEY]})
-
-
+            start_date = date_aggs['min']
+            end_date = date_aggs['max']
+            days_delta = (end_date - start_date).days
+            duration = alloc_whrs/Gantt._WHRS_DAY if (days_delta == 0 and alloc_whrs < Gantt._WHRS_DAY) else (days_delta if days_delta > 0 else 1)
+        else:
+            end_date = self._get_default_task_end_date(task)
+            duration = self._get_default_task_duration(task)
+        res.update({Gantt._TASK_ENDDATE: Converter.convert(end_date, Types.TYPE_STRING)})
+        res.update({Gantt._TASK_DURATION: duration})
+        res.update({Gantt._TASK_HRS_ALLOC: Converter.convert(alloc_whrs, Types.TYPE_STRING)})
+        res.update({Gantt._TASK_DUEDATE: Converter.convert(task[Gantt._TASK_DUEDATE], Types.TYPE_STRING)})
+        res.update({Gantt._TASK_HRS_ESTIMATE: Converter.convert(task[Gantt._TASK_HRS_ESTIMATE], Types.TYPE_STRING)})
         return res
 
     def toString(self):

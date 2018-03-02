@@ -24,6 +24,8 @@ class Converter:
             if type == Types.TYPE_STRING:
                 if isinstance(input, datetime.date):
                     return input.strftime('%Y-%m-%d')
+                elif isinstance(input, float):
+                    return '{0:.2f}'.format(input)
                 else:
                     return input
             if type == Types.TYPE_FLOAT:
