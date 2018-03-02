@@ -24,8 +24,6 @@ class Converter:
             if type == Types.TYPE_STRING:
                 if isinstance(input, datetime.date):
                     return input.strftime('%Y-%m-%d')
-                elif isinstance(input, float):
-                    return '{0:.2f}'.format(input)
                 else:
                     return input
             if type == Types.TYPE_FLOAT:
@@ -49,8 +47,8 @@ class Converter:
             raise Exception(e)
 
     @staticmethod
-    def date2str(input):
-        return input.strftime('%Y-%m-%d')
+    def datetime2str(input):
+        return input.strftime('%Y-%m-%d %H:%M')
 
     @staticmethod
     def df2list(df):

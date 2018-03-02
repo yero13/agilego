@@ -8,7 +8,7 @@ class ExtJSONEncoder(JSONEncoder):
     def default(self, obj):
         try:
             if isinstance(obj, date):
-                return Converter.date2str(obj)
+                return Converter.datetime2str(obj)
             iterable = iter(obj)
         except TypeError:
             pass
