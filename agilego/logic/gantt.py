@@ -44,7 +44,7 @@ class Gantt:
 
     @abc.abstractmethod
     def _get_links_source(self):
-        return NotImplementedError
+        return NotImplemented
 
     def _add_ext_task(self, node):
         if node not in self._graph.nodes:
