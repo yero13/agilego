@@ -6,7 +6,7 @@ from flask_restful import Api
 from framework.utils.json import ExtJSONEncoder
 from logic.constants import RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation, GanttTasks, GanttLinks
+    AssignmentList, SubtaskList, Assignment, AssignmentValidation, GanttTasks, GanttLinks
 
 CFG_LOG_API = './cfg/log/api-logging-config.json'
 
@@ -21,9 +21,7 @@ CORS(app)
 api.add_resource(Sprint, RestConstants.ROUTE_SPRINT)
 api.add_resource(SprintTimeline, RestConstants.ROUTE_SPRINT_TIMELINE)
 api.add_resource(Backlog, RestConstants.ROUTE_BACKLOG)
-api.add_resource(TaskDetails, '{}/<task_key>'.format(RestConstants.ROUTE_TASK))
 api.add_resource(SubtaskList, '{}/<task_key>{}'.format(RestConstants.ROUTE_TASK, RestConstants.ROUTE_SUBTASKS))
-api.add_resource(SubtaskDetails, '{}/<subtask_key>'.format(RestConstants.ROUTE_SUBTASK))
 api.add_resource(ComponentList, RestConstants.ROUTE_COMPONENTS)
 api.add_resource(GroupList, RestConstants.ROUTE_TEAM)
 api.add_resource(EmployeeList, RestConstants.ROUTE_EMPLOYEES)

@@ -13,7 +13,7 @@ from framework.utils.cfg import CfgUtils
 from framework.utils.env import get_env_params
 from logic.constants import DbConstants, RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AssignmentList, SubtaskList, TaskDetails, Assignment, SubtaskDetails, AssignmentValidation
+    AssignmentList, SubtaskList, Assignment, AssignmentValidation
 
 CFG_LOG_TEST = './cfg/log/test-logging-config.json'
 CFG_DATA_GENERATION  = './cfg/data/jira-data-generation.json'
@@ -131,9 +131,7 @@ class ApiTestCase(unittest.TestCase):
         api.add_resource(GroupList, RestConstants.ROUTE_TEAM)
         api.add_resource(EmployeeList, RestConstants.ROUTE_EMPLOYEES)
         # ToDo: add coverage
-        api.add_resource(TaskDetails, '{}/<task_key>'.format(RestConstants.ROUTE_TASK))
         api.add_resource(SubtaskList, '{}/<task_key>{}'.format(RestConstants.ROUTE_TASK, RestConstants.ROUTE_SUBTASKS))
-        api.add_resource(SubtaskDetails, '{}/<subtask_key>'.format(RestConstants.ROUTE_SUBTASK))
         api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group>'.format(RestConstants.ROUTE_GROUP))
         api.add_resource(AssignmentList, RestConstants.ROUTE_ASSIGNMENTS)
         api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT,

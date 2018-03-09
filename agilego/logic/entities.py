@@ -90,25 +90,6 @@ class SubtaskList(Resource):
              AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_PARENT: task_key}}))
 
-
-class TaskDetails(Resource):
-    def get(self, task_key):
-        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
-             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
-             AccessParams.KEY_MATCH_PARAMS: {
-                 ParamConstants.PARAM_ITEM_KEY: task_key}}))
-
-
-class SubtaskDetails(Resource):
-    def get(self, subtask_key):
-        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
-             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
-             AccessParams.KEY_MATCH_PARAMS: {
-                 ParamConstants.PARAM_ITEM_KEY: subtask_key}}))
-
-
 class Assignment(Resource):
     def get(self, key, date, group, employee):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
