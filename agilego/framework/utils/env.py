@@ -2,7 +2,7 @@ import json
 
 is_test = False
 
-CFG_ENV = './cfg/env.json'
+CFG_ENV = './cfg/env.json' # ToDo: move out framework
 CFG_ENV_TEST = 'test'
 CFG_ENV_PROD = 'prod'
 

@@ -109,8 +109,6 @@ class SubtaskDetails(Resource):
                  ParamConstants.PARAM_ITEM_KEY: subtask_key}}))
 
 
-# ToDo: group/assignments services should be reviewed as they should trigger validations and KPIs (velocity, etc) review
-
 class Assignment(Resource):
     def get(self, key, date, group, employee):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
@@ -118,7 +116,7 @@ class Assignment(Resource):
              AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
              AccessParams.KEY_MATCH_PARAMS: {
                  ParamConstants.PARAM_ITEM_KEY: key,
-                 ParamConstants.PARAM_DATE: date,
+                 ParamConstants.PARAM_DATE: Converter.convert(date, Types.TYPE_DATE),
                  ParamConstants.PARAM_GROUP: group,
                  ParamConstants.PARAM_EMPLOYEE: employee}}))
 
@@ -162,7 +160,6 @@ class AssignmentValidation(Resource):
                                                                           Types.TYPE_DATE)
         with open(CFG_ASSIGN_VALIDATION) as validation_cfg_file:
             res = Validator(json.load(validation_cfg_file, strict=False)).validate(assignment_details) # ToDo: load once on start-up api
-
         return res, 200 # ToDo: move cfg to constructor/cache
 
 

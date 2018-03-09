@@ -4,7 +4,6 @@ import json
 
 
 class MongoDb:
-    # ToDo: implement pooling and singleton for connections
     __CFG_DB_CONNECT = '././cfg/db.json' # ToDo: move outside framework
     __CFG_PARAM_MONGO_DBNAME = 'MONGO_DBNAME'
     __CFG_PARAM_MONGO_HOST = 'MONGO_HOST'

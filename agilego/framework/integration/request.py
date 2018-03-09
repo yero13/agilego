@@ -34,7 +34,6 @@ class Field:
 
     @staticmethod
     def parse_field(data, field_cfg, target, is_optional=False):
-        # ToDo: describe possible fields and implement unit testing
         field_type = field_cfg[Field.FIELD_TYPE]
         field_key = field_cfg[Field.FIELD_KEY] if Field.FIELD_KEY in field_cfg else None
         field_ext_id = field_cfg[Field.FIELD_EXT_ID] if Field.FIELD_EXT_ID in field_cfg else field_key

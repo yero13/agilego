@@ -74,7 +74,7 @@ class Gantt:
                        Gantt._TASK_DUEDATE: '', Gantt._TASK_HRS_ESTIMATE: '', Gantt._TASK_HRS_ALLOC: ''}})
 
     def _get_default_task_duration(self, task):
-        return task[Gantt._TASK_HRS_ESTIMATE] if (Gantt._TASK_HRS_ESTIMATE in task and task[Gantt._TASK_HRS_ESTIMATE]) else 0.95
+        return task[Gantt._TASK_HRS_ESTIMATE] if (Gantt._TASK_HRS_ESTIMATE in task and task[Gantt._TASK_HRS_ESTIMATE]) else 0.99
 
     def _get_default_task_end_date(self, task):
         end_date = task[Gantt._TASK_DUEDATE] if (Gantt._TASK_DUEDATE in task and task[Gantt._TASK_DUEDATE]) else self._sprint[Gantt._SPRINT_ENDDATE]
@@ -147,7 +147,7 @@ class BaselineGantt(Gantt):
             start_date = date_aggs['min']
             end_date = date_aggs['max']
             days_delta = (end_date - start_date).days
-            duration = alloc_whrs/Gantt._WHRS_DAY if (days_delta == 0 and alloc_whrs < Gantt._WHRS_DAY) else (days_delta + 0.95)
+            duration = alloc_whrs/Gantt._WHRS_DAY if (days_delta == 0 and alloc_whrs < Gantt._WHRS_DAY) else (days_delta + 0.99)
         else:
             end_date = self._get_default_task_end_date(task)
             duration = self._get_default_task_duration(task)

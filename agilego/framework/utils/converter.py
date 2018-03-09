@@ -35,8 +35,8 @@ class Converter:
                     return input
                 else:
                     return datetime.datetime.strptime(input, '%Y-%m-%d')
-            elif type == Types.TYPE_DATETIME: # ToDo: set template for datetime
-                if isinstance(input, datetime.datetime): # ToDo: test this conversion - it may require return date
+            elif type == Types.TYPE_DATETIME:
+                if isinstance(input, datetime.datetime):
                     return input
                 else:
                     return datetime.datetime.strptime(input[0:10], '%Y-%m-%d') # 2017-09-18T18:53:00.000Z
