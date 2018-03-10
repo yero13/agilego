@@ -15,18 +15,6 @@
 				"key": "key",
 				"value": "label"
 			}
-		},
-		"set_tech": {
-			"cfg": "./cfg/jira/jira-set-issue-field.json",
-			"type": "set_field_value",
-			"src.collection": "sprint.assignments_tech",
-			"static_mapping": {
-				"field": "$field_agilego_tech"
-			},
-			"dynamic_mapping": {
-				"key": "key",
-				"value": "tech"
-			}
 		}		
 	},
 	"db": "$db_jira_export"

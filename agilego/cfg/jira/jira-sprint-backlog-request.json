@@ -134,11 +134,6 @@
 									"type": "int",
 									"ext_id": "estimate"
 								},
-								"AGILEGO_Tech": {
-									"key": "$field_agilego_tech",
-									"type": "array",
-									"ext_id": "assignments"
-								},
 								"blocks": {
 									"key": "issuelinks",
 									"type": "array",

@@ -153,85 +153,6 @@
 						}
 					}
 				},				
-				"raw_assignments": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": "sprint.all_items"
-						},
-						"transform": {
-							"func": "framework.transformation.transformer.ungroup_array2singles",
-							"params": {
-								"field.array": "assignments",
-								"field.single": "assignment"
-							}
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.raw_assignments"
-						},
-						"dest.db.save": {
-							"dest": "sprint.raw_assignments"
-						}					
-					}
-				},
-				"assignments": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": "sprint.raw_assignments"
-						},
-						"transform": {
-							"func": "framework.transformation.transformer.regexp",
-							"params": {
-								"input.field": "assignment",
-								"pattern": "^(\\S+-\\d+){1}_(\\S+-\\d+){0,1}_(\\d{4}-\\d{2}-\\d{2})_(\\S+)_(\\S+)_(\\d+(\\.\\d{1,2})*)_(\\S*)$",
-								"output": [
-									{
-										"field": "key",
-										"idx": 0,
-										"type": "string"
-									},								
-									{
-										"field": "parent",
-										"idx": 1,
-										"type": "string"
-									},
-									{
-										"field": "date",
-										"idx": 2,
-										"type": "date"
-									},
-									{
-										"field": "group",
-										"idx": 3,
-										"type": "string"
-									},
-									{
-										"field": "employee",
-										"idx": 4,
-										"type": "string"
-									},
-									{
-										"field": "whrs",
-										"idx": 5,
-										"type": "float"
-									},
-									{
-										"field": "comment",
-										"idx": 7,
-										"type": "string"
-									}									
-								]
-							}
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.assignments"
-						},
-						"dest.db.save": {
-							"dest": "sprint.assignments"
-						}
-					}
-				},				
 				"idx_blocked_by": {
 					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
@@ -491,23 +412,6 @@
 						}
 					}
 				},
-				"assignements": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": "sprint.assignments"
-						},
-						"transform": {
-							"func": "framework.transformation.transformer.copy"
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.assignments"
-						},
-						"dest.db.save": {
-							"dest": "sprint.assignments"
-						}
-					}
-				},
 				"issue-links": {
 					"class": "framework.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
@@ -593,6 +497,31 @@
 						}
 					}
 				}				
+			}
+		},
+		"dest-update": {
+			"db": {
+				"src.db": "db_scrum_api",
+				"dest.db": "db_scrum_api"
+			},
+			"transformations": {
+				"assignments-filter": {
+					"class": "framework.transformation.transformer.MultiCol2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": ["sprint.assignments", "sprint.backlog"]
+						},
+						"transform": {
+							"func": "ext.transformers.filter_assignments"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.assignments"
+						},
+						"dest.db.save": {
+							"dest": "sprint.assignments"
+						}						
+					}				
+				}
 			}
 		}
 	}
