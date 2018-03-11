@@ -97,26 +97,30 @@ class Accessor:
             result = CRUD.read_multi(self.__db, collection, match_params)
         return result
 
-    def delete(self, cfg):
+    def delete(self, cfg, triggers_on=True):
         collection = cfg[AccessParams.KEY_COLLECTION]
         match_params = cfg[AccessParams.KEY_MATCH_PARAMS] if AccessParams.KEY_MATCH_PARAMS in cfg else {}
         target_type = cfg[AccessParams.KEY_TYPE] if AccessParams.KEY_TYPE in cfg else AccessParams.TYPE_MULTI
-        self.__exec_trigger(Trigger.ACTION_BEFORE_DELETE, collection, None, match_params)
+        if triggers_on:
+            self.__exec_trigger(Trigger.ACTION_BEFORE_DELETE, collection, None, match_params)
         if target_type == AccessParams.TYPE_SINGLE:
             result = CRUD.delete_single(self.__db, collection, match_params)
         elif target_type == AccessParams.TYPE_MULTI:
             result = CRUD.delete_multi(self.__db, collection, match_params)
-        self.__exec_trigger(Trigger.ACTION_AFTER_DELETE, collection, None, match_params)
+        if triggers_on:
+            self.__exec_trigger(Trigger.ACTION_AFTER_DELETE, collection, None, match_params)
         return result
 
-    def upsert(self, cfg):
+    def upsert(self, cfg, triggers_on=True):
         input_object = cfg[AccessParams.KEY_OBJECT]
         collection = cfg[AccessParams.KEY_COLLECTION]
         match_params = cfg[AccessParams.KEY_MATCH_PARAMS] if AccessParams.KEY_MATCH_PARAMS in cfg else {}
-        self.__exec_trigger(Trigger.ACTION_BEFORE_UPSERT, collection, input_object, match_params)
+        if triggers_on:
+            self.__exec_trigger(Trigger.ACTION_BEFORE_UPSERT, collection, input_object, match_params)
         if cfg[AccessParams.KEY_TYPE] == AccessParams.TYPE_SINGLE:
             result =  CRUD.upsert_single(self.__db, collection, input_object, match_params)
         elif cfg[AccessParams.KEY_TYPE] == AccessParams.TYPE_MULTI:
             result =  CRUD.insert_multi(self.__db, collection, input_object, match_params)
-        self.__exec_trigger(Trigger.ACTION_AFTER_UPSERT, collection, input_object, match_params)
+        if triggers_on:
+            self.__exec_trigger(Trigger.ACTION_AFTER_UPSERT, collection, input_object, match_params)
         return result

@@ -72,7 +72,7 @@ class Transformation:
         Accessor.factory(self._dest_db).delete(
             {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_CLEANUP_TARGET],
              AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_MATCH_PARAMS: {}})
+             AccessParams.KEY_MATCH_PARAMS: {}}, triggers_on=False)
 
     @abc.abstractmethod
     def _load(self, cfg):
@@ -82,7 +82,7 @@ class Transformation:
         Accessor.factory(self._dest_db).upsert(
             {AccessParams.KEY_COLLECTION: cfg[Transformation._CFG_KEY_SAVE_DEST],
              AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE if isinstance(self.__res, dict) else AccessParams.TYPE_MULTI,
-             AccessParams.KEY_OBJECT: self.__res})
+             AccessParams.KEY_OBJECT: self.__res}, triggers_on=False)
 
     def __transform(self, cfg):
         func = cfg[Transformation._CFG_KEY_FUNC]

@@ -505,14 +505,14 @@
 				"dest.db": "db_scrum_api"
 			},
 			"transformations": {
-				"assignments-filter": {
+				"assignments-filter-on-backlog": {
 					"class": "framework.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": ["sprint.assignments", "sprint.backlog"]
 						},
 						"transform": {
-							"func": "ext.transformers.filter_assignments"
+							"func": "ext.transformers.filter_assignments_on_backlog"
 						},
 						"dest.db.cleanup": {
 							"target": "sprint.assignments"
@@ -521,7 +521,41 @@
 							"dest": "sprint.assignments"
 						}						
 					}				
-				}
+				},
+				"assignments-filter-on-employees": {
+					"class": "framework.transformation.transformer.MultiCol2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": ["sprint.assignments", "project.employees"]
+						},
+						"transform": {
+							"func": "ext.transformers.filter_assignments_on_employees"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.assignments"
+						},
+						"dest.db.save": {
+							"dest": "sprint.assignments"
+						}						
+					}				
+				},
+				"team-filter-on-employees": {
+					"class": "framework.transformation.transformer.MultiCol2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": ["project.team", "project.employees"]
+						},
+						"transform": {
+							"func": "ext.transformers.filter_team_on_employees"
+						},
+						"dest.db.cleanup": {
+							"target": "project.team"
+						},
+						"dest.db.save": {
+							"dest": "project.team"
+						}						
+					}				
+				}				
 			}
 		}
 	}
