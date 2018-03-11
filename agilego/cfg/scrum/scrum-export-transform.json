@@ -51,62 +51,11 @@
 				"dest.db": "db_jira_export"
 			},
 			"transformations": {
-				"assignments-tech": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": "sprint.assignments"
-						},
-						"transform": {
-							"func": "framework.transformation.transformer.format",
-							"params": {
-								"format.string": "{}_{}_{:%Y-%m-%d}_{}_{}_{:n}_{}",
-								"format.input": [
-									{
-										"field": "key",
-										"type": "string"
-									},
-									{
-										"field": "parent",
-										"type": "string"
-									},
-									{
-										"field": "date",
-										"type": "date"
-									},
-									{
-										"field": "group",
-										"type": "string"
-									},									
-									{
-										"field": "employee",
-										"type": "string"
-									},						
-									{
-										"field": "whrs",
-										"type": "float"
-									},					
-									{
-										"field": "comment",
-										"type": "string"
-									}									
-								],
-								"result.field": "tech" 
-							}								
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.assignments_tech"
-						},
-						"dest.db.save": {
-							"dest": "sprint.assignments_tech"
-						}
-					}
-				},
 				"assignments-label": {
 					"class": "framework.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
-							"src": "sprint.assignments_tech"
+							"src": "sprint.assignments"
 						},
 						"transform": {
 							"func": "framework.transformation.transformer.format",
@@ -155,28 +104,6 @@
 						}						
 					}
 				},
-				"sprint-assignment-tech-transpose": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": "sprint.assignments_raw"
-						},
-						"transform": {
-							"func": "framework.transformation.transformer.group_singles2array",
-							"params": {
-								"field.key": "key",
-								"field.array": "tech",
-								"field.single": "tech"								
-							}						
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.assignments_tech"
-						},
-						"dest.db.save": {
-							"dest": "sprint.assignments_tech"
-						}						
-					}
-				},
 				"sprint-assignment-label-join": {
 					"class": "framework.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
@@ -196,54 +123,6 @@
 						},
 						"dest.db.save": {
 							"dest": "sprint.assignments_label"
-						}						
-					}
-				},
-				"sprint-assignment-tech-join": {
-					"class": "framework.transformation.transformer.MultiCol2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": ["sprint.idx_all_items", "sprint.assignments_tech"]
-						},
-						"transform": {
-							"func": "framework.transformation.transformer.left_join",
-							"params": {
-								"col.right": "sprint.idx_all_items",
-								"col.left": "sprint.assignments_tech",
-								"field.join": "key"								
-							}						
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.assignments_tech"
-						},
-						"dest.db.save": {
-							"dest": "sprint.assignments_tech"
-						}						
-					}
-				},
-				"sprint-assignment-tech-notnull": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": "sprint.assignments_tech"
-						},
-						"transform": {
-							"func": "framework.transformation.transformer.replace",
-							"params": {
-								"replace": [
-									{
-										"field": "tech",
-										"value.to_find": null,
-										"value.replace_with": []
-									}
-								]
-							}						
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.assignments_tech"
-						},
-						"dest.db.save": {
-							"dest": "sprint.assignments_tech"
 						}						
 					}
 				},
