@@ -1,6 +1,7 @@
 from framework.db.data import Trigger, CRUD
 from framework.utils.json import JSONUtils
 from logic.constants import ParamConstants, DbConstants
+from logic.gantt import Task
 
 
 class OnDeleteGroupTrigger(Trigger):
@@ -17,3 +18,11 @@ class OnUpsertGroupTrigger(Trigger):
                 CRUD.delete_multi(self._db, DbConstants.SCRUM_ASSIGNMENTS,
                                   {ParamConstants.PARAM_GROUP: exist_group[ParamConstants.PARAM_GROUP],
                                    ParamConstants.PARAM_EMPLOYEE: employee[ParamConstants.PARAM_EMPLOYEE_NAME]})
+
+
+class OnUpsertDeleteAssignment(Trigger):
+    def execute(self, input_object, match_params):
+        id = match_params[ParamConstants.PARAM_ITEM_KEY]
+        task = Task.create_task(id)
+        CRUD.upsert_single(self._db, DbConstants.GANTT_TASKS, task, {Task.TASK_ID: id})
+

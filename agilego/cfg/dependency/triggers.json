@@ -1,6 +1,10 @@
 {
 	"project.team": {
-		"before-delete" : "ext.triggers.OnDeleteGroupTrigger",
-		"before-upsert" : "ext.triggers.OnUpsertGroupTrigger"		
+		"before-delete": "ext.triggers.OnDeleteGroupTrigger",
+		"before-upsert": "ext.triggers.OnUpsertGroupTrigger"		
+	},
+	"sprint.assignments": {
+		"after-delete": "ext.triggers.OnUpsertDeleteAssignment",
+		"after-upsert": "ext.triggers.OnUpsertDeleteAssignment"
 	}
 }
