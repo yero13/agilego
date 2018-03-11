@@ -555,6 +555,40 @@
 							"dest": "project.team"
 						}						
 					}				
+				},
+				"baseline.gantt_links": {
+					"class": "framework.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.backlog_links"
+						},
+						"transform": {
+							"func": "ext.transformers.gantt_links"
+						},
+						"dest.db.cleanup": {
+							"target": "baseline.gantt_links"
+						},
+						"dest.db.save": {
+							"dest": "baseline.gantt_links"
+						}					
+					}				
+				},
+				"baseline.gantt_tasks": {
+					"class": "framework.transformation.transformer.MultiCol2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": ["baseline.gantt_links", "sprint.backlog"]
+						},
+						"transform": {
+							"func": "ext.transformers.gantt_tasks"
+						},
+						"dest.db.cleanup": {
+							"target": "baseline.gantt_tasks"
+						},
+						"dest.db.save": {
+							"dest": "baseline.gantt_tasks"
+						}						
+					}
 				}				
 			}
 		}

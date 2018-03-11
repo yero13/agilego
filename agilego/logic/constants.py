@@ -8,6 +8,8 @@ class DbConstants:
     PROJECT_TEAM = 'project.team'
     PROJECT_EMPLOYEES = 'project.employees'
     PROJECT_COMPONENTS = 'project.components'
+    GANTT_LINKS = 'baseline.gantt_links'
+    GANTT_TASKS = 'baseline.gantt_tasks'
 
 
 class RestConstants:

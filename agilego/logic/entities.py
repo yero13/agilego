@@ -5,7 +5,6 @@ from framework.db.data import Accessor, AccessParams
 from framework.utils.converter import Converter, Types
 from framework.validation.validator import Validator
 from logic.constants import DbConstants, ParamConstants, MatchConstants
-from logic.gantt import BaselineGantt
 
 CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json' # ToDo: load on start up
 
@@ -146,9 +145,13 @@ class AssignmentValidation(Resource):
 
 class GanttTasks(Resource):
     def get(self):
-        return jsonify(BaselineGantt().tasks)
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+            {AccessParams.KEY_COLLECTION: DbConstants.GANTT_TASKS,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI}))
 
 
 class GanttLinks(Resource):
     def get(self):
-        return jsonify(BaselineGantt().links)
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+            {AccessParams.KEY_COLLECTION: DbConstants.GANTT_LINKS,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI}))

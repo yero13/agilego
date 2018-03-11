@@ -1,7 +1,9 @@
 import pandas as pd
+import networkx as nx
 from framework.transformation.transformer import transformer
 from logic.constants import DbConstants, ParamConstants
 from copy import deepcopy
+from logic.gantt import Task, Link
 
 
 @transformer
@@ -62,3 +64,49 @@ def filter_team_on_employees(input, **params): # ToDo: fix capacity calculation
                 n_group[EMPLOYEES].remove(e_employee)
         res.append(n_group)
     return res
+
+
+@transformer
+def gantt_links(input, **params):
+    graph = nx.DiGraph()
+    for link in input:
+        link_type = link[Link.LINK_TYPE]
+        link_source = link[Link.LINK_SOURCE]
+        link_target = link[Link.LINK_TARGET]
+        if link_type == Link.LINK_BLOCKS:
+            graph.add_edge(link_source, link_target)
+        elif link_type == Link.LINK_BLOCKED and (link_target, link_source) not in graph.edges:
+            graph.add_edge(link_target, link_source)
+
+    res = []
+    for edge in graph.edges:
+        link = {Link.LINK_ID: '{}->{}'.format(edge[0], edge[1]),
+                Link.LINK_SOURCE: edge[0], Link.LINK_TARGET: edge[1], Link.LINK_TYPE: 2}
+        res.append(link)
+    return res
+
+
+@transformer
+def gantt_tasks(input, **params):
+    graph = nx.DiGraph()
+    for link in input[DbConstants.GANTT_LINKS]:
+        graph.add_edge(link[Link.LINK_SOURCE], link[Link.LINK_TARGET])
+    ext = []
+    for node in graph.nodes:
+        is_ext = True
+        for item in input[DbConstants.SCRUM_SPRINT_BACKLOG]:
+            if node == item[ParamConstants.PARAM_ITEM_KEY]:
+                is_ext = False
+                break
+        if is_ext:
+            ext.append(node)
+    res = []
+    for item in input[DbConstants.SCRUM_SPRINT_BACKLOG]:
+        res.append(Task.create_task(item[ParamConstants.PARAM_ITEM_KEY]))
+    if len(ext) > 0:
+        res.append(Task.create_fake_task(Task.TASK_EXT, 'External dependencies'))
+        for task in ext:
+            res.append(Task.create_fake_task(task, task, Task.TASK_EXT))
+    return res
+
+
