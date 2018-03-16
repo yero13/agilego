@@ -64,14 +64,14 @@ class Group(Resource):
             {AccessParams.KEY_COLLECTION: DbConstants.PROJECT_TEAM, AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
              AccessParams.KEY_MATCH_PARAMS: {ParamConstants.PARAM_GROUP: group}}), 204
 
-    def post(self):
-        group = request.get_json()
+    def post(self, group=None):
+        obj_group = request.get_json()
+        match_params = {ParamConstants.PARAM_GROUP: group if group else obj_group[ParamConstants.PARAM_GROUP]}
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).upsert(
             {AccessParams.KEY_COLLECTION: DbConstants.PROJECT_TEAM,
              AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
-             AccessParams.KEY_OBJECT: group,
-             AccessParams.KEY_MATCH_PARAMS: {
-                 ParamConstants.PARAM_GROUP: group[ParamConstants.PARAM_GROUP]}}), 201
+             AccessParams.KEY_OBJECT: obj_group,
+             AccessParams.KEY_MATCH_PARAMS: match_params}), 201
 
 
 class AssignmentList(Resource):

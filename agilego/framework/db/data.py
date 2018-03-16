@@ -30,9 +30,11 @@ class CRUD:
         return str(db[collection].update_one(match_params, {"$set": object}, upsert=True).upserted_id)
 
     @staticmethod
-    def insert_multi(db, collection, object, match_params=None):
-        if len(object) > 0:
-            return db[collection].insert_many(object).inserted_ids
+    def upsert_multi(db, collection, object, match_params=None):
+        if isinstance(object, list) and len(object) > 0:
+            return str(db[collection].insert_many(object).inserted_ids)
+        elif isinstance(object, dict):
+            return str(db[collection].update_many(match_params, {"$set": object}, upsert=False).upserted_id)
 
 
 class Trigger:
@@ -120,7 +122,7 @@ class Accessor:
         if cfg[AccessParams.KEY_TYPE] == AccessParams.TYPE_SINGLE:
             result =  CRUD.upsert_single(self.__db, collection, input_object, match_params)
         elif cfg[AccessParams.KEY_TYPE] == AccessParams.TYPE_MULTI:
-            result =  CRUD.insert_multi(self.__db, collection, input_object, match_params)
+            result =  CRUD.upsert_multi(self.__db, collection, input_object, match_params)
         if triggers_on:
             self.__exec_trigger(Trigger.ACTION_AFTER_UPSERT, collection, input_object, match_params)
         return result
