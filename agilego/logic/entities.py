@@ -66,6 +66,9 @@ class Group(Resource):
 
     def post(self, group=None):
         obj_group = request.get_json()
+        employees = obj_group[ParamConstants.PARAM_EMPLOYEES] if ParamConstants.PARAM_EMPLOYEES in obj_group else []
+        for employee in employees:
+            employee[ParamConstants.PARAM_CAPACITY] = Converter.convert(employee[ParamConstants.PARAM_CAPACITY], Types.TYPE_INT)
         match_params = {ParamConstants.PARAM_GROUP: group if group else obj_group[ParamConstants.PARAM_GROUP]}
         return Accessor.factory(DbConstants.CFG_DB_SCRUM_API).upsert(
             {AccessParams.KEY_COLLECTION: DbConstants.PROJECT_TEAM,

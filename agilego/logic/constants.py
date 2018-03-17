@@ -41,6 +41,7 @@ class ParamConstants:
     PARAM_COMPONENT = 'component'
     PARAM_TIMELINE = 'timeline'
     PARAM_WHRS = 'whrs'
+    PARAM_CAPACITY = 'capacity'
     PARAM_TYPE = 'type'
 
 
