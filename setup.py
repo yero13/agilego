@@ -15,8 +15,5 @@ setup(name='agilego',
       package_data = {'agilego': ['./log/log.txt', './cfg/*.json', './cfg/log/*.json', './cfg/jira/*.json', './cfg/scrum/*.json', '.LICENSE', './README.rst']},
       package_dir={'.':'agilego'},
       python_requires= '~=3.6',
-      install_requires=['flask', 'flask-cors', 'flask_cache', 'flask_restful', 'networkx'],
-      dependency_links=[
-          'git+https://github.com/yero13/natrix.git@master'
-      ]
-      )
+      install_requires=['flask', 'flask-cors', 'flask_cache', 'flask_restful', 'networkx', 'natrix']
+)
