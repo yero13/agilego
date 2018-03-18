@@ -1,6 +1,6 @@
-from natrix.db.data import Trigger, CRUD
-from natrix.utils.json import JSONUtils
-from natrix.utils.aggregator import Aggregator
+from na3x.db.data import Trigger, CRUD
+from na3x.utils.json import JSONUtils
+from na3x.utils.aggregator import Aggregator
 from logic.constants import ParamConstants, DbConstants
 from logic.gantt import Task
 

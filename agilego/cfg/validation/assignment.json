@@ -3,7 +3,7 @@
 	"checks": {
 		"employee.daily-whrs-capacity.exceed": {
 			"to_validate": {
-				"func": "natrix.validation.validator.aggregate",
+				"func": "na3x.validation.validator.aggregate",
 				"params": {
 					"extract": {
 						"db": "db_scrum_api",
@@ -22,13 +22,13 @@
 				"default": 0
 			},
 			"constraint": {
-				"func": "natrix.validation.validator.const",
+				"func": "na3x.validation.validator.const",
 				"params": {
 					"value": 6
 				}
 			},
 			"compare": {
-				"func": "natrix.validation.validator.limit_exceed",
+				"func": "na3x.validation.validator.limit_exceed",
 				"violation": {
 					"severity": "warning",
 					"message": "Employee max capality ({:g} whrs per day) exceed"
@@ -37,7 +37,7 @@
 		},
 		"group.sprint-whrs-capacity.exceed": {
 			"to_validate": {
-				"func": "natrix.validation.validator.aggregate",
+				"func": "na3x.validation.validator.aggregate",
 				"params": {
 					"extract": {
 						"db": "db_scrum_api",						
@@ -56,7 +56,7 @@
 				"default": 0
 			},		
 			"constraint": {
-				"func": "natrix.validation.validator.extract",
+				"func": "na3x.validation.validator.extract",
 				"params": {
 					"db": "db_scrum_api",
 					"match": ["group"],
@@ -66,7 +66,7 @@
 				"default": 9999
 			},
 			"compare": {
-				"func": "natrix.validation.validator.limit_exceed",
+				"func": "na3x.validation.validator.limit_exceed",
 				"violation": {
 					"severity": "warning",
 					"message": "Group max capality ({:g} whrs per sprint) exceed"
@@ -75,7 +75,7 @@
 		},
 		"task.originalestimate.exceed": {
 			"to_validate": {
-				"func": "natrix.validation.validator.aggregate",
+				"func": "na3x.validation.validator.aggregate",
 				"params": {
 					"extract": {
 						"db": "db_scrum_api",					
@@ -94,7 +94,7 @@
 				"default": 0
 			},		
 			"constraint": {
-				"func": "natrix.validation.validator.extract",
+				"func": "na3x.validation.validator.extract",
 				"params": {
 					"db": "db_scrum_api",				
 					"match": ["key"],
@@ -104,7 +104,7 @@
 				"default": 9999
 			},
 			"compare": {
-				"func": "natrix.validation.validator.limit_exceed",
+				"func": "na3x.validation.validator.limit_exceed",
 				"violation": {
 					"severity": "warning",
 					"message": "Task original estimate ({:g} hrs) exceed"
@@ -113,13 +113,13 @@
 		},
 		"task.duedate.overdue": {
 			"to_validate": {
-				"func": "natrix.validation.validator.return_input",
+				"func": "na3x.validation.validator.return_input",
 				"params": {
 					"field": "date"
 				}
 			},		
 			"constraint": {
-				"func": "natrix.validation.validator.extract",
+				"func": "na3x.validation.validator.extract",
 				"params": {
 					"db": "db_scrum_api",				
 					"match": ["key"],
@@ -132,7 +132,7 @@
 				}
 			},
 			"compare": {
-				"func": "natrix.validation.validator.limit_exceed",
+				"func": "na3x.validation.validator.limit_exceed",
 				"violation": {
 					"severity": "warning",
 					"message": "task's due date {:%Y-%m-%d} is passed"
@@ -141,7 +141,7 @@
 		},
 		"assignment.expertise.conflict": {
 			"constraint": {
-				"func": "natrix.validation.validator.extract",
+				"func": "na3x.validation.validator.extract",
 				"params": {
 					"db": "db_scrum_api",				
 					"match": ["key"],
@@ -151,7 +151,7 @@
 				"default": []
 			},		
 			"to_validate": {
-				"func": "natrix.validation.validator.extract",
+				"func": "na3x.validation.validator.extract",
 				"params": {
 					"db": "db_scrum_api",				
 					"match": ["group"],
@@ -161,7 +161,7 @@
 				"default": []
 			},
 			"compare": {
-				"func": "natrix.validation.validator.no_intersection",
+				"func": "na3x.validation.validator.no_intersection",
 				"violation": {
 					"severity": "warning",
 					"message": "Task requires {} component(s) expertise"
@@ -170,7 +170,7 @@
 		},
 		"assignment.blocked.conflict": {
 			"to_validate": {
-				"func": "natrix.validation.validator.return_input",
+				"func": "na3x.validation.validator.return_input",
 				"params": {
 					"field": "date"
 				}

@@ -1,13 +1,13 @@
 import argparse
 import json
 import logging.config
-from natrix.integration.importer import Importer
-from natrix.utils.cfg import CfgUtils
-from natrix.cfg import init, get_env_params
+from na3x.integration.importer import Importer
+from na3x.utils.cfg import CfgUtils
+from na3x.cfg import init, get_env_params
 
 CFG_LOG_IMPORT = './cfg/log/import-logging-config.json'
 CFG_IMPORT = './cfg/jira/jira-import.json'
-CFG_NATRIX = './cfg/natrix.json'
+CFG_NA3X = './cfg/na3x.json'
 
 if __name__ == '__main__':
     with open(CFG_LOG_IMPORT) as log_cfg_file:
@@ -20,8 +20,8 @@ if __name__ == '__main__':
 
     try:
         logger.info('Init JIRA importer: {}'.format(CFG_IMPORT))
-        with open(CFG_NATRIX) as natrix_cfg_file:
-            init(json.load(natrix_cfg_file, strict=False))
+        with open(CFG_NA3X) as na3x_cfg_file:
+            init(json.load(na3x_cfg_file, strict=False))
         with open(CFG_IMPORT) as cfg_file:
             cfg = json.loads(CfgUtils.substitute_params(cfg_file.read(), get_env_params()))
         Importer(cfg, args.login, args.pswd).perform()

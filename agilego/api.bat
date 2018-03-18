@@ -1,5 +1,5 @@
 setlocal
-set PYTHONPATH=%cd%;D:\Github\natrix\
+set PYTHONPATH=%cd%;
 set FLASK_APP=api.py
 set FLASK_DEBUG=1
 flask run
