@@ -8,14 +8,14 @@
 			},
 			"transformations": {
 				"set_issue_sprint": {
-					"class": "framework.transformation.transformer.MultiColDoc2XTransformation",
+					"class": "natrix.transformation.transformer.MultiColDoc2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src.cols": ["data.issues"],
 							"src.docs": ["data.sprint"]							
 						},
 						"transform": {
-							"func": "framework.transformation.transformer.update_col",
+							"func": "natrix.transformation.transformer.update_col",
 							"params": {
 								"target": "data.issues", 
 								"update": [

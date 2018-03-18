@@ -1,9 +1,9 @@
 import json
 from flask import jsonify
 from flask_restful import Resource, request
-from framework.db.data import Accessor, AccessParams
-from framework.utils.converter import Converter, Types
-from framework.validation.validator import Validator
+from natrix.db.data import Accessor, AccessParams
+from natrix.utils.converter import Converter, Types
+from natrix.validation.validator import Validator
 from logic.constants import DbConstants, ParamConstants, MatchConstants
 
 CFG_ASSIGN_VALIDATION = './cfg/validation/assignment.json' # ToDo: load on start up

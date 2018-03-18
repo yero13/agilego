@@ -7,13 +7,13 @@
 			},
 			"transformations": {
 				"assignements": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
+					"class": "natrix.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments"
 						},
 						"transform": {
-							"func": "framework.transformation.transformer.copy"
+							"func": "natrix.transformation.transformer.copy"
 						},
 						"dest.db.cleanup": {
 							"target": "sprint.assignments"
@@ -24,13 +24,13 @@
 					}
 				},
 				"sprint-all-items": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
+					"class": "natrix.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.backlog"
 						},
 						"transform": {
-							"func": "framework.transformation.transformer.copy",
+							"func": "natrix.transformation.transformer.copy",
 							"params": {
 								"fields": ["key"]
 							}
@@ -52,13 +52,13 @@
 			},
 			"transformations": {
 				"assignments-label": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
+					"class": "natrix.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments"
 						},
 						"transform": {
-							"func": "framework.transformation.transformer.format",
+							"func": "natrix.transformation.transformer.format",
 							"params": {
 								"format.string": "{}_{:%Y-%m-%d}",
 								"format.input": [
@@ -83,13 +83,13 @@
 					}
 				},				
 				"sprint-assignment-search-transpose": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
+					"class": "natrix.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_raw"
 						},
 						"transform": {
-							"func": "framework.transformation.transformer.group_singles2array",
+							"func": "natrix.transformation.transformer.group_singles2array",
 							"params": {
 								"field.key": "key",
 								"field.array": "label",
@@ -105,13 +105,13 @@
 					}
 				},
 				"sprint-assignment-label-join": {
-					"class": "framework.transformation.transformer.MultiCol2XTransformation",
+					"class": "natrix.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": ["sprint.idx_all_items", "sprint.assignments_search_labels"]
 						},
 						"transform": {
-							"func": "framework.transformation.transformer.left_join",
+							"func": "natrix.transformation.transformer.left_join",
 							"params": {
 								"col.right": "sprint.idx_all_items",
 								"col.left": "sprint.assignments_search_labels",
@@ -127,13 +127,13 @@
 					}
 				},
 				"sprint-assignment-label-notnull": {
-					"class": "framework.transformation.transformer.Col2XTransformation",
+					"class": "natrix.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": "sprint.assignments_label"
 						},
 						"transform": {
-							"func": "framework.transformation.transformer.replace",
+							"func": "natrix.transformation.transformer.replace",
 							"params": {
 								"replace": [
 									{

@@ -1,6 +1,6 @@
 import pandas as pd
 import networkx as nx
-from framework.transformation.transformer import transformer
+from natrix.transformation.transformer import transformer
 from logic.constants import DbConstants, ParamConstants
 from copy import deepcopy
 from logic.gantt import Task, Link

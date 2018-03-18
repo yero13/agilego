@@ -1,0 +1,5 @@
+{
+	"db": "./cfg/db.json",
+	"triggers": "./cfg/dependency/triggers.json",
+	"env": "./cfg/env.json"
+}

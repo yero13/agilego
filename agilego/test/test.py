@@ -3,14 +3,13 @@ import logging.config
 import unittest
 import flask
 from flask_restful import Api
-from framework import utils
-from framework.data.generator import Generator
-from framework.db.connect import MongoDb
-from framework.db.data import Accessor, AccessParams
-from framework.integration.importer import Importer
-from framework.transformation.transformer import Transformer
-from framework.utils.cfg import CfgUtils
-from framework.utils.env import get_env_params
+from natrix.data.generator import Generator
+from natrix.db.connect import MongoDb
+from natrix.db.data import Accessor, AccessParams
+from natrix.integration.importer import Importer
+from natrix.transformation.transformer import Transformer
+from natrix.utils.cfg import CfgUtils
+import natrix.cfg
 from logic.constants import DbConstants, RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
     AssignmentList, SubtaskList, Assignment, AssignmentValidation
@@ -18,6 +17,7 @@ from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, Group
 CFG_LOG_TEST = './cfg/log/test-logging-config.json'
 CFG_DATA_GENERATION  = './cfg/data/jira-data-generation.json'
 CFG_DATA_CLEANUP  = './cfg/data/jira-data-cleanup.json'
+CFG_NATRIX = './cfg/natrix.json'
 CFG_KEY_JIRA_LOGIN = 'jira_login'
 CFG_KEY_JIRA_PSWD = 'jira_pswd'
 CFG_KEY_SCRUM_SPRINT = 'scrum_sprint'
@@ -25,20 +25,22 @@ CFG_TEST_DATA_DB = 'db_src_data'
 CFG_TEST_DATA_COL_SPRINT = 'data.sprint'
 CFG_TEST_DATA_SPRINT_ID = 'id'
 
-utils.env.is_test = True
 with open(CFG_LOG_TEST) as logging_cfg_file:
     logging.config.dictConfig(json.load(logging_cfg_file, strict=False))
+with open(CFG_NATRIX) as natrix_cfg_file:
+    natrix.cfg.init(json.load(natrix_cfg_file, strict=False))
 
 
 def setUpModule():
-    test_env_cfg = get_env_params()
+    natrix.cfg.IS_TEST = True
+    test_env_cfg = natrix.cfg.get_env_params()
     with open(CFG_DATA_GENERATION) as cfg_file:
         Generator(json.load(cfg_file, strict=False), test_env_cfg[CFG_KEY_JIRA_LOGIN],
               test_env_cfg[CFG_KEY_JIRA_PSWD], test_env_cfg).perform()
 
 
 def tearDownModule():
-    test_env_cfg = get_env_params()
+    test_env_cfg = natrix.cfg.get_env_params()
     with open(CFG_DATA_CLEANUP) as cfg_file:
         Generator(json.load(cfg_file, strict=False), test_env_cfg[CFG_KEY_JIRA_LOGIN],
               test_env_cfg[CFG_KEY_JIRA_PSWD], test_env_cfg).perform()
@@ -54,7 +56,7 @@ class ImportTestCase(unittest.TestCase):
 
     def setUp(self):
         logger = logging.getLogger(__name__)
-        self.__test_env_cfg = get_env_params()
+        self.__test_env_cfg = natrix.cfg.get_env_params()
         self.__test_env_cfg[CFG_KEY_SCRUM_SPRINT] = Accessor.factory(CFG_TEST_DATA_DB).get(
             {AccessParams.KEY_COLLECTION: CFG_TEST_DATA_COL_SPRINT,
              AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE})[CFG_TEST_DATA_SPRINT_ID]
@@ -86,7 +88,7 @@ class TransformTestCase(unittest.TestCase):
 
     def setUp(self):
         logger = logging.getLogger(__name__)
-        self.__test_env_cfg = get_env_params()
+        self.__test_env_cfg = natrix.cfg.get_env_params()
         # ToDo: cleanup tables
         try:
             logger.info('Init transformer: {}'.format(TransformTestCase.__CFG_TRANSFORM))
@@ -121,7 +123,7 @@ class ApiTestCase(unittest.TestCase):
     __TEST_DATA_EMPLOYEE = b'testuser'
 
     def setUp(self):
-        self.__test_env_cfg = get_env_params()
+        self.__test_env_cfg = natrix.cfg.get_env_params()
         self.__app = flask.Flask(__name__)
         api = Api(self.__app)
         api.add_resource(Sprint, RestConstants.ROUTE_SPRINT)

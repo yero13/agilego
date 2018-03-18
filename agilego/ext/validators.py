@@ -1,7 +1,7 @@
 from copy import deepcopy
-from framework.db.data import Accessor, AccessParams
-from framework.utils.aggregator import Aggregator
-from framework.validation.validator import getter, comparator, Check
+from natrix.db.data import Accessor, AccessParams
+from natrix.utils.aggregator import Aggregator
+from natrix.validation.validator import getter, comparator, Check
 from logic.constants import DbConstants, ParamConstants
 
 

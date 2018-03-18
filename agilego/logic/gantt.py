@@ -1,6 +1,6 @@
-from framework.db.data import Accessor, AccessParams
-from framework.utils.aggregator import Aggregator
-from framework.utils.converter import Converter, Types
+from natrix.db.data import Accessor, AccessParams
+from natrix.utils.aggregator import Aggregator
+from natrix.utils.converter import Converter, Types
 from logic.constants import DbConstants, ParamConstants
 
 

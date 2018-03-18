@@ -8,13 +8,13 @@
 			},
 			"transformations": {
 				"set_sprint_board": {
-					"class": "framework.transformation.transformer.MultiDoc2XTransformation",
+					"class": "natrix.transformation.transformer.MultiDoc2XTransformation",
 					"cfg": {
 						"src.db.load": {
 							"src": ["data.sprint", "data.board"]
 						},
 						"transform": {
-							"func": "framework.transformation.transformer.update_doc",
+							"func": "natrix.transformation.transformer.update_doc",
 							"params": {
 								"source": [ 
 									{

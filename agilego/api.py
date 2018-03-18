@@ -3,17 +3,21 @@ import logging.config
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
-from framework.utils.json import ExtJSONEncoder
+from natrix.utils.json import ExtJSONEncoder
 from logic.constants import RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
     AssignmentList, SubtaskList, Assignment, AssignmentValidation, GanttTasks, GanttLinks
+from natrix.cfg import init
 
 CFG_LOG_API = './cfg/log/api-logging-config.json'
+CFG_NATRIX = './cfg/natrix.json'
 
 app = Flask(__name__)
 app.json_encoder = ExtJSONEncoder
 with open(CFG_LOG_API) as log_cfg_file:
     logging.config.dictConfig(json.load(log_cfg_file, strict=False))
+with open(CFG_NATRIX) as natrix_cfg_file:
+    init(json.load(natrix_cfg_file, strict=False))
 
 api = Api(app)
 CORS(app)
