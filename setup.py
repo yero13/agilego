@@ -17,6 +17,6 @@ setup(name='agilego',
       python_requires= '~=3.6',
       install_requires=['flask', 'flask-cors', 'flask_cache', 'flask_restful', 'networkx'],
       dependency_links=[
-          'git+https://github.com/yero13/natrix.git'
+          'git+https://github.com/yero13/natrix.git@master'
       ]
       )
