@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 setup(name='agilego',
       version='0.1.2',
-      description='Scrum sprint planner',
+      description='Sprint planner',
       author='Roman Yepifanov',
       url='https://github.com/yero13/agilego.be',
       license='GNU GPL v2.0',
