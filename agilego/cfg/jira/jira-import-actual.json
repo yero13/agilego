@@ -1,0 +1,21 @@
+{
+	"version": 0.1,
+	"mapping": {
+		"url": "$jira_url",
+		"project": "$scrum_project",
+		"sprint": "$scrum_sprint"
+	},
+	"requests": {
+		"server-time": {
+			"cfg": "./cfg/jira/jira-server-time-request.json",
+			"type": "single_object",
+			"dest": "server-time"		
+		},
+		"actual-status": {
+			"cfg": "./cfg/jira/jira-actual-status-request.json",
+			"type": "list",
+			"dest": "actual-status"
+		}
+	},
+	"db": "$db_jira_import"
+}

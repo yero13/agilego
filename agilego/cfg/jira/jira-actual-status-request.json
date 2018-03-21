@@ -1,0 +1,75 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/api/2/search",
+		"data": {
+			"jql": "sprint = $sprint",
+			"maxResults": 50,
+			"startAt": 0
+		}
+	},
+	"response": {
+		"content-root": "issues",
+		"issues": {
+			"noname": true,
+			"type": "array",
+			"fields": {
+				"root": {
+					"type": "object",
+					"explicit": true,
+					"noname": true,
+					"fields": {
+						"key": {
+							"key": "key",
+							"type": "string"
+						},
+						"fields": {
+							"key": "fields",
+							"type": "object",
+							"fields": {
+								"assignee": {
+									"key": "assignee",
+									"type": "object",
+									"optional": true,
+									"fields": {
+										"displayName": {
+											"key": "displayName",
+											"type": "string",
+											"ext_id": "assignee"
+										},
+										"name": {
+											"key": "name",
+											"type": "string",
+											"ext_id": "assignee_id"
+										}								
+									}
+								},
+								"status": {
+									"key": "status",
+									"type": "object",
+									"fields": {
+										"name": {
+											"key": "name",
+											"type": "string",
+											"ext_id": "status"
+										}
+									}
+								},
+								"timeospent": {
+									"key": "timespent",
+									"type": "int",
+									"ext_id": "spent"
+								},
+								"timeoriginalestimate": {
+									"key": "timeoriginalestimate",
+									"type": "int",
+									"ext_id": "estimate"
+								}
+							}
+						}
+					}
+				}				
+			}
+		}
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"version": 0.1,
+	"request": {
+		"url": "$url/rest/api/2/serverInfo"
+	},
+	"response": {
+		"noname": "True",
+		"type": "object",
+		"fields": {
+			"serverTime": {
+				"key": "serverTime",
+				"type": "datetime"
+			}
+		}
+	}
+}

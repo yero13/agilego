@@ -6,7 +6,7 @@ from na3x.utils.cfg import CfgUtils
 from na3x.cfg import init, get_env_params
 
 CFG_LOG_IMPORT = './cfg/log/import-logging-config.json'
-CFG_IMPORT = './cfg/jira/jira-import-scope.json'
+CFG_IMPORT = './cfg/jira/jira-import-actual.json'
 CFG_NA3X = './cfg/na3x.json'
 
 if __name__ == '__main__':
