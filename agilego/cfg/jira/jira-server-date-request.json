@@ -7,9 +7,10 @@
 		"noname": "True",
 		"type": "object",
 		"fields": {
-			"serverTime": {
+			"serverDate": {
 				"key": "serverTime",
-				"type": "datetime"
+				"type": "date",
+				"ext_id": "serverdate"
 			}
 		}
 	}

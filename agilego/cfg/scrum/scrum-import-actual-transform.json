@@ -1,0 +1,236 @@
+{
+	"version": 0.1,
+	"transformation-sets": {
+		"actual-transform": {
+			"db": {
+				"src.db": "db_jira_import",
+				"dest.db": "db_scrum_transform"
+			},
+			"transformations": {
+				"actual.status.date": {
+					"class": "na3x.transformation.transformer.Doc2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "server-time"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "actual.status.date"
+						},
+						"dest.db.save": {
+							"dest": "actual.status.date"
+						}
+					}				
+				},
+				"actual.issues.status": {
+					"class": "na3x.transformation.transformer.MultiColDoc2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src.cols": ["actual-status"],
+							"src.docs": ["server-time"]							
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.update_col",
+							"params": {
+								"target": "actual-status", 
+								"update": [
+									{
+										"src.type": "doc",
+										"src.col": "server-time",
+										"src.field": "serverdate",
+										"dest.field": "statusdate"
+									}
+								]
+							}						
+						},
+						"dest.db.cleanup": {
+							"target": "actual.issues.status"
+						},
+						"dest.db.save": {
+							"dest": "actual.issues.status"
+						}						
+					}
+				}
+			}
+		},
+		"plan-transform": {
+			"db": {
+				"src.db": "db_scrum_api",
+				"dest.db": "db_scrum_transform"
+			},
+			"transformations": {
+				"plan.issues": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.backlog"							
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.copy",
+							"params": {
+								"fields": ["key"]
+							}						
+						},
+						"dest.db.cleanup": {
+							"target": "plan.issues"
+						},
+						"dest.db.save": {
+							"dest": "plan.issues"
+						}						
+					}
+				}
+			}
+		},		
+		"int-transform": {
+			"db": {
+				"src.db": "db_scrum_transform",
+				"dest.db": "db_scrum_transform"
+			},
+			"transformations": {
+				"sec2hrs": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "actual.issues.status"
+						},
+						"transform": {
+							"func": "ext.transformers.sec2hrs",
+							"params": {
+								"fields": ["spent"]  
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "actual.issues.status"
+						},
+						"dest.db.save": {
+							"dest": "actual.issues.status"
+						}
+					}
+				},			
+				"actual.issues.discrepencies": {
+					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": ["actual.issues.status", "plan.issues"]
+						},
+						"transform": {
+							"func": "ext.transformers.merge_plan_vs_actual"					
+						},
+						"dest.db.cleanup": {
+							"target": "actual.issues.discrepencies"
+						},
+						"dest.db.save": {
+							"dest": "actual.issues.discrepencies"
+						}						
+					}
+				},
+				"scope.added": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "actual.issues.discrepencies"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.replace",
+							"params": {
+								"replace": [
+									{
+										"field": "_merge",
+										"value.to_find": "right_only",
+										"value.replace_with": "added_to_sprint"
+									}
+								]
+							}						
+						},
+						"dest.db.cleanup": {
+							"target": "actual.issues.discrepencies"
+						},
+						"dest.db.save": {
+							"dest": "actual.issues.discrepencies"
+						}						
+					}
+				},
+				"scope.moved_out": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "actual.issues.discrepencies"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.replace",
+							"params": {
+								"replace": [
+									{
+										"field": "_merge",
+										"value.to_find": "left_only",
+										"value.replace_with": "moved_out_sprint"
+									}
+								]
+							}						
+						},
+						"dest.db.cleanup": {
+							"target": "actual.issues.discrepencies"
+						},
+						"dest.db.save": {
+							"dest": "actual.issues.discrepencies"
+						}						
+					}
+				},
+				"scope.no_changes": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "actual.issues.discrepencies"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.replace",
+							"params": {
+								"replace": [
+									{
+										"field": "_merge",
+										"value.to_find": "both",
+										"value.replace_with": "no_changes"
+									}
+								]
+							}						
+						},
+						"dest.db.cleanup": {
+							"target": "actual.issues.discrepencies"
+						},
+						"dest.db.save": {
+							"dest": "actual.issues.discrepencies"
+						}						
+					}
+				},
+				"field.sprint_diff": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "actual.issues.discrepencies"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.rename_fields",
+							"params": {
+								"rename": [
+									{
+										"src.field": "_merge",
+										"dest.field": "sprint_diff"
+									}									
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "actual.issues.discrepencies"
+						},
+						"dest.db.save": {
+							"dest": "actual.issues.discrepencies"
+						}					
+					}
+				}				
+				
+			}
+		}
+	}
+}

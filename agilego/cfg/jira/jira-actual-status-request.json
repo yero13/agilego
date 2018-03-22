@@ -59,11 +59,6 @@
 									"key": "timespent",
 									"type": "int",
 									"ext_id": "spent"
-								},
-								"timeoriginalestimate": {
-									"key": "timeoriginalestimate",
-									"type": "int",
-									"ext_id": "estimate"
 								}
 							}
 						}

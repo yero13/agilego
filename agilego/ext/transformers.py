@@ -1,6 +1,7 @@
 import pandas as pd
 import networkx as nx
 from na3x.transformation.transformer import transformer
+from na3x.utils.converter import Converter
 from logic.constants import DbConstants, ParamConstants
 from copy import deepcopy
 from logic.gantt import Task, Link
@@ -110,3 +111,14 @@ def gantt_tasks(input, **params):
     return res
 
 
+@transformer
+def merge_plan_vs_actual(input, **params):
+    INPUT_PLAN = 'plan.issues'
+    INPUT_ACTUAL = 'actual.issues.status'
+
+    plan_df = pd.DataFrame.from_records(input[INPUT_PLAN])
+    actual_df = pd.DataFrame.from_records(input[INPUT_ACTUAL])
+    res = Converter.df2list(
+        plan_df.merge(actual_df, right_on=ParamConstants.PARAM_ITEM_KEY, left_on=ParamConstants.PARAM_ITEM_KEY,
+                      suffixes=('_plan', '_actual'), indicator=True, how='outer'))
+    return res
