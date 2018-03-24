@@ -2,6 +2,7 @@ import pandas as pd
 import networkx as nx
 from na3x.transformation.transformer import transformer
 from na3x.utils.converter import Converter
+from na3x.utils.aggregator import Aggregator
 from logic.constants import DbConstants, ParamConstants
 from copy import deepcopy
 from logic.gantt import Task, Link
@@ -122,3 +123,43 @@ def merge_plan_vs_actual(input, **params):
         plan_df.merge(actual_df, right_on=ParamConstants.PARAM_ITEM_KEY, left_on=ParamConstants.PARAM_ITEM_KEY,
                       suffixes=('_plan', '_actual'), indicator=True, how='outer'))
     return res
+
+
+@transformer
+def plan_vs_actual_discrepencies(input, **params):
+    INPUT_PLAN_VS_ACTUAL = 'actual.issues.discrepencies'
+    INPUT_ACTUAL_STATUS_DATE = 'actual.status.date'
+    INPUR_SERVER_DATE = 'serverdate'
+    INPUT_PLAN = 'sprint.assignments'
+
+    OUT_START_DATE_PLAN = 'start_plan'
+    OUT_END_DATE_PLAN = 'end_plan'
+    OUT_WHRS_PLAN = 'whrs_plan'
+    OUT_ASSIGNEES_PLAN = 'assignees_plan'
+
+    status_date = input[INPUT_ACTUAL_STATUS_DATE][INPUR_SERVER_DATE]
+    plan_df = pd.DataFrame.from_records(input[INPUT_PLAN])
+    schedule_plan_agg = Aggregator.agg_multi_func(Converter.df2list(plan_df), ParamConstants.PARAM_DATE, ['min', 'max'],
+                                                  ParamConstants.PARAM_ITEM_KEY)
+    plan_df.where(plan_df.date <= status_date, inplace=True)
+    spent_plan_agg = Aggregator.agg_single_func(Converter.df2list(plan_df), ParamConstants.PARAM_WHRS, 'sum',
+                                                ParamConstants.PARAM_ITEM_KEY)
+    plan_df.where(plan_df.date == status_date, inplace=True)
+    discrepencies = Converter.df2list(pd.DataFrame.from_records(input[INPUT_PLAN_VS_ACTUAL]))
+    for item in discrepencies:
+        key = item[ParamConstants.PARAM_ITEM_KEY]
+        if key in schedule_plan_agg:
+            item[OUT_START_DATE_PLAN] = schedule_plan_agg[key]['min']
+            item[OUT_END_DATE_PLAN] = schedule_plan_agg[key]['max']
+        if key in spent_plan_agg:
+            item[OUT_WHRS_PLAN] = spent_plan_agg[key]
+        item_assignees = Converter.df2list(plan_df.where(plan_df.key==key))
+        assignees_plan = []
+        for assignee in item_assignees:
+            if assignee[ParamConstants.PARAM_GROUP] and assignee[ParamConstants.PARAM_EMPLOYEE] and item[
+                ParamConstants.PARAM_ITEM_KEY] == assignee[ParamConstants.PARAM_ITEM_KEY]:
+                assignees_plan.append({ParamConstants.PARAM_GROUP: assignee[ParamConstants.PARAM_GROUP],
+                                       ParamConstants.PARAM_EMPLOYEE: assignee[ParamConstants.PARAM_EMPLOYEE]})
+        item[OUT_ASSIGNEES_PLAN] = assignees_plan
+
+    return discrepencies
