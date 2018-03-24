@@ -10,6 +10,8 @@ class DbConstants:
     PROJECT_COMPONENTS = 'project.components'
     GANTT_LINKS = 'baseline.gantt_links'
     GANTT_TASKS = 'baseline.gantt_tasks'
+    ACTUAL_DATE = 'actual.status.date'
+    ACTUAL_DISCREPENCIES = 'actual.issues.discrepencies'
 
 
 class RestConstants:
@@ -28,6 +30,9 @@ class RestConstants:
     ROUTE_ASSIGNMENT_VALIDATION = '{}/validate'.format(ROUTE_ASSIGNMENT)
     ROUTE_GANTT_TASKS = '/gantt/tasks'
     ROUTE_GANTT_LINKS = '/gantt/links'
+    ROUTE_PLAN_VS_ACTUAL = '/plan-vs-actual'
+    ROUTE_ACTUAL_DATE = '{}/date'.format(ROUTE_PLAN_VS_ACTUAL)
+    ROUTE_ACTUAL_DISCREPENCIES = '{}/discrepencies'.format(ROUTE_PLAN_VS_ACTUAL)
 
 
 class ParamConstants:

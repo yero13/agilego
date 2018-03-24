@@ -158,3 +158,17 @@ class GanttLinks(Resource):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {AccessParams.KEY_COLLECTION: DbConstants.GANTT_LINKS,
              AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI}))
+
+
+class ActualStatusDate(Resource):
+    def get(self):
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+            {AccessParams.KEY_COLLECTION: DbConstants.ACTUAL_DATE,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE}))
+
+
+class PlanVsActualDiscrepencies(Resource):
+    def get(self):
+        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+            {AccessParams.KEY_COLLECTION: DbConstants.ACTUAL_DISCREPENCIES,
+             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI}))
