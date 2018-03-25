@@ -2,7 +2,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(name='agilego',
-      version='0.1.2',
+      version='0.2.0',
       description='Sprint planner',
       author='Roman Yepifanov',
       url='https://github.com/yero13/agilego.be',
