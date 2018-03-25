@@ -272,7 +272,7 @@
 					"class": "na3x.transformation.transformer.MultiColDoc2XTransformation",
 					"cfg": {
 						"src.db.load": {
-							"src.cols": ["actual.issues.discrepencies", "sprint.assignments"],
+							"src.cols": ["actual.issues.discrepencies", "sprint.allocations"],
 							"src.docs": ["actual.status.date"]
 						},
 						"transform": {

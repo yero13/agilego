@@ -15,7 +15,7 @@ def get_linked_issues(key, link_type):
 
 
 @getter
-def get_linked_assignments(input, **params):
+def get_linked_allocations(input, **params):
     LINK_TARGET = 'target'
     PARAM_FUNC = 'func'
 
@@ -24,12 +24,12 @@ def get_linked_assignments(input, **params):
     if len(linked_issues) > 0:
         for issue in linked_issues:
             filter.append({ParamConstants.PARAM_ITEM_KEY: issue[LINK_TARGET]})
-        linked_assignments = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+        linked_allocations = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
             {AccessParams.KEY_MATCH_PARAMS: {AccessParams.OPERATOR_OR: filter},
-            AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+            AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ALLOCATIONS,
             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
         agg_func = params.get(PARAM_FUNC)
-        return Aggregator.agg_single_func(linked_assignments, ParamConstants.PARAM_DATE, agg_func, [ParamConstants.PARAM_ITEM_KEY])
+        return Aggregator.agg_single_func(linked_allocations, ParamConstants.PARAM_DATE, agg_func, [ParamConstants.PARAM_ITEM_KEY])
     else:
         return None
 

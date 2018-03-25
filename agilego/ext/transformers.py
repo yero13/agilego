@@ -30,22 +30,22 @@ def sec2hrs(input, **params):
 
 
 @transformer
-def filter_assignments_on_backlog(input, **params):
+def filter_allocations_on_backlog(input, **params):
     res = []
-    for assignment in input[DbConstants.SCRUM_ASSIGNMENTS]:
+    for allocation in input[DbConstants.SCRUM_ALLOCATIONS]:
         for item in input[DbConstants.SCRUM_SPRINT_BACKLOG]:
-            if assignment[ParamConstants.PARAM_ITEM_KEY] == item[ParamConstants.PARAM_ITEM_KEY]:
-                res.append(assignment)
+            if allocation[ParamConstants.PARAM_ITEM_KEY] == item[ParamConstants.PARAM_ITEM_KEY]:
+                res.append(allocation)
     return res
 
 
 @transformer
-def filter_assignments_on_employees(input, **params):
+def filter_allocations_on_employees(input, **params):
     res = []
-    for assignment in input[DbConstants.SCRUM_ASSIGNMENTS]:
+    for allocation in input[DbConstants.SCRUM_ALLOCATIONS]:
         for employee in input[DbConstants.PROJECT_EMPLOYEES]:
-            if assignment[ParamConstants.PARAM_EMPLOYEE] == employee[ParamConstants.PARAM_EMPLOYEE_NAME]:
-                res.append(assignment)
+            if allocation[ParamConstants.PARAM_EMPLOYEE] == employee[ParamConstants.PARAM_EMPLOYEE_NAME]:
+                res.append(allocation)
     return res
 
 
@@ -130,7 +130,7 @@ def plan_vs_actual_discrepencies(input, **params):
     INPUT_PLAN_VS_ACTUAL = 'actual.issues.discrepencies'
     INPUT_ACTUAL_STATUS_DATE = 'actual.status.date'
     INPUR_SERVER_DATE = 'serverdate'
-    INPUT_PLAN = 'sprint.assignments'
+    INPUT_PLAN = 'sprint.allocations'
 
     OUT_START_DATE_PLAN = 'start_plan'
     OUT_END_DATE_PLAN = 'end_plan'

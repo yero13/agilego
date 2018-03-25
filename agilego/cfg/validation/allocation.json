@@ -8,7 +8,7 @@
 					"extract": {
 						"db": "db_scrum_api",
 						"match": ["employee", "date"],
-						"collection": "sprint.assignments"
+						"collection": "sprint.allocations"
 					},
 					"substitute": {
 						"field": "whrs",
@@ -42,7 +42,7 @@
 					"extract": {
 						"db": "db_scrum_api",						
 						"match": ["group"],
-						"collection": "sprint.assignments"
+						"collection": "sprint.allocations"
 					},
 					"substitute": {
 						"field": "whrs",
@@ -80,7 +80,7 @@
 					"extract": {
 						"db": "db_scrum_api",					
 						"match": ["key"],
-						"collection": "sprint.assignments"
+						"collection": "sprint.allocations"
 					},
 					"substitute": {
 						"field": "whrs",
@@ -139,7 +139,7 @@
 				}				
 			}	
 		},
-		"assignment.expertise.conflict": {
+		"allocation.expertise.conflict": {
 			"constraint": {
 				"func": "na3x.validation.validator.extract",
 				"params": {
@@ -168,7 +168,7 @@
 				}				
 			}	
 		},
-		"assignment.blocked.conflict": {
+		"allocation.blocked.conflict": {
 			"to_validate": {
 				"func": "na3x.validation.validator.return_input",
 				"params": {
@@ -176,7 +176,7 @@
 				}
 			},	
 			"constraint": {
-				"func": "ext.validators.get_linked_assignments",
+				"func": "ext.validators.get_linked_allocations",
 				"params": {
 					"type": "blocks",
 					"func": "min"
@@ -187,7 +187,7 @@
 				"func": "ext.validators.schedule_conflict_too_late",
 				"violation": {
 					"severity": "warning",
-					"message": "Conflict with blocked {} assignment {:%Y-%m-%d}"
+					"message": "Conflict with blocked {} allocation {:%Y-%m-%d}"
 				}				
 			}				
 		}

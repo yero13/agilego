@@ -12,7 +12,7 @@ from na3x.utils.cfg import CfgUtils
 import na3x.cfg
 from logic.constants import DbConstants, RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AssignmentList, SubtaskList, Assignment, AssignmentValidation
+    AllocationtList, SubtaskList, Allocation, AllocationValidation
 
 CFG_LOG_TEST = './cfg/log/test-logging-config.json'
 CFG_DATA_GENERATION  = './cfg/data/jira-data-generation.json'
@@ -135,10 +135,10 @@ class ApiTestCase(unittest.TestCase):
         # ToDo: add coverage
         api.add_resource(SubtaskList, '{}/<task_key>{}'.format(RestConstants.ROUTE_TASK, RestConstants.ROUTE_SUBTASKS))
         api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group>'.format(RestConstants.ROUTE_GROUP))
-        api.add_resource(AssignmentList, RestConstants.ROUTE_ASSIGNMENTS)
-        api.add_resource(Assignment, RestConstants.ROUTE_ASSIGNMENT,
-                         '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ASSIGNMENT))
-        api.add_resource(AssignmentValidation, RestConstants.ROUTE_ASSIGNMENT_VALIDATION)
+        api.add_resource(AllocationtList, RestConstants.ROUTE_ALLOCATIONS)
+        api.add_resource(Allocation, RestConstants.ROUTE_ALLOCATION,
+                         '{}/<key>,<date>,<group>,<employee>'.format(RestConstants.ROUTE_ALLOCATION))
+        api.add_resource(AllocationValidation, RestConstants.ROUTE_ALLOCATION_VALIDATION)
 
     def test_api_sprint(self):
         result = self.__app.test_client().get(RestConstants.ROUTE_SPRINT)

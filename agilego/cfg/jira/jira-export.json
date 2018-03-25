@@ -7,7 +7,7 @@
 		"set_search_label": {
 			"cfg": "./cfg/jira/jira-set-issue-field.json",
 			"type": "set_field_value",
-			"src.collection": "sprint.assignments_search_labels",
+			"src.collection": "sprint.allocations_search_labels",
 			"static_mapping": {
 				"field": "$field_agilego_search"
 			},

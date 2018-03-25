@@ -3,8 +3,8 @@
 		"before-delete": "ext.triggers.OnDeleteGroupTrigger",
 		"before-upsert": "ext.triggers.OnUpsertGroupTrigger"		
 	},
-	"sprint.assignments": {
-		"after-delete": "ext.triggers.OnUpsertDeleteAssignment",
-		"after-upsert": "ext.triggers.OnUpsertDeleteAssignment"
+	"sprint.allocations": {
+		"after-delete": "ext.triggers.OnUpsertDeleteAllocation",
+		"after-upsert": "ext.triggers.OnUpsertDeleteAllocation"
 	}
 }

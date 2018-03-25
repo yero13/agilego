@@ -60,12 +60,12 @@ class Task:
         parent = backlog_item[ParamConstants.PARAM_ITEM_PARENT]
         if parent:
             res.update({Task.TASK_PARENT: parent})
-        assignments = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ASSIGNMENTS,
+        allocations = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_ALLOCATIONS,
              AccessParams.KEY_MATCH_PARAMS: {ParamConstants.PARAM_ITEM_KEY: id},
              AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI})
-        date_aggs = Aggregator.agg_multi_func(assignments, ParamConstants.PARAM_DATE, ['min', 'max'])
-        alloc_whrs = Aggregator.agg_single_func(assignments, ParamConstants.PARAM_WHRS, 'sum')
+        date_aggs = Aggregator.agg_multi_func(allocations, ParamConstants.PARAM_DATE, ['min', 'max'])
+        alloc_whrs = Aggregator.agg_single_func(allocations, ParamConstants.PARAM_WHRS, 'sum')
         if date_aggs:
             start_date = date_aggs['min']
             end_date = date_aggs['max']

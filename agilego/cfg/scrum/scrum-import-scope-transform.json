@@ -505,37 +505,37 @@
 				"dest.db": "db_scrum_api"
 			},
 			"transformations": {
-				"assignments-filter-on-backlog": {
+				"allocations-filter-on-backlog": {
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
-							"src": ["sprint.assignments", "sprint.backlog"]
+							"src": ["sprint.allocations", "sprint.backlog"]
 						},
 						"transform": {
-							"func": "ext.transformers.filter_assignments_on_backlog"
+							"func": "ext.transformers.filter_allocations_on_backlog"
 						},
 						"dest.db.cleanup": {
-							"target": "sprint.assignments"
+							"target": "sprint.allocations"
 						},
 						"dest.db.save": {
-							"dest": "sprint.assignments"
+							"dest": "sprint.allocations"
 						}						
 					}				
 				},
-				"assignments-filter-on-employees": {
+				"allocations-filter-on-employees": {
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
-							"src": ["sprint.assignments", "project.employees"]
+							"src": ["sprint.allocations", "project.employees"]
 						},
 						"transform": {
-							"func": "ext.transformers.filter_assignments_on_employees"
+							"func": "ext.transformers.filter_allocations_on_employees"
 						},
 						"dest.db.cleanup": {
-							"target": "sprint.assignments"
+							"target": "sprint.allocations"
 						},
 						"dest.db.save": {
-							"dest": "sprint.assignments"
+							"dest": "sprint.allocations"
 						}						
 					}				
 				},
