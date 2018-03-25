@@ -15,7 +15,7 @@ def dates2range(input, **params):
     PARAM_FIELD_RANGE = 'field.range'
 
     return {params.get(PARAM_FIELD_RANGE): pd.date_range(input[params.get(PARAM_FIELD_STARTDATE)],
-                                                         input[params.get(PARAM_FIELD_ENDDATE)]).tolist()}
+                                                         input[params.get(PARAM_FIELD_ENDDATE)], normalize=True).tolist()}
 
 
 @transformer
