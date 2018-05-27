@@ -383,7 +383,28 @@
 							"dest": "sprint.link_subtasks"
 						}					
 					}
-				}				
+				},
+				"related": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items_sorted"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.list_concat",
+							"params": {
+								"src.fields": ["relates_in", "relates_out"],
+								"dest.field": "related"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.all_items_sorted"
+						},
+						"dest.db.save": {
+							"dest": "sprint.all_items_sorted"
+						}
+					}
+				}
 			}
 		},
 		"dest-transform": {
@@ -401,7 +422,7 @@
 						"transform": {
 							"func": "na3x.transformation.transformer.copy",
 							"params": {
-								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks"]
+								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks", "related"]
 							}
 						},
 						"dest.db.cleanup": {

@@ -134,6 +134,80 @@
 									"type": "int",
 									"ext_id": "estimate"
 								},
+								"relates_in": {
+									"key": "issuelinks",
+									"type": "array",
+									"ext_id": "relates_in",
+									"match":{
+										"type": "object",
+										"properties": {
+											"type": {
+												"type": "object",
+												"properties": {
+													"inward": {"type": "string", "pattern": "relates to"}
+												},
+												"required": ["inward"]
+											},
+											"inwardIssue": {
+												"type": "object",
+												"properties": {
+													"key": {"type": "string"}
+												},
+												"required": ["key"]
+											}
+										},
+										"required": ["type", "inwardIssue"]
+									},									
+									"fields": {
+										"inwardIssue": {
+											"key": "inwardIssue",
+											"type": "object",
+											"fields": {
+												"key": {
+													"key": "key",
+													"type": "string"
+												}
+											}
+										}
+									}
+								},								
+								"relates_out": {
+									"key": "issuelinks",
+									"type": "array",
+									"ext_id": "relates_out",
+									"match":{
+										"type": "object",
+										"properties": {
+											"type": {
+												"type": "object",
+												"properties": {
+													"outward": {"type": "string", "pattern": "relates to"}
+												},
+												"required": ["outward"]
+											},
+											"outwardIssue": {
+												"type": "object",
+												"properties": {
+													"key": {"type": "string"}
+												},
+												"required": ["key"]
+											}
+										},
+										"required": ["type", "outwardIssue"]
+									},									
+									"fields": {
+										"outwardIssue": {
+											"key": "outwardIssue",
+											"type": "object",
+											"fields": {
+												"key": {
+													"key": "key",
+													"type": "string"
+												}
+											}
+										}
+									}
+								},
 								"blocks": {
 									"key": "issuelinks",
 									"type": "array",
