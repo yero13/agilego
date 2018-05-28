@@ -152,7 +152,161 @@
 							"dest": "sprint.all_items_sorted"
 						}
 					}
+				},
+				"idx_relates_out": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.ungroup_array2singles",
+							"params": {
+								"field.key": "key",
+								"field.array": "relates_out",
+								"field.single": "relates_out"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.idx_relates_out"
+						},
+						"dest.db.save": {
+							"dest": "sprint.idx_relates_out"
+						}					
+					}
+				},
+				"idx_relates_out_2_links": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.idx_relates_out"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.update_col",
+							"params": {
+								"update": [
+									{
+										"src.type": "const",
+										"const.value": "relates",
+										"dest.field": "type"
+									}
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_relates_out"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_relates_out"
+						}					
+					}
 				},				
+				"link_relates_out": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.link_relates_out"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.rename_fields",
+							"params": {
+								"rename": [
+									{
+										"src.field": "key",
+										"dest.field": "source"
+									},
+									{
+										"src.field": "relates_out",
+										"dest.field": "target"
+									}									
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_relates_out"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_relates_out"
+						}					
+					}
+				},
+				"idx_relates_in": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.ungroup_array2singles",
+							"params": {
+								"field.key": "key",
+								"field.array": "relates_in",
+								"field.single": "relates_in"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.idx_relates_in"
+						},
+						"dest.db.save": {
+							"dest": "sprint.idx_relates_in"
+						}					
+					}
+				},
+				"idx_relates_in_2_links": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.idx_relates_in"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.update_col",
+							"params": {
+								"update": [
+									{
+										"src.type": "const",
+										"const.value": "relates",
+										"dest.field": "type"
+									}
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_relates_in"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_relates_in"
+						}					
+					}
+				},				
+				"link_relates_in": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.link_relates_in"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.rename_fields",
+							"params": {
+								"rename": [
+									{
+										"src.field": "key",
+										"dest.field": "source"
+									},
+									{
+										"src.field": "relates_in",
+										"dest.field": "target"
+									}									
+								]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.link_relates_in"
+						},
+						"dest.db.save": {
+							"dest": "sprint.link_relates_in"
+						}					
+					}
+				},								
 				"idx_blocked_by": {
 					"class": "na3x.transformation.transformer.Col2XTransformation",
 					"cfg": {
@@ -384,7 +538,7 @@
 						}					
 					}
 				},
-				"related": {
+				"concate_relates": {
 					"class": "na3x.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
@@ -394,7 +548,7 @@
 							"func": "na3x.transformation.transformer.list_concat",
 							"params": {
 								"src.fields": ["relates_in", "relates_out"],
-								"dest.field": "related"
+								"dest.field": "relates"
 							}
 						},
 						"dest.db.cleanup": {
@@ -422,7 +576,7 @@
 						"transform": {
 							"func": "na3x.transformation.transformer.copy",
 							"params": {
-								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks", "related"]
+								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks", "relates"]
 							}
 						},
 						"dest.db.cleanup": {
@@ -437,7 +591,7 @@
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
-							"src": ["sprint.link_subtasks", "sprint.link_blocks", "sprint.link_blocked"]
+							"src": ["sprint.link_subtasks", "sprint.link_blocks", "sprint.link_blocked", "sprint.link_relates_out", "sprint.link_relates_in"]
 						},
 						"transform": {
 							"func": "na3x.transformation.transformer.union"
