@@ -6,7 +6,7 @@ from flask_restful import Api
 from na3x.utils.json import ExtJSONEncoder
 from logic.constants import RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AllocationtList, SubtaskList, Allocation, AllocationValidation, GanttTasks, GanttLinks, ActualStatusDate, \
+    AllocationtList, Allocation, AllocationValidation, GanttTasks, GanttLinks, ActualStatusDate, \
     PlanVsActualDiscrepencies
 from na3x.cfg import init
 
@@ -26,7 +26,6 @@ CORS(app)
 api.add_resource(Sprint, RestConstants.ROUTE_SPRINT)
 api.add_resource(SprintTimeline, RestConstants.ROUTE_SPRINT_TIMELINE)
 api.add_resource(Backlog, RestConstants.ROUTE_BACKLOG)
-api.add_resource(SubtaskList, '{}/<task_key>{}'.format(RestConstants.ROUTE_TASK, RestConstants.ROUTE_SUBTASKS))
 api.add_resource(ComponentList, RestConstants.ROUTE_COMPONENTS)
 api.add_resource(GroupList, RestConstants.ROUTE_TEAM)
 api.add_resource(EmployeeList, RestConstants.ROUTE_EMPLOYEES)

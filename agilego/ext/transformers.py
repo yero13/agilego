@@ -6,6 +6,7 @@ from na3x.utils.aggregator import Aggregator
 from logic.constants import DbConstants, ParamConstants
 from copy import deepcopy
 from logic.gantt import Task, Link
+from string import Template
 
 
 @transformer
@@ -27,6 +28,23 @@ def sec2hrs(input, **params):
         for row in input:
             row[field] = row[field]/3600 if row[field] else None
     return input
+
+
+@transformer
+def backlog_hierarchy(input, **params):
+    PARAM_FIELD_SUBTASKS = 'field.subtasks'
+    PARAM_FIELD_KEY = 'field.key'
+    PARAM_WHERE_TOP = 'where.top'
+    PARAM_WHERE_SUBTASK = 'where.subtask'
+
+    field_subtasks = params.get(PARAM_FIELD_SUBTASKS)
+    field_key = params.get(PARAM_FIELD_KEY)
+    backlog_df = pd.DataFrame.from_records(input)
+    hierarchy = Converter.df2list(backlog_df.query(params.get(PARAM_WHERE_TOP)))
+    subtask_query = params.get(PARAM_WHERE_SUBTASK)
+    for item in hierarchy:
+        item[field_subtasks] = Converter.df2list(backlog_df.query(Template(subtask_query).substitute({field_key: item[field_key]})))
+    return hierarchy
 
 
 @transformer

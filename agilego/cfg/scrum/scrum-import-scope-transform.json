@@ -538,7 +538,52 @@
 						}					
 					}
 				},
-				"concate_relates": {
+				"backlog": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items_sorted"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.copy",
+							"params": {
+								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components"]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.backlog"
+						},
+						"dest.db.save": {
+							"dest": "sprint.backlog"
+						}
+					}
+				},				
+				"backlog_hierarchy": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.backlog"
+						},
+						"transform": {
+							"func": "ext.transformers.backlog_hierarchy",
+							"params": {
+								"where.top": "type != 'Sub-task'",
+								"where.subtask": "parent == '$key'",
+								"field.key": "key",
+								"field.subtasks": "subtasks"
+							}							
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.backlog"
+						},
+						"dest.db.save": {
+							"dest": "sprint.backlog"
+						}
+					}
+				},				
+				
+				
+				"concate_relates-TO_REMOVE": {
 					"class": "na3x.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
@@ -567,7 +612,7 @@
 				"dest.db": "db_scrum_api"
 			},
 			"transformations": {
-				"backlog": {
+				"backlog-TO_REMOVE": {
 					"class": "na3x.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
@@ -587,6 +632,23 @@
 						}
 					}
 				},
+				"backlog": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.backlog"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.backlog"
+						},
+						"dest.db.save": {
+							"dest": "sprint.backlog"
+						}
+					}
+				},				
 				"issue-links": {
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
@@ -680,7 +742,7 @@
 				"dest.db": "db_scrum_api"
 			},
 			"transformations": {
-				"allocations-filter-on-backlog": {
+				"allocations-filter-on-backlog_TO_REVIEW": {
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
@@ -697,7 +759,7 @@
 						}						
 					}				
 				},
-				"allocations-filter-on-employees": {
+				"allocations-filter-on-employees_TO_REVIEW": {
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
