@@ -84,17 +84,6 @@ class AllocationtList(Resource):
              AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI}))
 
 
-'''
-class SubtaskList(Resource):
-    def get(self, task_key):
-        return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
-             AccessParams.KEY_TYPE: AccessParams.TYPE_MULTI,
-             AccessParams.KEY_MATCH_PARAMS: {
-                 ParamConstants.PARAM_ITEM_PARENT: task_key}}))
-'''
-
-
 class Allocation(Resource):
     def get(self, key, date, group, employee):
         return jsonify(Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(

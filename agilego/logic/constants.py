@@ -3,6 +3,7 @@ class DbConstants:
     SCRUM_SPRINT = 'sprint.definition'
     SCRUM_SPRINT_TIMELINE = 'sprint.timeline'
     SCRUM_SPRINT_BACKLOG = 'sprint.backlog'
+    SCRUM_SPRINT_BACKLOG_PLAIN = 'sprint.backlog_plain'
     SCRUM_BACKLOG_LINKS = 'sprint.backlog_links'
     SCRUM_ALLOCATIONS = 'sprint.allocations'
     PROJECT_TEAM = 'project.team'
@@ -19,8 +20,6 @@ class RestConstants:
     ROUTE_SPRINT_TIMELINE = '{}/timeline'.format(ROUTE_SPRINT)
     ROUTE_BACKLOG = '/backlog'
     ROUTE_TASK = '/task'
-    ROUTE_SUBTASKS = '/subtasks'
-    ROUTE_SUBTASK = '/subtask'
     ROUTE_ALLOCATION = '/allocation'
     ROUTE_COMPONENTS = '/components'
     ROUTE_TEAM = '/team'
@@ -48,6 +47,7 @@ class ParamConstants:
     PARAM_WHRS = 'whrs'
     PARAM_CAPACITY = 'capacity'
     PARAM_TYPE = 'type'
+    PARAM_SUBTASKS = 'subtasks'
 
 
 class MatchConstants:

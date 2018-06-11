@@ -581,7 +581,26 @@
 						}
 					}
 				},				
-				
+				"backlog_planning_limitations": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items_sorted"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.copy",
+							"params": {
+								"fields": ["key", "duedate", "estimate", "components"]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.planning_limitations"
+						},
+						"dest.db.save": {
+							"dest": "sprint.planning_limitations"
+						}
+					}
+				},					
 				
 				"concate_relates-TO_REMOVE": {
 					"class": "na3x.transformation.transformer.Col2XTransformation",
@@ -648,7 +667,44 @@
 							"dest": "sprint.backlog"
 						}
 					}
-				},				
+				},
+				"backlog_plain": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items_sorted"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.copy",
+							"params": {
+								"fields": ["key", "parent", "type", "duedate", "estimate"]
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.backlog_plain"
+						},
+						"dest.db.save": {
+							"dest": "sprint.backlog_plain"
+						}
+					}
+				},								
+				"planning_limitations": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.planning_limitations"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.copy"
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.planning_limitations"
+						},
+						"dest.db.save": {
+							"dest": "sprint.planning_limitations"
+						}
+					}
+				},
 				"issue-links": {
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
@@ -814,7 +870,7 @@
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
-							"src": ["baseline.gantt_links", "sprint.backlog"]
+							"src": ["baseline.gantt_links", "sprint.backlog_plain"]
 						},
 						"transform": {
 							"func": "ext.transformers.gantt_tasks"

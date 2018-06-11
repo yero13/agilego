@@ -53,7 +53,7 @@ class Task:
         res = {}
         res.update({Task.TASK_ID: id})
         backlog_item = Accessor.factory(DbConstants.CFG_DB_SCRUM_API).get(
-            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG,
+            {AccessParams.KEY_COLLECTION: DbConstants.SCRUM_SPRINT_BACKLOG_PLAIN,
              AccessParams.KEY_TYPE: AccessParams.TYPE_SINGLE,
              AccessParams.KEY_MATCH_PARAMS: {ParamConstants.PARAM_ITEM_KEY: id}})
         res.update({Task.TASK_TEXT: id})

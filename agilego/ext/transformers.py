@@ -114,14 +114,14 @@ def gantt_tasks(input, **params):
     ext = []
     for node in graph.nodes:
         is_ext = True
-        for item in input[DbConstants.SCRUM_SPRINT_BACKLOG]:
+        for item in input[DbConstants.SCRUM_SPRINT_BACKLOG_PLAIN]:
             if node == item[ParamConstants.PARAM_ITEM_KEY]:
                 is_ext = False
                 break
         if is_ext:
             ext.append(node)
     res = []
-    for item in input[DbConstants.SCRUM_SPRINT_BACKLOG]:
+    for item in input[DbConstants.SCRUM_SPRINT_BACKLOG_PLAIN]:
         res.append(Task.create_task(item[ParamConstants.PARAM_ITEM_KEY]))
     if len(ext) > 0:
         res.append(Task.create_fake_task(Task.TASK_EXT, 'External dependencies'))
