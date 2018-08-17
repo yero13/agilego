@@ -600,28 +600,6 @@
 							"dest": "sprint.planning_limitations"
 						}
 					}
-				},					
-				
-				"concate_relates-TO_REMOVE": {
-					"class": "na3x.transformation.transformer.Col2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": "sprint.all_items_sorted"
-						},
-						"transform": {
-							"func": "na3x.transformation.transformer.list_concat",
-							"params": {
-								"src.fields": ["relates_in", "relates_out"],
-								"dest.field": "relates"
-							}
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.all_items_sorted"
-						},
-						"dest.db.save": {
-							"dest": "sprint.all_items_sorted"
-						}
-					}
 				}
 			}
 		},
@@ -631,26 +609,6 @@
 				"dest.db": "db_scrum_api"
 			},
 			"transformations": {
-				"backlog-TO_REMOVE": {
-					"class": "na3x.transformation.transformer.Col2XTransformation",
-					"cfg": {
-						"src.db.load": {
-							"src": "sprint.all_items_sorted"
-						},
-						"transform": {
-							"func": "na3x.transformation.transformer.copy",
-							"params": {
-								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocked_by", "blocks", "relates"]
-							}
-						},
-						"dest.db.cleanup": {
-							"target": "sprint.backlog"
-						},
-						"dest.db.save": {
-							"dest": "sprint.backlog"
-						}
-					}
-				},
 				"backlog": {
 					"class": "na3x.transformation.transformer.Col2XTransformation",
 					"cfg": {
@@ -798,7 +756,7 @@
 				"dest.db": "db_scrum_api"
 			},
 			"transformations": {
-				"allocations-filter-on-backlog_TO_REVIEW": {
+				"allocations-filter-on-backlog": {
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
@@ -815,7 +773,7 @@
 						}						
 					}				
 				},
-				"allocations-filter-on-employees_TO_REVIEW": {
+				"allocations-filter-on-employees": {
 					"class": "na3x.transformation.transformer.MultiCol2XTransformation",
 					"cfg": {
 						"src.db.load": {
