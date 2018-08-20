@@ -538,6 +538,27 @@
 						}					
 					}
 				},
+				"concate_relates": {
+					"class": "na3x.transformation.transformer.Col2XTransformation",
+					"cfg": {
+						"src.db.load": {
+							"src": "sprint.all_items_sorted"
+						},
+						"transform": {
+							"func": "na3x.transformation.transformer.list_concat",
+							"params": {
+								"src.fields": ["relates_in", "relates_out"],
+								"dest.field": "relates"
+							}
+						},
+						"dest.db.cleanup": {
+							"target": "sprint.all_items_sorted"
+						},
+						"dest.db.save": {
+							"dest": "sprint.all_items_sorted"
+						}
+					}
+				},				
 				"backlog": {
 					"class": "na3x.transformation.transformer.Col2XTransformation",
 					"cfg": {
@@ -547,7 +568,7 @@
 						"transform": {
 							"func": "na3x.transformation.transformer.copy",
 							"params": {
-								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components"]
+								"fields": ["key", "parent", "type", "priority", "status", "assignee_id", "duedate", "estimate", "components", "blocks", "blocked_by", "relates"]
 							}
 						},
 						"dest.db.cleanup": {
