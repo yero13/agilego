@@ -12,7 +12,7 @@ from na3x.utils.cfg import CfgUtils
 import na3x.cfg
 from logic.constants import DbConstants, RestConstants
 from logic.entities import Sprint, Backlog, SprintTimeline, ComponentList, GroupList, EmployeeList, Group, \
-    AllocationtList, SubtaskList, Allocation, AllocationValidation
+    AllocationtList, Allocation, AllocationValidation
 
 CFG_LOG_TEST = './cfg/log/test-logging-config.json'
 CFG_DATA_GENERATION  = './cfg/data/jira-data-generation.json'
@@ -47,7 +47,7 @@ def tearDownModule():
 
 
 class ImportTestCase(unittest.TestCase):
-    __CFG_IMPORT = './cfg/jira/jira-import.json'
+    __CFG_IMPORT = './cfg/jira/jira-import-scope.json'
     __CFG_IMPORT_DB = 'db_jira_import'
     __COL_BACKLOG = 'backlog'
     __COL_SPRINT = 'sprint'
@@ -83,7 +83,7 @@ class ImportTestCase(unittest.TestCase):
 
 
 class TransformTestCase(unittest.TestCase):
-    __CFG_TRANSFORM = './cfg/scrum/scrum-import-transform.json'
+    __CFG_TRANSFORM = './cfg/scrum/scrum-import-scope-transform.json'
     __CFG_TRANSFORM_DB = 'db_scrum_api'
 
     def setUp(self):
@@ -133,7 +133,6 @@ class ApiTestCase(unittest.TestCase):
         api.add_resource(GroupList, RestConstants.ROUTE_TEAM)
         api.add_resource(EmployeeList, RestConstants.ROUTE_EMPLOYEES)
         # ToDo: add coverage
-        api.add_resource(SubtaskList, '{}/<task_key>{}'.format(RestConstants.ROUTE_TASK, RestConstants.ROUTE_SUBTASKS))
         api.add_resource(Group, RestConstants.ROUTE_GROUP, '{}/<group>'.format(RestConstants.ROUTE_GROUP))
         api.add_resource(AllocationtList, RestConstants.ROUTE_ALLOCATIONS)
         api.add_resource(Allocation, RestConstants.ROUTE_ALLOCATION,
