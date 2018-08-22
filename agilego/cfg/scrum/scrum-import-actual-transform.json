@@ -53,7 +53,7 @@
 					"class": "na3x.transformation.transformer.Col2XTransformation",
 					"cfg": {
 						"src.db.load": {
-							"src": "sprint.backlog"							
+							"src": "sprint.backlog_plain"
 						},
 						"transform": {
 							"func": "na3x.transformation.transformer.copy",
